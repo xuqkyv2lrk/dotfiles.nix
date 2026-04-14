@@ -65,7 +65,7 @@
 
   users.users.lqnw3c = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "video" "audio" "docker" "libvirtd" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "audio" "libvirtd" ];
     shell = pkgs.zsh;
   };
 
