@@ -25,7 +25,7 @@
     # media
     mpv
     cava
-    mpc_cli
+    mpc
     ncmpcpp
     ncspot
     yt-dlp
