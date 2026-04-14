@@ -6,7 +6,7 @@ in
 {
   # Noctalia (Quickshell-based shell layer) — shared across all WMs
   home.packages = with pkgs; [
-    quickshell
+    noctalia-qs
 
     # Media & audio controls invoked by Noctalia
     pamixer
