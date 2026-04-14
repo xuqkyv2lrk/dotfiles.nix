@@ -127,11 +127,12 @@ no manual edits needed for them.
 
 ### 7. Clone this repo and wire in the hardware config
 
-Git is available on the installer. Clone the repo into the mounted system:
+Git is available on the installer. Clone the repo to a temporary location — we are running
+as root here, so we use `/tmp` rather than a user home directory that does not exist yet:
 
 ```bash
-git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git /mnt/etc/dotfiles.nix
-cd /mnt/etc/dotfiles.nix
+git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git /tmp/dotfiles.nix
+cd /tmp/dotfiles.nix
 ```
 
 Copy the generated hardware config into the appropriate host directory:
@@ -150,18 +151,29 @@ git push
 
 ### 8. Install from the flake
 
-With the hardware config in place, install directly from the flake — no intermediate
-vanilla install needed:
+With the hardware config in place, install directly from the flake:
 
 ```bash
-nixos-install --flake /mnt/etc/dotfiles.nix#<hostname>
+nixos-install --flake /tmp/dotfiles.nix#<hostname>
 reboot
 ```
 
-The system boots fully configured. After first login, any future changes are applied with
-`nixos-rebuild switch` as normal.
+### 9. After first boot — clone the repo to your home directory
 
-### 9. zram
+The `/tmp` clone is gone after reboot. Log in as your user and clone the repo to its
+permanent location:
+
+```bash
+git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git ~/.dotfiles.nix
+```
+
+From here all rebuilds run from `~/.dotfiles.nix`:
+
+```bash
+sudo nixos-rebuild switch --flake ~/.dotfiles.nix#<hostname>
+```
+
+### 10. zram
 
 zram is already declared in `hosts/xiuhcoatl/configuration.nix`:
 
