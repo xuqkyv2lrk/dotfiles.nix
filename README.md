@@ -49,20 +49,14 @@ Identify your target disk:
 lsblk
 ```
 
-Partition with `gdisk` (GPT). Replace `/dev/sda` with your actual disk:
+Partition with `parted` (GPT). Replace `/dev/sda` with your actual disk:
 
 ```bash
-gdisk /dev/sda
+parted /dev/sda -- mklabel gpt
+parted /dev/sda -- mkpart ESP fat32 1MiB 1GiB
+parted /dev/sda -- set 1 esp on
+parted /dev/sda -- mkpart primary 1GiB 100%
 ```
-
-Create two partitions:
-
-| Number | Size | Type code | Purpose |
-|--------|------|-----------|---------|
-| 1 | 1 GiB | `ef00` | EFI System |
-| 2 | remainder | `8300` | Linux filesystem (btrfs) |
-
-Write and exit with `w`.
 
 ### 3. Format the partitions
 
