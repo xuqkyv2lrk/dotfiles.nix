@@ -7,7 +7,6 @@ in
   # Hyprland ecosystem packages
   # The compositor itself is enabled at system level via programs.hyprland.enable
   home.packages = with pkgs; [
-    hyprlock
     hypridle
     hyprpicker
     xdg-desktop-portal-hyprland
