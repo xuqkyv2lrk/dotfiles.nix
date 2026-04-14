@@ -53,6 +53,9 @@
   ];
 
   # Virtualisation
+  # Desktop environment
+  programs.hyprland.enable = true;
+
   virtualisation.docker = {
     enable = true;
     enableOnBoot = true;
