@@ -13,6 +13,13 @@ in
     socat   # used by monitor_hotplug.sh
   ];
 
+  home.pointerCursor = {
+    gtk.enable = true;
+    package = pkgs.catppuccin-cursors.mochaMauve;
+    name = "catppuccin-mocha-mauve-cursors";
+    size = 24;
+  };
+
   # dotfiles.di hyprland symlinks
   home.file."bin/start-hypr".source = lnDi "hyprland/bin/bin/start-hypr";
   xdg.configFile."hypr".source      = lnDi "hyprland/hypr/.config/hypr";
