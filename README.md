@@ -1,6 +1,6 @@
 # dotfiles.nix
 
-NixOS system configuration for `xiuhcoatl`, managed with Nix flakes and Home Manager.
+NixOS system configurations managed with Nix flakes and Home Manager.
 
 ## Repository layout
 
