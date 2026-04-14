@@ -12,9 +12,23 @@ NixOS system configurations managed with Nix flakes and Home Manager.
 │   └── xiuhcoatl/
 │       ├── configuration.nix          # system-level config
 │       └── hardware-configuration.nix # generated, do not edit manually
-└── home/
-    └── lqnw3c.nix                     # Home Manager user config
+├── home/
+│   ├── modules/
+│   │   ├── base.nix       # packages, dotfiles.core symlinks, activation scripts
+│   │   ├── noctalia.nix   # quickshell + runtime deps (shared by all WMs)
+│   │   ├── hyprland.nix   # hyprland tools + dotfiles.di symlinks
+│   │   ├── niri.nix       # niri tools + dotfiles.di symlinks
+│   │   └── sway.nix       # sway tools + dotfiles.di symlinks
+│   └── lqnw3c.nix         # user identity + module imports
+└── modules/
+    └── nixos/
+        └── hardware/      # reusable per-hardware NixOS modules
 ```
+
+Each user config (`home/<user>.nix`) declares the user identity and imports exactly the
+modules it needs. A headless server imports only `base.nix`. A desktop machine adds
+`noctalia.nix` and one WM module. Only one WM module should be imported per user — WM
+configs (gtk theming, hypr config, etc.) are WM-specific and will conflict if combined.
 
 ## Relationship to other dotfiles repos
 
@@ -26,7 +40,8 @@ NixOS system configurations managed with Nix flakes and Home Manager.
 
 `dotfiles.core` is the single source of truth for program configurations. It is cloned and
 managed on NixOS exactly as on Arch — Home Manager handles package installation, while
-program configs gradually migrate into native `programs.*` modules in `home/lqnw3c.nix`.
+program configs live in `home/modules/base.nix`. `dotfiles.di` uses git submodules and is
+always cloned with `--recurse-submodules`.
 
 ---
 
@@ -160,10 +175,9 @@ reboot
 
 ### 9. First boot
 
-On first boot, `home-manager-lqnw3c.service` runs automatically as `lqnw3c`. The
-activation scripts clone `~/.dotfiles.core` and `~/.dotfiles.di` to the correct user
-home and create all config symlinks. No manual steps needed — the system is fully
-configured.
+On first boot, `home-manager-<user>.service` runs automatically. The activation scripts
+clone `~/.dotfiles.core` and `~/.dotfiles.di` (with submodules) to the user home and
+create all config symlinks. No manual steps needed — the system is fully configured.
 
 ### 10. Clone this repo for future changes
 
@@ -178,8 +192,12 @@ git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git ~/.dotfiles.nix
 All future rebuilds run from there:
 
 ```bash
-sudo nixos-rebuild switch --flake ~/.dotfiles.nix#<hostname>
+sudo nixos-rebuild switch --flake ~/.dotfiles.nix'#'<hostname>
 ```
+
+> [!NOTE]
+> zsh interprets `#` as a comment character. Quote it as shown above or use
+> `--flake ".#<hostname>"` with double quotes instead.
 
 ### 11. zram
 
@@ -197,19 +215,28 @@ To adjust, add `memoryPercent = 25;` (or whatever fraction suits your workload).
 
 ---
 
+## Adding a new machine
+
+1. Create `hosts/<hostname>/configuration.nix` — enable the compositor, declare the user, import the appropriate hardware module.
+2. Run `nixos-generate-config` during install and commit `hardware-configuration.nix`.
+3. Create `home/<user>.nix` importing `base.nix`, `noctalia.nix`, and one WM module.
+4. Wire it in `flake.nix` under `nixosConfigurations.<hostname>`.
+
+---
+
 ## Day-to-day workflow
 
 Rebuild and switch to the current config:
 
 ```bash
-sudo nixos-rebuild switch --flake ~/.dotfiles.nix#<hostname>
+sudo nixos-rebuild switch --flake ~/.dotfiles.nix'#'<hostname>
 ```
 
 Update all flake inputs to their latest revisions:
 
 ```bash
 nix flake update
-nixos-rebuild switch --flake .#xiuhcoatl
+sudo nixos-rebuild switch --flake ./'#'xiuhcoatl
 ```
 
 Roll back if something breaks:
@@ -222,10 +249,10 @@ Or pick an older generation from the boot menu at startup.
 
 ## Applying Home Manager changes only
 
-If only `home/lqnw3c.nix` changed and a full system rebuild is overkill:
+If only files under `home/` changed and a full system rebuild is overkill:
 
 ```bash
-home-manager switch --flake ~/.dotfiles.nix#lqnw3c
+home-manager switch --flake ~/.dotfiles.nix'#'<user>
 ```
 
 ## Garbage collection
