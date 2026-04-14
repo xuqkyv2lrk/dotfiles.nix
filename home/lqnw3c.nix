@@ -116,7 +116,11 @@ in
     openssl.dev
     pandoc
     python3
-    rustup
+    cargo
+    rustc
+    rustfmt
+    clippy
+    rust-analyzer
     shellcheck
 
     # devops / infra
