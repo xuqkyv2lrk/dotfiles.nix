@@ -117,6 +117,14 @@ This reads the active mounts and writes `/mnt/etc/nixos/configuration.nix` and
 step 5, those options are captured automatically in the generated `fileSystems` entries —
 no manual edits needed for them.
 
+> [!NOTE]
+> Before proceeding, confirm the btrfs options were captured correctly:
+> ```bash
+> grep -A5 'btrfs' /mnt/etc/nixos/hardware-configuration.nix
+> ```
+> Each btrfs mount should include `"noatime"` and `"compress=zstd"` in its `options` list.
+> If they are missing, add them manually before continuing.
+
 Edit the generated `configuration.nix` minimally to enable networking and set a root
 password, then install:
 
