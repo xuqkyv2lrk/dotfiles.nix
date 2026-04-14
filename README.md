@@ -158,22 +158,30 @@ nixos-install --flake /tmp/dotfiles.nix#<hostname>
 reboot
 ```
 
-### 9. After first boot — clone the repo to your home directory
+### 9. First boot
 
-The `/tmp` clone is gone after reboot. Log in as your user and clone the repo to its
-permanent location:
+On first boot, `home-manager-lqnw3c.service` runs automatically as `lqnw3c`. The
+activation scripts clone `~/.dotfiles.core` and `~/.dotfiles.di` to the correct user
+home and create all config symlinks. No manual steps needed — the system is fully
+configured.
+
+### 10. Clone this repo for future changes
+
+The `/tmp` clone from the installer is gone. The running system does not need this repo
+to function — it was baked in at install time. Clone it only when you need to make
+config changes:
 
 ```bash
 git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git ~/.dotfiles.nix
 ```
 
-From here all rebuilds run from `~/.dotfiles.nix`:
+All future rebuilds run from there:
 
 ```bash
 sudo nixos-rebuild switch --flake ~/.dotfiles.nix#<hostname>
 ```
 
-### 10. zram
+### 11. zram
 
 zram is already declared in `hosts/xiuhcoatl/configuration.nix`:
 
