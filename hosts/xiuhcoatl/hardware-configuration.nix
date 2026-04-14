@@ -37,6 +37,12 @@
       options = [ "subvol=@log" "compress=zstd" "noatime" ];
     };
 
+  fileSystems."/.snapshots" =
+    { device = "/dev/disk/by-uuid/38aaa421-18b2-47d9-948a-1ac4474540df";
+      fsType = "btrfs";
+      options = [ "subvol=@snapshots" "compress=zstd" "noatime" ];
+    };
+
   fileSystems."/boot" =
     { device = "/dev/disk/by-uuid/177A-9EB2";
       fsType = "vfat";
