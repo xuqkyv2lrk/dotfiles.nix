@@ -40,6 +40,7 @@
   services.libinput.enable = true;
   services.printing.enable = true;
   services.openssh.enable = true;
+  services.upower.enable = true;
 
   # Bluetooth
   hardware.bluetooth.enable = true;
