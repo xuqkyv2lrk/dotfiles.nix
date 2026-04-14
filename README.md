@@ -112,9 +112,13 @@ compression with a good speed/ratio tradeoff.
 nixos-generate-config --root /mnt
 ```
 
-This writes `/mnt/etc/nixos/configuration.nix` and `hardware-configuration.nix`. Edit the
-generated `configuration.nix` minimally to enable networking and set a root password, then
-install:
+This reads the active mounts and writes `/mnt/etc/nixos/configuration.nix` and
+`hardware-configuration.nix`. Because we mounted with `noatime` and `compress=zstd` in
+step 5, those options are captured automatically in the generated `fileSystems` entries —
+no manual edits needed for them.
+
+Edit the generated `configuration.nix` minimally to enable networking and set a root
+password, then install:
 
 ```bash
 nixos-install
