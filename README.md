@@ -32,6 +32,9 @@ program configs gradually migrate into native `programs.*` modules in `home/lqnw
 
 ## Base installation guide
 
+For more in-depth coverage of the installation process, see the
+[official NixOS manual](https://nixos.org/manual/nixos/stable/#sec-installation).
+
 ### 1. Boot the NixOS installer
 
 Download the minimal ISO from [nixos.org](https://nixos.org/download) and boot from it.
@@ -60,17 +63,22 @@ parted /dev/sda -- mkpart primary 1GiB 100%
 
 ### 3. Format the partitions
 
+Labels let us reference partitions by name rather than device path, which is stable across
+reboots and hardware changes.
+
 ```bash
 mkfs.fat -F 32 -n BOOT /dev/sda1
 mkfs.btrfs -L nixos /dev/sda2
 ```
+
+Partitions are now addressable as `/dev/disk/by-label/BOOT` and `/dev/disk/by-label/nixos`.
 
 ### 4. Create btrfs subvolumes
 
 Mount the root btrfs volume temporarily to create subvolumes:
 
 ```bash
-mount /dev/sda2 /mnt
+mount /dev/disk/by-label/nixos /mnt
 
 btrfs subvolume create /mnt/@
 btrfs subvolume create /mnt/@home
@@ -84,15 +92,15 @@ umount /mnt
 ### 5. Mount with correct options
 
 ```bash
-mount -o noatime,compress=zstd,subvol=@ /dev/sda2 /mnt
+mount -o noatime,compress=zstd,subvol=@ /dev/disk/by-label/nixos /mnt
 
 mkdir -p /mnt/{boot,home,nix,var/log,.snapshots}
 
-mount /dev/sda1 /mnt/boot
-mount -o noatime,compress=zstd,subvol=@home     /dev/sda2 /mnt/home
-mount -o noatime,compress=zstd,subvol=@nix      /dev/sda2 /mnt/nix
-mount -o noatime,compress=zstd,subvol=@log      /dev/sda2 /mnt/var/log
-mount -o noatime,compress=zstd,subvol=@snapshots /dev/sda2 /mnt/.snapshots
+mount /dev/disk/by-label/BOOT /mnt/boot
+mount -o noatime,compress=zstd,subvol=@home      /dev/disk/by-label/nixos /mnt/home
+mount -o noatime,compress=zstd,subvol=@nix       /dev/disk/by-label/nixos /mnt/nix
+mount -o noatime,compress=zstd,subvol=@log       /dev/disk/by-label/nixos /mnt/var/log
+mount -o noatime,compress=zstd,subvol=@snapshots /dev/disk/by-label/nixos /mnt/.snapshots
 ```
 
 `noatime` avoids unnecessary write amplification on btrfs. `compress=zstd` gives transparent
