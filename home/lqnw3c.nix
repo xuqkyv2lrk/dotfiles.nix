@@ -41,22 +41,6 @@
     # extraConfig goes here eventually
   };
 
-  programs.git = {
-    enable = true;
-    userName = "lqnw3c";
-    userEmail = ""; # fill in
-    extraConfig = {
-      core.pager = "delta";
-      interactive.diffFilter = "delta --color-only";
-      delta = {
-        navigate = true;
-        light = false;
-      };
-      merge.conflictstyle = "diff3";
-      diff.colorMoved = "default";
-    };
-  };
-
   programs.vim = {
     enable = true;
     # extraConfig goes here eventually
