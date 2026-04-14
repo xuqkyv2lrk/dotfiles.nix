@@ -106,62 +106,62 @@ mount -o noatime,compress=zstd,subvol=@snapshots /dev/disk/by-label/nixos /mnt/.
 `noatime` avoids unnecessary write amplification on btrfs. `compress=zstd` gives transparent
 compression with a good speed/ratio tradeoff.
 
-### 6. Generate initial config and install
+### 6. Generate hardware config
 
 ```bash
 nixos-generate-config --root /mnt
 ```
 
-This reads the active mounts and writes `/mnt/etc/nixos/configuration.nix` and
-`hardware-configuration.nix`. Because we mounted with `noatime` and `compress=zstd` in
-step 5, those options are captured automatically in the generated `fileSystems` entries —
+This reads the active mounts and writes `hardware-configuration.nix` under
+`/mnt/etc/nixos/`. Because we mounted with `noatime` and `compress=zstd` in step 5,
+those options are captured automatically in the generated `fileSystems` entries —
 no manual edits needed for them.
 
 > [!NOTE]
-> Before proceeding, confirm the btrfs options were captured correctly:
+> Confirm the btrfs options were captured correctly before continuing:
 > ```bash
 > grep -A5 'btrfs' /mnt/etc/nixos/hardware-configuration.nix
 > ```
 > Each btrfs mount should include `"noatime"` and `"compress=zstd"` in its `options` list.
-> If they are missing, add them manually before continuing.
+> If they are missing, add them manually.
 
-Edit the generated `configuration.nix` minimally to enable networking and set a root
-password, then install:
+### 7. Clone this repo and wire in the hardware config
+
+Git is available on the installer. Clone the repo into the mounted system:
 
 ```bash
-nixos-install
+git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git /mnt/etc/dotfiles.nix
+cd /mnt/etc/dotfiles.nix
+```
+
+Copy the generated hardware config into the appropriate host directory:
+
+```bash
+cp /mnt/etc/nixos/hardware-configuration.nix hosts/<hostname>/hardware-configuration.nix
+```
+
+Commit and push so the repo reflects the real hardware:
+
+```bash
+git add hosts/<hostname>/hardware-configuration.nix
+git commit -m "chore(<hostname>): add hardware config"
+git push
+```
+
+### 8. Install from the flake
+
+With the hardware config in place, install directly from the flake — no intermediate
+vanilla install needed:
+
+```bash
+nixos-install --flake .#<hostname>
 reboot
 ```
 
-### 7. Bootstrap from this repo
+The system boots fully configured. After first login, any future changes are applied with
+`nixos-rebuild switch` as normal.
 
-After first boot, log in as root and enable flakes temporarily:
-
-```bash
-nix-env -iA nixos.git
-```
-
-Clone the repo:
-
-```bash
-git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git /etc/dotfiles.nix
-cd /etc/dotfiles.nix
-```
-
-Copy the generated hardware config into the repo:
-
-```bash
-cp /etc/nixos/hardware-configuration.nix hosts/xiuhcoatl/hardware-configuration.nix
-```
-
-Replace the placeholder `configuration.nix` with your actual one (or merge the two), then
-apply the full flake configuration:
-
-```bash
-nixos-rebuild switch --flake .#xiuhcoatl
-```
-
-### 8. zram
+### 9. zram
 
 zram is already declared in `hosts/xiuhcoatl/configuration.nix`:
 
@@ -182,7 +182,7 @@ To adjust, add `memoryPercent = 25;` (or whatever fraction suits your workload).
 Rebuild and switch to the current config:
 
 ```bash
-nixos-rebuild switch --flake /etc/dotfiles.nix#xiuhcoatl
+sudo nixos-rebuild switch --flake ~/.dotfiles.nix#<hostname>
 ```
 
 Update all flake inputs to their latest revisions:
@@ -205,7 +205,7 @@ Or pick an older generation from the boot menu at startup.
 If only `home/lqnw3c.nix` changed and a full system rebuild is overkill:
 
 ```bash
-home-manager switch --flake /etc/dotfiles.nix#lqnw3c
+home-manager switch --flake ~/.dotfiles.nix#lqnw3c
 ```
 
 ## Garbage collection
