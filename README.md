@@ -154,7 +154,7 @@ With the hardware config in place, install directly from the flake — no interm
 vanilla install needed:
 
 ```bash
-nixos-install --flake .#<hostname>
+nixos-install --flake /mnt/etc/dotfiles.nix#<hostname>
 reboot
 ```
 
