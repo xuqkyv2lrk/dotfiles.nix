@@ -24,7 +24,8 @@ in
 
   home.activation.cloneDotfilesDi = lib.hm.dag.entryBefore ["writeBoundary"] ''
     if [ ! -d "${config.home.homeDirectory}/.dotfiles.di" ]; then
-      $DRY_RUN_CMD ${pkgs.git}/bin/git clone https://gitlab.com/wd2nf8gqct/dotfiles.di.git \
+      $DRY_RUN_CMD ${pkgs.git}/bin/git clone --recurse-submodules \
+        https://gitlab.com/wd2nf8gqct/dotfiles.di.git \
         "${config.home.homeDirectory}/.dotfiles.di"
     fi
   '';

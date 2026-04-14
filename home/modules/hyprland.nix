@@ -16,7 +16,8 @@ in
   ];
 
   # dotfiles.di hyprland symlinks
-  xdg.configFile."hypr".source    = lnDi "hyprland/hypr/.config/hypr";
+  home.file."bin/start-hypr".source = lnDi "hyprland/bin/bin/start-hypr";
+  xdg.configFile."hypr".source      = lnDi "hyprland/hypr/.config/hypr";
   xdg.configFile."qt5ct".source   = lnDi "hyprland/qt5ct/.config/qt5ct";
   xdg.configFile."kvantum".source = lnDi "hyprland/kvantum/.config/kvantum";
   xdg.configFile."gtk-2.0".source = lnDi "hyprland/gtk-2.0/.config/gtk-2.0";

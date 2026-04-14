@@ -22,6 +22,9 @@ in
 
     # Wallpaper daemon
     swww
+
+    # System controls invoked by Noctalia
+    brightnessctl
   ];
 
   # Noctalia user configuration
