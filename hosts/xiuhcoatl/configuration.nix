@@ -40,15 +40,36 @@
   services.printing.enable = true;
   services.openssh.enable = true;
 
-  # Allow unfree packages (Broadcom WiFi, etc.)
+  # Bluetooth
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
+
+  # Fonts
+  fonts.packages = with pkgs; [
+    noto-fonts
+    noto-fonts-cjk-sans
+    noto-fonts-color-emoji
+  ];
+
+  # Virtualisation
+  virtualisation.docker = {
+    enable = true;
+    enableOnBoot = true;
+  };
+
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
+
+  # Allow unfree packages (Broadcom WiFi, 1password, etc.)
   nixpkgs.config.allowUnfree = true;
 
   users.users.lqnw3c = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "video" "audio" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "audio" "docker" "libvirtd" ];
     shell = pkgs.zsh;
   };
 
+  # Bootstrap packages available before home-manager activates
   environment.systemPackages = with pkgs; [
     vim
     git

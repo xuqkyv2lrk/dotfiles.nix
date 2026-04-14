@@ -1,48 +1,117 @@
-# Home Manager configuration for lqnw3c on xiuhcoatl.
-#
-# Strategy: start by declaring packages here and managing program options
-# natively through Home Manager modules. Over time, configs that currently
-# live in dotfiles.core will migrate here as proper `programs.*` blocks.
-#
-# For configs not yet ported, keep using dotfiles.core with stow on this
-# machine the same way you do on Arch — Home Manager and stow coexist fine.
 { config, pkgs, ... }:
 {
   home.username = "lqnw3c";
   home.homeDirectory = "/home/lqnw3c";
-  home.stateVersion = "25.05";
+  home.stateVersion = "25.11";
 
-  # Let Home Manager manage itself
   programs.home-manager.enable = true;
 
-  # Packages not managed via program modules below
   home.packages = with pkgs; [
-    bat
-    btop
+    # browsers & mail
+    firefox
+    thunderbird
+
+    # terminal emulator
+    foot
+
+    # password managers
+    bitwarden
+    _1password
+    _1password-gui
+
+    # editors
+    emacs
+
+    # media
+    mpv
     cava
-    delta
-    fastfetch
-    mpd
+    mpc_cli
     ncmpcpp
     ncspot
+    yt-dlp
+    ffmpeg
+    imagemagick
+
+    # cli utilities
+    bat
+    bc
+    btop
+    cloudflared
+    curl
+    delta
+    dmidecode
+    eza
+    fastfetch
+    fd
+    jq
+    ripgrep
+    rsync
+    unzip
+    wget
+    wireguard-tools
+    wl-clipboard
     yazi
+    yq-go
+
+    # development
+    cmake
+    gcc
+    go
+    graphviz
+    kubectl
+    meson
+    nodejs
+    openssl
+    openssl.dev
+    pandoc
+    python3
+    shellcheck
+
+    # virtualisation (GUI tools — services enabled in configuration.nix)
+    virt-manager
+    virt-viewer
   ];
 
-  # --- Program modules (native Nix way) ---
-  # These replace the corresponding dotfiles.core configs as you migrate.
+  # --- Program modules ---
 
   programs.zsh = {
     enable = true;
-    # initExtra, shellAliases, etc. go here eventually
   };
 
   programs.tmux = {
     enable = true;
-    # extraConfig goes here eventually
   };
 
   programs.vim = {
     enable = true;
-    # extraConfig goes here eventually
+  };
+
+  programs.direnv = {
+    enable = true;
+    enableZshIntegration = true;
+    nix-direnv.enable = true;
+  };
+
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  programs.zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  # --- User services ---
+
+  services.mpd = {
+    enable = true;
+    musicDirectory = "~/Music";
+    extraConfig = ''
+      audio_output {
+        type "pipewire"
+        name "PipeWire"
+      }
+    '';
   };
 }
