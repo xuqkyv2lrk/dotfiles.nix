@@ -8,11 +8,17 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    dotfiles-core = {
+      url = "gitlab:wd2nf8gqct/dotfiles.core";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }: {
+  outputs = { self, nixpkgs, home-manager, dotfiles-core, ... }@inputs: {
     nixosConfigurations.xiuhcoatl = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
+      specialArgs = { inherit inputs; };
       modules = [
         ./hosts/xiuhcoatl/configuration.nix
         home-manager.nixosModules.home-manager

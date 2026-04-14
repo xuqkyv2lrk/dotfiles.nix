@@ -2,7 +2,7 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../../modules/nixos/hardware/broadcom-wifi.nix
+    ../../modules/nixos/hardware/dell-xps-13-9350.nix
   ];
 
   # Boot
