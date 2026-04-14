@@ -56,7 +56,7 @@ Partition with `parted` (GPT). Replace `/dev/sda` with your actual disk:
 
 ```bash
 parted /dev/sda -- mklabel gpt
-parted /dev/sda -- mkpart ESP fat32 1MiB 1GiB
+parted /dev/sda -- mkpart ESP fat32 1MiB 1GiB  # 1GiB recommended for NixOS: each generation stores its own kernel + initrd here
 parted /dev/sda -- set 1 esp on
 parted /dev/sda -- mkpart primary 1GiB 100%
 ```
