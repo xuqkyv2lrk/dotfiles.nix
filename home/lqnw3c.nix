@@ -2,7 +2,7 @@
 {
   home.username = "lqnw3c";
   home.homeDirectory = "/home/lqnw3c";
-  home.stateVersion = "25.11";
+  home.stateVersion = "25.05";
 
   programs.home-manager.enable = true;
 
@@ -106,7 +106,7 @@
 
   services.mpd = {
     enable = true;
-    musicDirectory = "~/Music";
+    musicDirectory = "~/music";
     extraConfig = ''
       audio_output {
         type "pipewire"
