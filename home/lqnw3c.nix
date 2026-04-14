@@ -18,6 +18,14 @@ in
     fi
   '';
 
+  home.activation.cloneDoomEmacs = lib.hm.dag.entryBefore ["writeBoundary"] ''
+    if [ ! -d "${config.home.homeDirectory}/.emacs.d" ]; then
+      $DRY_RUN_CMD ${pkgs.git}/bin/git clone --depth 1 \
+        https://github.com/doomemacs/doomemacs \
+        "${config.home.homeDirectory}/.emacs.d"
+    fi
+  '';
+
   home.activation.cloneDotfilesDi = lib.hm.dag.entryBefore ["writeBoundary"] ''
     if [ ! -d "${config.home.homeDirectory}/.dotfiles.di" ]; then
       $DRY_RUN_CMD ${pkgs.git}/bin/git clone https://gitlab.com/wd2nf8gqct/dotfiles.di.git \
@@ -108,7 +116,22 @@ in
     openssl.dev
     pandoc
     python3
+    rustup
     shellcheck
+
+    # devops / infra
+    awscli2
+    fluxcd
+    kubernetes-helm
+    sops
+    talosctl
+    tfenv
+
+    # shell utilities
+    atuin
+    diff-so-fancy
+    dyff
+    oh-my-posh
 
     # virtualisation (GUI tools — services enabled in configuration.nix)
     virt-manager
