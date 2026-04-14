@@ -15,7 +15,7 @@
     foot
 
     # password managers
-    bitwarden
+    bitwarden-desktop
     _1password
     _1password-gui
 
