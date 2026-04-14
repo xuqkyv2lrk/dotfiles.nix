@@ -9,7 +9,6 @@ in
   home.packages = with pkgs; [
     hyprlock
     hypridle
-    hyprpaper
     hyprpicker
     xdg-desktop-portal-hyprland
     socat   # used by monitor_hotplug.sh
