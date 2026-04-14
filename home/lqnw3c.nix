@@ -13,14 +13,14 @@ in
   # Clone dotfiles repos on first activation, before symlinks are created
   home.activation.cloneDotfilesCore = lib.hm.dag.entryBefore ["writeBoundary"] ''
     if [ ! -d "${config.home.homeDirectory}/.dotfiles.core" ]; then
-      $DRY_RUN_CMD git clone https://gitlab.com/wd2nf8gqct/dotfiles.core.git \
+      $DRY_RUN_CMD ${pkgs.git}/bin/git clone https://gitlab.com/wd2nf8gqct/dotfiles.core.git \
         "${config.home.homeDirectory}/.dotfiles.core"
     fi
   '';
 
   home.activation.cloneDotfilesDi = lib.hm.dag.entryBefore ["writeBoundary"] ''
     if [ ! -d "${config.home.homeDirectory}/.dotfiles.di" ]; then
-      $DRY_RUN_CMD git clone https://gitlab.com/wd2nf8gqct/dotfiles.di.git \
+      $DRY_RUN_CMD ${pkgs.git}/bin/git clone https://gitlab.com/wd2nf8gqct/dotfiles.di.git \
         "${config.home.homeDirectory}/.dotfiles.di"
     fi
   '';
