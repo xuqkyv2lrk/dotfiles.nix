@@ -25,6 +25,7 @@ in
 
     # System controls invoked by Noctalia
     brightnessctl
+    wlsunset
   ];
 
   # Noctalia user configuration
