@@ -2,6 +2,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ../../modules/nixos/hardware/broadcom-wifi.nix
   ];
 
   # Boot
