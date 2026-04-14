@@ -129,7 +129,7 @@ in
     kubernetes-helm
     sops
     talosctl
-    tfenv
+    terraform
 
     # shell utilities
     atuin
