@@ -15,15 +15,37 @@
 
 ## Usage
 
-**Restoring an existing host** — no bootstrap needed, the flake has everything:
+All paths start from the NixOS installer — you will be in the installer TTY running as
+root. The steps below are the short version; the [base installation guide](#base-installation-guide)
+covers each step in full.
+
+**Existing host** — partition, format, mount, then:
+
+```bash
+# Generate hardware config against the mounted system
+nixos-generate-config --root /mnt
+
+# Clone to /tmp — ~ is /root in the installer and won't survive reboot
+git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git /tmp/dotfiles.nix
+
+# Copy the generated hardware config into the host directory
+cp /mnt/etc/nixos/hardware-configuration.nix /tmp/dotfiles.nix/hosts/<hostname>/hardware-configuration.nix
+
+# Install and reboot
+nixos-install --flake /tmp/dotfiles.nix#<hostname>
+reboot
+```
+
+**New host** — same as above, but before running `nixos-install` also scaffold
+`hosts/<hostname>/configuration.nix` and add a `nixosConfigurations.<hostname>` entry
+to `flake.nix`. See [Adding a new machine](#adding-a-new-machine).
+
+**Day-to-day config changes** (already running system, not a reinstall):
 
 ```bash
 git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git ~/.dotfiles.nix
-cd ~/.dotfiles.nix
-sudo nixos-rebuild switch --flake .#<hostname>
+sudo nixos-rebuild switch --flake ~/.dotfiles.nix'#'<hostname>
 ```
-
-**Setting up a new host** — follow the [base installation guide](#base-installation-guide) below. The short version: partition, format, generate hardware config with `nixos-generate-config`, copy it into `hosts/<hostname>/`, scaffold a `configuration.nix` and flake entry, then install.
 
 ---
 
