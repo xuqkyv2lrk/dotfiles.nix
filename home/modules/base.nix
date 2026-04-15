@@ -155,7 +155,6 @@ in
     if [ ! -d "$TPM_DIR" ]; then
       $DRY_RUN_CMD ${pkgs.git}/bin/git clone https://github.com/tmux-plugins/tpm "$TPM_DIR"
     fi
-    $DRY_RUN_CMD bash "$TPM_DIR/scripts/install_plugins.sh"
   '';
 
   programs.direnv = {
