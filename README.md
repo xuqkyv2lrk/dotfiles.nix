@@ -1,15 +1,16 @@
 <div align="center">
-<img src="https://brand.nixos.org/logos/nixos-logo-default-gradient-white-regular-vertical-recommended.svg" alt="dotfiles.nix" width="120px" /> <br />
-<h1>dotfiles.nix</h1>
+<img src="https://brand.nixos.org/logos/nixos-logo-default-gradient-white-regular-vertical-recommended.svg" alt="dotfiles.nix" width="250px" />
+<h3>dotfiles.nix</h3>
 <p>NixOS system configurations managed with Nix flakes and Home Manager.</p>
-
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](LICENSE)
-[![GitLab](https://img.shields.io/badge/GitLab-Main-orange.svg?logo=gitlab)](https://gitlab.com/wd2nf8gqct/dotfiles.nix)
-[![GitHub Mirror](https://img.shields.io/badge/GitHub-Mirror-black.svg?logo=github)](https://github.com/xuqkyv2lrk/dotfiles.nix)
-[![Codeberg Mirror](https://img.shields.io/badge/Codeberg-Mirror-2185D0.svg?logo=codeberg)](https://codeberg.org/iw8knmadd5/dotfiles.nix)
-
-[![NixOS](https://img.shields.io/badge/NixOS-5277C3?logo=nixos&logoColor=white&style=flat)](https://nixos.org)
-
+<p>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg" alt="License" /></a>
+  <a href="https://gitlab.com/wd2nf8gqct/dotfiles.nix"><img src="https://img.shields.io/badge/GitLab-Main-orange.svg?logo=gitlab" alt="GitLab" /></a>
+  <a href="https://github.com/xuqkyv2lrk/dotfiles.nix"><img src="https://img.shields.io/badge/GitHub-Mirror-black.svg?logo=github" alt="GitHub Mirror" /></a>
+  <a href="https://codeberg.org/iw8knmadd5/dotfiles.nix"><img src="https://img.shields.io/badge/Codeberg-Mirror-2185D0.svg?logo=codeberg" alt="Codeberg Mirror" /></a>
+</p>
+<p>
+  <a href="https://nixos.org"><img src="https://img.shields.io/badge/NixOS-5277C3?logo=nixos&logoColor=white&style=flat" alt="NixOS" /></a>
+</p>
 </div>
 
 ## Repository layout
