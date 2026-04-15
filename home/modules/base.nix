@@ -106,6 +106,7 @@ in
     # development
     cmake
     gcc
+    gnumake
     go
     graphviz
     kubectl
