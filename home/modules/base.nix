@@ -69,6 +69,8 @@ in
 
     # editors
     emacs
+    vim
+    tmux
 
     # media
     mpv
