@@ -21,7 +21,7 @@ in
     cliphist
 
     # Wallpaper daemon
-    swww
+    awww
 
     # System controls invoked by Noctalia
     brightnessctl
