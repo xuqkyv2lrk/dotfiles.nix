@@ -20,10 +20,7 @@ in
     # Clipboard manager
     cliphist
 
-    # Wallpaper daemon
-    awww
-
-    # System controls invoked by Noctalia
+# System controls invoked by Noctalia
     brightnessctl
     wlsunset
   ];
