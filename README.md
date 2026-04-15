@@ -19,32 +19,18 @@ All paths start from the NixOS installer — you will be in the installer TTY ru
 root. The steps below are the short version; the [base installation guide](#base-installation-guide)
 covers each step in full.
 
-**Existing host** — partition, format, mount, then:
-
-```bash
-# Generate hardware config against the mounted system
-nixos-generate-config --root /mnt
-
-# Clone to /tmp — ~ is /root in the installer and won't survive reboot
-git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git /tmp/dotfiles.nix
-
-# Copy the generated hardware config into the host directory
-cp /mnt/etc/nixos/hardware-configuration.nix /tmp/dotfiles.nix/hosts/<hostname>/hardware-configuration.nix
-
-# Install and reboot
-nixos-install --flake /tmp/dotfiles.nix#<hostname>
-reboot
-```
-
-**New host** — same as above, but before running `nixos-install` also scaffold
-`hosts/<hostname>/configuration.nix` and add a `nixosConfigurations.<hostname>` entry
-to `flake.nix`. See [Adding a new machine](#adding-a-new-machine).
+All install paths run from the **NixOS installer ISO**. Partition, format, and mount
+the disk first (see [base installation guide](#base-installation-guide)), then use
+[dotfiles.bootstrap](https://gitlab.com/wd2nf8gqct/dotfiles.bootstrap) to handle the
+rest — hardware config, scaffolding for new hosts, and `nixos-install`. The repo is
+copied into the installed system before reboot so it's ready to commit from after
+first boot.
 
 **Day-to-day config changes** (already running system, not a reinstall):
 
 ```bash
-git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git ~/.dotfiles.nix
-sudo nixos-rebuild switch --flake ~/.dotfiles.nix'#'<hostname>
+cd ~/.dotfiles.nix
+sudo nixos-rebuild switch --flake .#<hostname>
 ```
 
 ---
