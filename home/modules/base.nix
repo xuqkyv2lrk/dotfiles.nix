@@ -154,6 +154,8 @@ in
     TPM_DIR="${config.home.homeDirectory}/.tmux/plugins/tpm"
     if [ ! -d "$TPM_DIR" ]; then
       $DRY_RUN_CMD ${pkgs.git}/bin/git clone https://github.com/tmux-plugins/tpm "$TPM_DIR"
+      TMUX_PLUGIN_MANAGER_PATH="${config.home.homeDirectory}/.tmux/plugins" \
+        $DRY_RUN_CMD bash "$TPM_DIR/scripts/install_plugins.sh" || true
     fi
   '';
 
