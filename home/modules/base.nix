@@ -141,6 +141,23 @@ in
     virt-viewer
   ];
 
+  home.activation.vimPlugins = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    PLUG_VIM="${config.home.homeDirectory}/.vim/autoload/plug.vim"
+    if [ ! -f "$PLUG_VIM" ]; then
+      $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fLo "$PLUG_VIM" --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    fi
+    $DRY_RUN_CMD ${pkgs.vim}/bin/vim +'PlugInstall --sync' +qa
+  '';
+
+  home.activation.tmuxPlugins = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    TPM_DIR="${config.home.homeDirectory}/.tmux/plugins/tpm"
+    if [ ! -d "$TPM_DIR" ]; then
+      $DRY_RUN_CMD ${pkgs.git}/bin/git clone https://github.com/tmux-plugins/tpm "$TPM_DIR"
+    fi
+    $DRY_RUN_CMD bash "$TPM_DIR/scripts/install_plugins.sh"
+  '';
+
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
