@@ -9,13 +9,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    dotfiles-core = {
-      url = "gitlab:wd2nf8gqct/dotfiles.core";
+    dotfiles-bootstrap = {
+      url = "gitlab:wd2nf8gqct/dotfiles.bootstrap";
       flake = false;
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, dotfiles-core, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, dotfiles-bootstrap, ... }@inputs: {
     nixosConfigurations.xiuhcoatl = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
