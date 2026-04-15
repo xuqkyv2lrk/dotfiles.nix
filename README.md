@@ -1,6 +1,16 @@
-# dotfiles.nix
+<div align="center">
+<img src="https://brand.nixos.org/logos/nixos-logo-default-gradient-white-regular-vertical-recommended.svg" alt="dotfiles.nix" width="120px" /> <br />
+<h1>dotfiles.nix</h1>
+<p>NixOS system configurations managed with Nix flakes and Home Manager.</p>
 
-NixOS system configurations managed with Nix flakes and Home Manager.
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](LICENSE)
+[![GitLab](https://img.shields.io/badge/GitLab-Main-orange.svg?logo=gitlab)](https://gitlab.com/wd2nf8gqct/dotfiles.nix)
+[![GitHub Mirror](https://img.shields.io/badge/GitHub-Mirror-black.svg?logo=github)](https://github.com/xuqkyv2lrk/dotfiles.nix)
+[![Codeberg Mirror](https://img.shields.io/badge/Codeberg-Mirror-2185D0.svg?logo=codeberg)](https://codeberg.org/iw8knmadd5/dotfiles.nix)
+
+[![NixOS](https://img.shields.io/badge/NixOS-5277C3?logo=nixos&logoColor=white&style=flat)](https://nixos.org)
+
+</div>
 
 ## Repository layout
 
@@ -257,7 +267,7 @@ home-manager switch --flake ~/.dotfiles.nix'#'<user>
 
 ## Garbage collection
 
-Old generations and unused store paths are collected automatically (weekly, keeping 14 days).
+Old generations and unused store paths are collected automatically (weekly, keeping 7 days).
 To collect manually:
 
 ```bash
