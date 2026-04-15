@@ -13,6 +13,20 @@
 </p>
 </div>
 
+## Usage
+
+**Restoring an existing host** — no bootstrap needed, the flake has everything:
+
+```bash
+git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git ~/.dotfiles.nix
+cd ~/.dotfiles.nix
+sudo nixos-rebuild switch --flake .#<hostname>
+```
+
+**Setting up a new host** — follow the [base installation guide](#base-installation-guide) below. The short version: partition, format, generate hardware config with `nixos-generate-config`, copy it into `hosts/<hostname>/`, scaffold a `configuration.nix` and flake entry, then install.
+
+---
+
 ## Repository layout
 
 ```
