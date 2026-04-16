@@ -7,8 +7,18 @@ in
   # Hyprland ecosystem packages
   # The compositor itself is enabled at system level via programs.hyprland.enable
   home.packages = with pkgs; [
+    catppuccin-gtk
     hypridle
+    dart-sass
+    gnome-keyring
+    gnome-themes-extra
+    gtk-engine-murrine
     hyprpicker
+    nautilus
+    papirus-icon-theme
+    pwvucontrol
+    sassc
+    xdg-desktop-portal-gtk
     xdg-desktop-portal-hyprland
     socat   # used by monitor_hotplug.sh
   ];
@@ -21,7 +31,8 @@ in
   };
 
   # dotfiles.di hyprland symlinks
-  home.file."bin/start-hypr".source = lnDi "hyprland/bin/bin/start-hypr";
+  home.file."bin/start-hypr".source                          = lnDi "hyprland/bin/bin/start-hypr";
+  home.file.".config/systemd/user/idle.service".source       = lnDi "hyprland/systemd/.config/systemd/user/idle.service";
   xdg.configFile."hypr".source      = lnDi "hyprland/hypr/.config/hypr";
   xdg.configFile."qt5ct".source   = lnDi "hyprland/qt5ct/.config/qt5ct";
   xdg.configFile."kvantum".source = lnDi "hyprland/kvantum/.config/kvantum";

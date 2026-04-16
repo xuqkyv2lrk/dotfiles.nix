@@ -61,7 +61,7 @@
 
   xdg.portal.config = {
     niri = {
-      default = [ "gtk" "gnome" ];
+      default = [ "gnome" "gtk" ];
       "org.freedesktop.impl.portal.ScreenCast" = [ "gtk" ];
     };
   };
