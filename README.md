@@ -247,12 +247,14 @@ sudo nixos-rebuild switch --flake ".#$(hostname)"
 Rebuild and switch to the current config:
 
 ```bash
+cd ~/.dotfiles.nix
 sudo nixos-rebuild switch --flake ".#$(hostname)"
 ```
 
 Update all flake inputs to their latest revisions:
 
 ```bash
+cd ~/.dotfiles.nix
 nix flake update
 sudo nixos-rebuild switch --flake ".#$(hostname)"
 ```
