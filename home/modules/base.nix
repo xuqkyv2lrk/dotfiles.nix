@@ -105,7 +105,7 @@ in
 
     # development
     gnupg
-    pinentry-curses
+    pinentry-tty
     cmake
     gcc
     gnumake
@@ -163,7 +163,7 @@ in
 
   services.gpg-agent = {
     enable = true;
-    pinentryPackage = pkgs.pinentry-curses;
+    pinentryPackage = pkgs.pinentry-tty;
   };
 
   programs.direnv = {
