@@ -208,7 +208,19 @@ reboot
 are pre-cloned during installation, so activation just writes symlinks — no network
 dependency at boot.
 
-### 10. Commit the hardware config
+### 10. Switch remotes to SSH
+
+The repos were cloned over HTTPS during install. To push via SSH, run the helper
+(available in your shell after first boot):
+
+```bash
+dotfiles-use-ssh
+```
+
+Enter your SSH remote prefix when prompted — `git@gitlab.com` or an alias from your SSH
+config (e.g. `gitlab`). It updates all dotfiles repos and submodules in one shot.
+
+### 11. Commit the hardware config
 
 The repo was copied into `~/.dotfiles.nix` by bootstrap. Commit the hardware config and
 push so the repo reflects the real hardware:
