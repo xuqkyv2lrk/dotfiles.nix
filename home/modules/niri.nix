@@ -53,6 +53,7 @@ in
   # dotfiles.di niri symlinks
   home.file."bin/start-niri".source     = lnDi "niri/bin/bin/start-niri";
   xdg.configFile."niri".source          = lnDi "niri/niri/.config/niri";
+  xdg.configFile."hypr".source          = lnDi "niri/hypr/.config/hypr";
   xdg.configFile."swappy".source        = lnDi "niri/swappy/.config/swappy";
   xdg.configFile."mimeapps.list".source = lnDi "niri/xdg/.config/mimeapps.list";
   xdg.configFile."gtk-3.0".source       = lnDi "niri/gtk-3.0/.config/gtk-3.0";
