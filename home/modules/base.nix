@@ -104,6 +104,8 @@ in
     yq-go
 
     # development
+    gnupg
+    pinentry-curses
     cmake
     gcc
     gnumake
