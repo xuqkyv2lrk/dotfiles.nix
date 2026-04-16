@@ -15,16 +15,9 @@
 
 ## Usage
 
-All paths start from the NixOS installer — you will be in the installer TTY running as
-root. The steps below are the short version; the [base installation guide](#base-installation-guide)
-covers each step in full.
-
-All install paths run from the **NixOS installer ISO**. Partition, format, and mount
-the disk first (see [base installation guide](#base-installation-guide)), then use
-[dotfiles.bootstrap](https://gitlab.com/wd2nf8gqct/dotfiles.bootstrap) to handle the
-rest — hardware config, scaffolding for new hosts, and `nixos-install`. The repo is
-copied into the installed system before reboot so it's ready to commit from after
-first boot.
+All install paths start from the **NixOS installer ISO**. Partition, format, and mount
+the disk first, then follow the [base installation guide](#base-installation-guide) —
+it covers both new machines and reinstalls.
 
 **Day-to-day config changes** (already running system, not a reinstall):
 
