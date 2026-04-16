@@ -191,7 +191,7 @@ bootstrap and install directly:
 
 ```bash
 git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git /tmp/dotfiles.nix
-cp /mnt/etc/nixos/hardware-configuration.nix /tmp/dotfiles.nix/hosts/$(hostname)/hardware-configuration.nix
+cp /mnt/etc/nixos/hardware-configuration.nix "/tmp/dotfiles.nix/hosts/$(hostname)/hardware-configuration.nix"
 nixos-install --flake "/tmp/dotfiles.nix#$(hostname)"
 ```
 
@@ -214,7 +214,7 @@ push so the repo reflects the real hardware:
 
 ```bash
 cd ~/.dotfiles.nix
-git add hosts/$(hostname)/hardware-configuration.nix
+git add "hosts/$(hostname)/hardware-configuration.nix"
 git commit -m "chore($(hostname)): add hardware config"
 git push
 ```
