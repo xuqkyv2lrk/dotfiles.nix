@@ -205,13 +205,9 @@ reboot
 
 ### 9. First boot
 
-`home-manager-<user>.service` runs automatically at first boot. The activation scripts
-clone `~/.dotfiles.core` and `~/.dotfiles.di` (with submodules) and create all config
-symlinks. If it fails (network not ready at boot), log in and re-run manually:
-
-```bash
-sudo nixos-rebuild switch --flake ".#$(hostname)"
-```
+`home-manager-<user>.service` runs automatically at first boot. Both dotfiles repos
+are pre-cloned during installation, so activation just writes symlinks — no network
+dependency at boot.
 
 ### 10. Commit the hardware config
 
