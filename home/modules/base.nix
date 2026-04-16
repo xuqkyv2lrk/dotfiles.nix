@@ -164,6 +164,8 @@ in
   services.gpg-agent = {
     enable = true;
     pinentryPackage = pkgs.pinentry-tty;
+    defaultCacheTtl = 28800;
+    maxCacheTtl = 28800;
   };
 
   programs.direnv = {
