@@ -64,10 +64,11 @@ configs (gtk theming, hypr config, etc.) are WM-specific and will conflict if co
 | [dotfiles.di](https://gitlab.com/wd2nf8gqct/dotfiles.di) | Desktop interface (Hyprland, Niri, etc.) |
 | **dotfiles.nix** (this repo) | NixOS system config + Home Manager |
 
-`dotfiles.core` is the single source of truth for program configurations. It is cloned and
-managed on NixOS exactly as on Arch — Home Manager handles package installation, while
-program configs live in `home/modules/base.nix`. `dotfiles.di` uses git submodules and is
-always cloned with `--recurse-submodules`.
+`dotfiles.core` is the single source of truth for program configurations and works the
+same across all distros — Home Manager handles package installation while the actual
+configs are cloned from `dotfiles.core` and symlinked via the activation scripts in
+`home/modules/base.nix`. `dotfiles.di` uses git submodules and must always be cloned
+with `--recurse-submodules`.
 
 ---
 
