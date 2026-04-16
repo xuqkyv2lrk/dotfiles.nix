@@ -20,11 +20,12 @@ in
     # Clipboard manager
     cliphist
 
-# System controls invoked by Noctalia
+    # System controls invoked by Noctalia
     brightnessctl
     wlsunset
   ];
 
-  # Noctalia user configuration
-  xdg.configFile."noctalia".source = lnDi "quickshell/noctalia/.config/noctalia";
+  # Noctalia user configuration and shell
+  xdg.configFile."noctalia".source    = lnDi "quickshell/noctalia/.config/noctalia";
+  xdg.configFile."quickshell".source  = lnDi "quickshell/noctalia-shell";
 }
