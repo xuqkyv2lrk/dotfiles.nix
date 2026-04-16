@@ -224,6 +224,7 @@ git push
 All future rebuilds run from here:
 
 ```bash
+cd ~/.dotfiles.nix
 sudo nixos-rebuild switch --flake ".#$(hostname)"
 ```
 
