@@ -22,7 +22,7 @@ it covers both new machines and reinstalls.
 **Day-to-day config changes** (already running system, not a reinstall):
 
 ```bash
-sudo nixos-rebuild switch --flake "~/.dotfiles.nix#$(hostname)"
+sudo nixos-rebuild switch --flake "${HOME}/.dotfiles.nix#$(hostname)"
 ```
 
 ---
@@ -223,7 +223,7 @@ git push
 All future rebuilds run from here:
 
 ```bash
-sudo nixos-rebuild switch --flake "~/.dotfiles.nix#$(hostname)"
+sudo nixos-rebuild switch --flake "${HOME}/.dotfiles.nix#$(hostname)"
 ```
 
 > [!NOTE]
@@ -245,14 +245,14 @@ sudo nixos-rebuild switch --flake "~/.dotfiles.nix#$(hostname)"
 Rebuild and switch to the current config:
 
 ```bash
-sudo nixos-rebuild switch --flake "~/.dotfiles.nix#$(hostname)"
+sudo nixos-rebuild switch --flake "${HOME}/.dotfiles.nix#$(hostname)"
 ```
 
 Update all flake inputs to their latest revisions:
 
 ```bash
 cd ~/.dotfiles.nix
-nix flake update ~/.dotfiles.nix
+nix flake update "${HOME}/.dotfiles.nix"
 sudo nixos-rebuild switch --flake ".#$(hostname)"
 ```
 
@@ -269,7 +269,7 @@ Or pick an older generation from the boot menu at startup.
 If only files under `home/` changed and a full system rebuild is overkill:
 
 ```bash
-home-manager switch --flake "~/.dotfiles.nix#$(whoami)"
+home-manager switch --flake "${HOME}/.dotfiles.nix#$(whoami)"
 ```
 
 ## Garbage collection
