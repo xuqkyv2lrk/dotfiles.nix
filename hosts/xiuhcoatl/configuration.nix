@@ -57,7 +57,14 @@
 
   # Virtualisation
   # Desktop environment
-  programs.hyprland.enable = true;
+  programs.niri.enable = true;
+
+  xdg.portal.config = {
+    niri = {
+      default = [ "gtk" "gnome" ];
+      "org.freedesktop.impl.portal.ScreenCast" = [ "gtk" ];
+    };
+  };
 
   virtualisation.docker = {
     enable = true;

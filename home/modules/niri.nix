@@ -7,14 +7,22 @@ in
   # Niri ecosystem packages
   # The compositor itself is enabled at system level via programs.niri.enable
   home.packages = with pkgs; [
-    swaylock
-    brightnessctl
+    xdg-desktop-portal-gtk
+    xdg-desktop-portal-gnome
   ];
 
+  home.pointerCursor = {
+    gtk.enable = true;
+    package = pkgs.catppuccin-cursors.mochaMauve;
+    name = "catppuccin-mocha-mauve-cursors";
+    size = 24;
+  };
+
   # dotfiles.di niri symlinks
-  xdg.configFile."niri".source    = lnDi "niri/niri/.config/niri";
-  xdg.configFile."hypr".source    = lnDi "niri/hypr/.config/hypr";
-  xdg.configFile."swaylock".source = lnDi "niri/swaylock/.config/swaylock";
-  xdg.configFile."gtk-3.0".source = lnDi "niri/gtk-3.0/.config/gtk-3.0";
-  xdg.configFile."gtk-4.0".source = lnDi "niri/gtk-4.0/.config/gtk-4.0";
+  home.file."bin/start-niri".source     = lnDi "niri/bin/bin/start-niri";
+  xdg.configFile."niri".source          = lnDi "niri/niri/.config/niri";
+  xdg.configFile."swappy".source        = lnDi "niri/swappy/.config/swappy";
+  xdg.configFile."mimeapps.list".source = lnDi "niri/xdg/.config/mimeapps.list";
+  xdg.configFile."gtk-3.0".source       = lnDi "niri/gtk-3.0/.config/gtk-3.0";
+  xdg.configFile."gtk-4.0".source       = lnDi "niri/gtk-4.0/.config/gtk-4.0";
 }
