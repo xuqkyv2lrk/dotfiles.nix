@@ -30,7 +30,7 @@ first boot.
 
 ```bash
 cd ~/.dotfiles.nix
-sudo nixos-rebuild switch --flake .#<hostname>
+sudo nixos-rebuild switch --flake ".#$(hostname)"
 ```
 
 ---
@@ -191,8 +191,8 @@ bootstrap and install directly:
 
 ```bash
 git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git /tmp/dotfiles.nix
-cp /mnt/etc/nixos/hardware-configuration.nix /tmp/dotfiles.nix/hosts/<hostname>/hardware-configuration.nix
-nixos-install --flake /tmp/dotfiles.nix#<hostname>
+cp /mnt/etc/nixos/hardware-configuration.nix /tmp/dotfiles.nix/hosts/$(hostname)/hardware-configuration.nix
+nixos-install --flake "/tmp/dotfiles.nix#$(hostname)"
 ```
 
 ### 8. Reboot
@@ -214,20 +214,19 @@ push so the repo reflects the real hardware:
 
 ```bash
 cd ~/.dotfiles.nix
-git add hosts/<hostname>/hardware-configuration.nix
-git commit -m "chore(<hostname>): add hardware config"
+git add hosts/$(hostname)/hardware-configuration.nix
+git commit -m "chore($(hostname)): add hardware config"
 git push
 ```
 
 All future rebuilds run from here:
 
 ```bash
-sudo nixos-rebuild switch --flake ~/.dotfiles.nix'#'<hostname>
+sudo nixos-rebuild switch --flake ".#$(hostname)"
 ```
 
 > [!NOTE]
-> zsh interprets `#` as a comment character. Quote it as shown above or use
-> `--flake ".#<hostname>"` with double quotes instead.
+> zsh interprets `#` as a comment character. Always quote the flake argument as shown above.
 
 ---
 
@@ -245,14 +244,14 @@ sudo nixos-rebuild switch --flake ~/.dotfiles.nix'#'<hostname>
 Rebuild and switch to the current config:
 
 ```bash
-sudo nixos-rebuild switch --flake ~/.dotfiles.nix'#'<hostname>
+sudo nixos-rebuild switch --flake ".#$(hostname)"
 ```
 
 Update all flake inputs to their latest revisions:
 
 ```bash
 nix flake update
-sudo nixos-rebuild switch --flake ./'#'xiuhcoatl
+sudo nixos-rebuild switch --flake ".#$(hostname)"
 ```
 
 Roll back if something breaks:
@@ -268,7 +267,7 @@ Or pick an older generation from the boot menu at startup.
 If only files under `home/` changed and a full system rebuild is overkill:
 
 ```bash
-home-manager switch --flake ~/.dotfiles.nix'#'<user>
+home-manager switch --flake ".#$(whoami)"
 ```
 
 ## Garbage collection
