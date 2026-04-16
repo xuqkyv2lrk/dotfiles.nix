@@ -172,7 +172,7 @@ fileSystems."/" = {
 Open the file and verify each btrfs mount has those options:
 
 ```bash
-nano /mnt/etc/nixos/hardware-configuration.nix
+vim /mnt/etc/nixos/hardware-configuration.nix
 ```
 
 ### 7. Install
