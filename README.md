@@ -173,10 +173,12 @@ no manual edits needed for them.
 > Each btrfs mount should include `"noatime"` and `"compress=zstd"` in its `options` list.
 > If they are missing, add them manually.
 
-### 7. Run bootstrap
+### 7. Install
 
-With the disk mounted and hardware config generated, hand off to
-[dotfiles.bootstrap](https://gitlab.com/wd2nf8gqct/dotfiles.bootstrap):
+**New machine** (hostname not yet declared in this repo) — use
+[dotfiles.bootstrap](https://gitlab.com/wd2nf8gqct/dotfiles.bootstrap), which
+scaffolds `hosts/<hostname>/configuration.nix`, wires it into `flake.nix`, runs
+`nixos-install`, and copies the repo into the installed system:
 
 ```bash
 git clone https://gitlab.com/wd2nf8gqct/dotfiles.bootstrap.git /tmp/dotfiles.bootstrap
@@ -184,10 +186,14 @@ cd /tmp/dotfiles.bootstrap
 ./bootstrap.sh
 ```
 
-Bootstrap handles everything from here: clones this repo, copies the hardware config,
-scaffolds `hosts/<hostname>/configuration.nix` if the hostname is new (opening an
-editor to wire it into `flake.nix`), runs `nixos-install`, and copies the repo into the
-installed system so it's ready to commit after first boot.
+**Reinstall on an existing host** (hostname already declared in `flake.nix`) — skip
+bootstrap and install directly:
+
+```bash
+git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git /tmp/dotfiles.nix
+cp /mnt/etc/nixos/hardware-configuration.nix /tmp/dotfiles.nix/hosts/<hostname>/hardware-configuration.nix
+nixos-install --flake /tmp/dotfiles.nix#<hostname>
+```
 
 ### 8. Reboot
 
