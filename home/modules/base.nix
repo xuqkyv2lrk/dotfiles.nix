@@ -161,6 +161,11 @@ in
     fi
   '';
 
+  services.gpg-agent = {
+    enable = true;
+    pinentryPackage = pkgs.pinentry-curses;
+  };
+
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
