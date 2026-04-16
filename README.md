@@ -173,51 +173,47 @@ no manual edits needed for them.
 > Each btrfs mount should include `"noatime"` and `"compress=zstd"` in its `options` list.
 > If they are missing, add them manually.
 
-### 7. Clone this repo and wire in the hardware config
+### 7. Run bootstrap
 
-Git is available on the installer. Clone the repo to a temporary location — we are running
-as root here, so we use `/tmp` rather than a user home directory that does not exist yet:
+With the disk mounted and hardware config generated, hand off to
+[dotfiles.bootstrap](https://gitlab.com/wd2nf8gqct/dotfiles.bootstrap):
 
 ```bash
-git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git /tmp/dotfiles.nix
-cd /tmp/dotfiles.nix
+git clone https://gitlab.com/wd2nf8gqct/dotfiles.bootstrap.git /tmp/dotfiles.bootstrap
+cd /tmp/dotfiles.bootstrap
+./bootstrap.sh
 ```
 
-Copy the generated hardware config into the appropriate host directory:
+Bootstrap handles everything from here: clones this repo, copies the hardware config,
+scaffolds `hosts/<hostname>/configuration.nix` if the hostname is new (opening an
+editor to wire it into `flake.nix`), runs `nixos-install`, and copies the repo into the
+installed system so it's ready to commit after first boot.
+
+### 8. Reboot
 
 ```bash
-cp /mnt/etc/nixos/hardware-configuration.nix hosts/<hostname>/hardware-configuration.nix
-```
-
-### 8. Install from the flake
-
-With the hardware config in place, install directly from the flake:
-
-```bash
-nixos-install --flake /tmp/dotfiles.nix#<hostname>
 reboot
 ```
 
 ### 9. First boot
 
-On first boot, `home-manager-<user>.service` runs automatically. The activation scripts
-clone `~/.dotfiles.core` and `~/.dotfiles.di` (with submodules) to the user home and
-create all config symlinks. No manual steps needed — the system is fully configured.
+`home-manager-<user>.service` runs automatically on first login. The activation scripts
+clone `~/.dotfiles.core` and `~/.dotfiles.di` (with submodules) and create all config
+symlinks. No manual steps needed — the system is fully configured.
 
-### 10. Clone this repo and commit the hardware config
+### 10. Commit the hardware config
 
-The `/tmp` clone from the installer is gone. Clone the repo and commit the hardware
-config that was baked in during install:
+The repo was copied into `~/.dotfiles.nix` by bootstrap. Commit the hardware config and
+push so the repo reflects the real hardware:
 
 ```bash
-git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git ~/.dotfiles.nix
 cd ~/.dotfiles.nix
 git add hosts/<hostname>/hardware-configuration.nix
 git commit -m "chore(<hostname>): add hardware config"
 git push
 ```
 
-All future rebuilds run from `~/.dotfiles.nix`:
+All future rebuilds run from here:
 
 ```bash
 sudo nixos-rebuild switch --flake ~/.dotfiles.nix'#'<hostname>
@@ -226,20 +222,6 @@ sudo nixos-rebuild switch --flake ~/.dotfiles.nix'#'<hostname>
 > [!NOTE]
 > zsh interprets `#` as a comment character. Quote it as shown above or use
 > `--flake ".#<hostname>"` with double quotes instead.
-
-### 11. zram
-
-zram is already declared in `hosts/xiuhcoatl/configuration.nix`:
-
-```nix
-zramSwap = {
-  enable = true;
-  algorithm = "zstd";
-};
-```
-
-This creates a compressed in-memory swap device. The default size is 50% of physical RAM.
-To adjust, add `memoryPercent = 25;` (or whatever fraction suits your workload).
 
 ---
 
