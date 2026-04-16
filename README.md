@@ -264,14 +264,6 @@ nixos-rebuild switch --rollback
 
 Or pick an older generation from the boot menu at startup.
 
-## Applying Home Manager changes only
-
-If only files under `home/` changed and a full system rebuild is overkill:
-
-```bash
-home-manager switch --flake "${HOME}/.dotfiles.nix#$(whoami)"
-```
-
 ## Garbage collection
 
 Old generations and unused store paths are collected automatically (weekly, keeping 7 days).
