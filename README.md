@@ -155,17 +155,25 @@ nixos-generate-config --root /mnt
 ```
 
 This reads the active mounts and writes `hardware-configuration.nix` under
-`/mnt/etc/nixos/`. Because we mounted with `noatime` and `compress=zstd` in step 5,
-those options are captured automatically in the generated `fileSystems` entries —
-no manual edits needed for them.
+`/mnt/etc/nixos/`. The generated btrfs entries will include the subvolume but
+`nixos-generate-config` does not reliably carry over all mount options — manually
+add `"noatime"` and `"compress=zstd"` to each btrfs `options` list before continuing.
 
-> [!NOTE]
-> Confirm the btrfs options were captured correctly before continuing:
-> ```bash
-> grep -A5 'btrfs' /mnt/etc/nixos/hardware-configuration.nix
-> ```
-> Each btrfs mount should include `"noatime"` and `"compress=zstd"` in its `options` list.
-> If they are missing, add them manually.
+Each btrfs `fileSystems` entry should look like this:
+
+```nix
+fileSystems."/" = {
+  device = "/dev/disk/by-label/nixos";
+  fsType = "btrfs";
+  options = [ "subvol=@" "noatime" "compress=zstd" ];
+};
+```
+
+Open the file and verify each btrfs mount has those options:
+
+```bash
+nano /mnt/etc/nixos/hardware-configuration.nix
+```
 
 ### 7. Install
 
