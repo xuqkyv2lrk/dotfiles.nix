@@ -189,14 +189,6 @@ Copy the generated hardware config into the appropriate host directory:
 cp /mnt/etc/nixos/hardware-configuration.nix hosts/<hostname>/hardware-configuration.nix
 ```
 
-Commit and push so the repo reflects the real hardware:
-
-```bash
-git add hosts/<hostname>/hardware-configuration.nix
-git commit -m "chore(<hostname>): add hardware config"
-git push
-```
-
 ### 8. Install from the flake
 
 With the hardware config in place, install directly from the flake:
@@ -212,17 +204,20 @@ On first boot, `home-manager-<user>.service` runs automatically. The activation 
 clone `~/.dotfiles.core` and `~/.dotfiles.di` (with submodules) to the user home and
 create all config symlinks. No manual steps needed — the system is fully configured.
 
-### 10. Clone this repo for future changes
+### 10. Clone this repo and commit the hardware config
 
-The `/tmp` clone from the installer is gone. The running system does not need this repo
-to function — it was baked in at install time. Clone it only when you need to make
-config changes:
+The `/tmp` clone from the installer is gone. Clone the repo and commit the hardware
+config that was baked in during install:
 
 ```bash
 git clone https://gitlab.com/wd2nf8gqct/dotfiles.nix.git ~/.dotfiles.nix
+cd ~/.dotfiles.nix
+git add hosts/<hostname>/hardware-configuration.nix
+git commit -m "chore(<hostname>): add hardware config"
+git push
 ```
 
-All future rebuilds run from there:
+All future rebuilds run from `~/.dotfiles.nix`:
 
 ```bash
 sudo nixos-rebuild switch --flake ~/.dotfiles.nix'#'<hostname>
