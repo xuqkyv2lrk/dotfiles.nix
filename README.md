@@ -45,7 +45,7 @@ sudo nixos-rebuild switch --flake ".#$(hostname)"
 │   │   ├── hyprland.nix   # hyprland tools + dotfiles.di symlinks
 │   │   ├── niri.nix       # niri tools + dotfiles.di symlinks
 │   │   └── sway.nix       # sway tools + dotfiles.di symlinks
-│   └── lqnw3c.nix         # user identity + module imports
+│   └── <user>.nix         # user identity + module imports
 └── modules/
     └── nixos/
         └── hardware/      # reusable per-hardware NixOS modules
@@ -205,9 +205,13 @@ reboot
 
 ### 9. First boot
 
-`home-manager-<user>.service` runs automatically on first login. The activation scripts
+`home-manager-<user>.service` runs automatically at first boot. The activation scripts
 clone `~/.dotfiles.core` and `~/.dotfiles.di` (with submodules) and create all config
-symlinks. No manual steps needed — the system is fully configured.
+symlinks. If it fails (network not ready at boot), log in and re-run manually:
+
+```bash
+sudo nixos-rebuild switch --flake ".#$(hostname)"
+```
 
 ### 10. Commit the hardware config
 
