@@ -11,10 +11,12 @@
         Type = "oneshot";
         ExecStart = pkgs.writeShellScript "lock-before-suspend" ''
           user=$(${pkgs.systemd}/bin/loginctl list-sessions --no-legend \
-            | awk '{print $3}' | grep -v root | head -1)
-          uid=$(id -u "$user")
+            | ${pkgs.gawk}/bin/awk '{print $3}' \
+            | ${pkgs.gnugrep}/bin/grep -v root \
+            | ${pkgs.coreutils}/bin/head -1)
+          uid=$(${pkgs.coreutils}/bin/id -u "$user")
           export XDG_RUNTIME_DIR=/run/user/$uid
-          home=$(${pkgs.coreutils}/bin/getent passwd "$user" | cut -d: -f6)
+          home=$(${pkgs.gawk}/bin/awk -F: -v u="$user" '$1==u{print $6}' /etc/passwd)
           ${pkgs.noctalia-qs}/bin/quickshell ipc --any-display \
             -p "$home/.dotfiles.di/quickshell/noctalia-shell" \
             call lockScreen lock
