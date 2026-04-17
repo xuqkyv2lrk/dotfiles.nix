@@ -83,7 +83,7 @@
       Type = "oneshot";
       User = "bxxjs";
       Environment = "XDG_RUNTIME_DIR=/run/user/1000";
-      ExecStart = "${pkgs.noctalia-qs}/bin/quickshell ipc --any-display -p /home/bxxjs/.dotfiles.di/quickshell/noctalia-shell call lockScreen lock";
+      ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.noctalia-qs}/bin/quickshell ipc --any-display -p /home/bxxjs/.dotfiles.di/quickshell/noctalia-shell call lockScreen lock && sleep 1'";
       TimeoutSec = 10;
     };
   };
