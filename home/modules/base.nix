@@ -174,6 +174,9 @@ in
   programs.fzf.enable = true;
   programs.zoxide.enable = true;
 
+  # Tell xdg-desktop-portal (and apps like Firefox) to use dark mode
+  dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
+
   services.mpd = {
     enable = true;
     musicDirectory = "~/music";
