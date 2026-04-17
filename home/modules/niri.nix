@@ -59,6 +59,16 @@ in
   xdg.configFile."gtk-3.0".source       = lnDi "niri/gtk-3.0/.config/gtk-3.0";
   xdg.configFile."gtk-4.0".source       = lnDi "niri/gtk-4.0/.config/gtk-4.0";
 
-  home.file.".config/systemd/user/idle.service".source =
-    lnDi "niri/systemd/.config/systemd/user/idle.service";
+  systemd.user.services.idle = {
+    Unit = {
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+      Requisite = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "/usr/bin/env hypridle -c %h/.config/hypr/hypridle.conf";
+      Restart = "on-failure";
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
 }
