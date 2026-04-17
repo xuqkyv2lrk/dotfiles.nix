@@ -76,7 +76,7 @@
     options   = "--delete-older-than 7d";
   };
 
-  custom.noctaliaLock = { enable = true; user = "bxxjs"; };
+  custom.noctaliaLock = true;
 
   # First NixOS version installed on this machine — do not change.
   system.stateVersion = "25.11";
