@@ -8,7 +8,6 @@ in
   # The compositor itself is enabled at system level via programs.sway.enable
   home.packages = with pkgs; [
     catppuccin-gtk
-    hypridle
     dart-sass
     gnome-keyring
     gnome-themes-extra
@@ -25,19 +24,6 @@ in
 
   # dotfiles.di sway symlinks
   home.file."bin/start-sway".source = lnDi "sway/bin/bin/start-sway";
-
-  systemd.user.services.idle = {
-    Unit = {
-      PartOf = [ "graphical-session.target" ];
-      After = [ "graphical-session.target" ];
-      Requisite = [ "graphical-session.target" ];
-    };
-    Service = {
-      ExecStart = "/usr/bin/env hypridle -c %h/.config/hypr/hypridle.conf";
-      Restart = "on-failure";
-    };
-    Install.WantedBy = [ "graphical-session.target" ];
-  };
 
   xdg.configFile."hypr".source                               = lnDi "sway/hypr/.config/hypr";
   xdg.configFile."sway".source                               = lnDi "sway/sway/.config/sway";

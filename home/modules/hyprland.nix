@@ -8,7 +8,6 @@ in
   # The compositor itself is enabled at system level via programs.hyprland.enable
   home.packages = with pkgs; [
     catppuccin-gtk
-    hypridle
     dart-sass
     gnome-keyring
     gnome-themes-extra
@@ -32,19 +31,6 @@ in
 
   # dotfiles.di hyprland symlinks
   home.file."bin/start-hypr".source = lnDi "hyprland/bin/bin/start-hypr";
-
-  systemd.user.services.idle = {
-    Unit = {
-      PartOf = [ "graphical-session.target" ];
-      After = [ "graphical-session.target" ];
-      Requisite = [ "graphical-session.target" ];
-    };
-    Service = {
-      ExecStart = "/usr/bin/env hypridle -c %h/.config/hypr/hypridle.conf";
-      Restart = "on-failure";
-    };
-    Install.WantedBy = [ "graphical-session.target" ];
-  };
 
   xdg.configFile."hypr".source      = lnDi "hyprland/hypr/.config/hypr";
   xdg.configFile."qt5ct".source   = lnDi "hyprland/qt5ct/.config/qt5ct";

@@ -7,9 +7,6 @@ in
   # Niri ecosystem packages
   # The compositor itself is enabled at system level via programs.niri.enable
   home.packages = with pkgs; [
-    # Idle management
-    hypridle
-
     # Launcher
     fuzzel
 
@@ -53,18 +50,6 @@ in
   # dotfiles.di niri symlinks
   home.file."bin/start-niri".source     = lnDi "niri/bin/bin/start-niri";
 
-  systemd.user.services.idle = {
-    Unit = {
-      PartOf = [ "graphical-session.target" ];
-      After = [ "graphical-session.target" ];
-      Requisite = [ "graphical-session.target" ];
-    };
-    Service = {
-      ExecStart = "/usr/bin/env hypridle -c %h/.config/hypr/hypridle.conf";
-      Restart = "on-failure";
-    };
-    Install.WantedBy = [ "graphical-session.target" ];
-  };
   xdg.configFile."niri".source          = lnDi "niri/niri/.config/niri";
   xdg.configFile."hypr".source          = lnDi "niri/hypr/.config/hypr";
   xdg.configFile."swappy".source        = lnDi "niri/swappy/.config/swappy";
