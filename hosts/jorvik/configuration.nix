@@ -29,6 +29,8 @@
     jack.enable = true;
   };
 
+  services.logind.lidSwitch = "suspend";
+
   services.libinput.enable = true;
   services.printing.enable = true;
   services.openssh.enable = true;
