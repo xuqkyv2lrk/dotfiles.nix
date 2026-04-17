@@ -24,8 +24,21 @@ in
   ];
 
   # dotfiles.di sway symlinks
-  home.file."bin/start-sway".source                          = lnDi "sway/bin/bin/start-sway";
-  home.file.".config/systemd/user/idle.service".source       = lnDi "sway/systemd/.config/systemd/user/idle.service";
+  home.file."bin/start-sway".source = lnDi "sway/bin/bin/start-sway";
+
+  systemd.user.services.idle = {
+    Unit = {
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+      Requisite = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "/usr/bin/env hypridle -c %h/.config/hypr/hypridle.conf";
+      Restart = "on-failure";
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   xdg.configFile."hypr".source                               = lnDi "sway/hypr/.config/hypr";
   xdg.configFile."sway".source                               = lnDi "sway/sway/.config/sway";
   xdg.configFile."kanshi".source  = lnDi "sway/kanshi/.config/kanshi";

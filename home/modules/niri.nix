@@ -52,12 +52,6 @@ in
 
   # dotfiles.di niri symlinks
   home.file."bin/start-niri".source     = lnDi "niri/bin/bin/start-niri";
-  xdg.configFile."niri".source          = lnDi "niri/niri/.config/niri";
-  xdg.configFile."hypr".source          = lnDi "niri/hypr/.config/hypr";
-  xdg.configFile."swappy".source        = lnDi "niri/swappy/.config/swappy";
-  xdg.configFile."mimeapps.list".source = lnDi "niri/xdg/.config/mimeapps.list";
-  xdg.configFile."gtk-3.0".source       = lnDi "niri/gtk-3.0/.config/gtk-3.0";
-  xdg.configFile."gtk-4.0".source       = lnDi "niri/gtk-4.0/.config/gtk-4.0";
 
   systemd.user.services.idle = {
     Unit = {
@@ -71,4 +65,11 @@ in
     };
     Install.WantedBy = [ "graphical-session.target" ];
   };
+  xdg.configFile."niri".source          = lnDi "niri/niri/.config/niri";
+  xdg.configFile."hypr".source          = lnDi "niri/hypr/.config/hypr";
+  xdg.configFile."swappy".source        = lnDi "niri/swappy/.config/swappy";
+  xdg.configFile."mimeapps.list".source = lnDi "niri/xdg/.config/mimeapps.list";
+  xdg.configFile."gtk-3.0".source       = lnDi "niri/gtk-3.0/.config/gtk-3.0";
+  xdg.configFile."gtk-4.0".source       = lnDi "niri/gtk-4.0/.config/gtk-4.0";
+
 }
