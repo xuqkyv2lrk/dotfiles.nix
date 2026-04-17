@@ -5,9 +5,6 @@
     SUBSYSTEM=="usb", ATTRS{idVendor}=="04f2", ATTRS{idProduct}=="b615", ATTR{authorized}="0"
   '';
 
-  # T480s supports S3 deep sleep — requires BIOS: Config → Power → Sleep State = Linux
-  boot.kernelParams = [ "mem_sleep_default=deep" ];
-
   # Intel UHD 620 + NVIDIA MX150 (Optimus hybrid graphics)
   # niri runs on Intel; NVIDIA available for offloaded workloads.
   services.xserver.videoDrivers = [ "nvidia" ];
