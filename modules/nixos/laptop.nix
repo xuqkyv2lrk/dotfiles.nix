@@ -5,4 +5,6 @@
     HandleLidSwitchExternalPower = "suspend";
     HandleLidSwitchDocked = "ignore";
   };
+
+  hardware.bluetooth.powerOnBoot = false;
 }

@@ -37,7 +37,6 @@
   services.upower.enable = true;
 
   hardware.bluetooth.enable = true;
-  hardware.bluetooth.powerOnBoot = true;
   hardware.acpilight.enable = true;
 
   fonts.packages = with pkgs; [
