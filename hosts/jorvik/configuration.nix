@@ -3,6 +3,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/nixos/hardware/thinkpad-t480s.nix
+    ../../modules/nixos/laptop.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
@@ -28,8 +29,6 @@
     pulse.enable = true;
     jack.enable = true;
   };
-
-  services.logind.lidSwitch = "suspend";
 
   services.libinput.enable = true;
   services.printing.enable = true;

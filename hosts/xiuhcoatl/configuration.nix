@@ -3,6 +3,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/nixos/hardware/dell-xps-13-9350.nix
+    ../../modules/nixos/laptop.nix
   ];
 
   # Boot
