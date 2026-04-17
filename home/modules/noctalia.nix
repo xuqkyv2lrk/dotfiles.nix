@@ -28,9 +28,7 @@ in
   # Polls playerctl every 5 s and toggles noctalia idle inhibitor while media plays
   systemd.user.services.noctalia-media-inhibit = {
     description = "Inhibit noctalia idle when media is playing";
-    partOf = [ "graphical-session.target" ];
     wantedBy = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
     serviceConfig = {
       Type = "simple";
       Restart = "on-failure";
