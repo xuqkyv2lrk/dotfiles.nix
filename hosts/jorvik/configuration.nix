@@ -4,6 +4,7 @@
     ./hardware-configuration.nix
     ../../modules/nixos/hardware/thinkpad-t480s.nix
     ../../modules/nixos/laptop.nix
+    ../../modules/nixos/noctalia-lock.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
@@ -75,18 +76,7 @@
     options   = "--delete-older-than 7d";
   };
 
-  systemd.services.lock-before-suspend = {
-    description = "Lock noctalia screen before suspend";
-    before = [ "sleep.target" ];
-    wantedBy = [ "sleep.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      User = "bxxjs";
-      Environment = "XDG_RUNTIME_DIR=/run/user/1000";
-      ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.noctalia-qs}/bin/quickshell ipc --any-display -p /home/bxxjs/.dotfiles.di/quickshell/noctalia-shell call lockScreen lock && sleep 1'";
-      TimeoutSec = 10;
-    };
-  };
+  custom.noctaliaLock = { enable = true; user = "bxxjs"; };
 
   # First NixOS version installed on this machine — do not change.
   system.stateVersion = "25.11";

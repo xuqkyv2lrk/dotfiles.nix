@@ -4,6 +4,7 @@
     ./hardware-configuration.nix
     ../../modules/nixos/hardware/dell-xps-13-9350.nix
     ../../modules/nixos/laptop.nix
+    ../../modules/nixos/noctalia-lock.nix
   ];
 
   # Boot
@@ -106,6 +107,8 @@
     dates = "weekly";
     options = "--delete-older-than 7d";
   };
+
+  custom.noctaliaLock = { enable = true; user = "lqnw3c"; };
 
   # First NixOS version installed on this machine — do not change.
   system.stateVersion = "25.11";
