@@ -27,13 +27,14 @@ in
 
   # Polls playerctl every 5 s and toggles noctalia idle inhibitor while media plays
   systemd.user.services.noctalia-media-inhibit = {
-    description = "Inhibit noctalia idle when media is playing";
-    wantedBy = [ "graphical-session.target" ];
-    serviceConfig = {
+    Unit = {
+      Description = "Inhibit noctalia idle when media is playing";
+    };
+    Service = {
       Type = "simple";
       Restart = "on-failure";
-      RestartSec = 5;
-      ExecStart = pkgs.writeShellScript "noctalia-media-inhibit" ''
+      RestartSec = "5";
+      ExecStart = toString (pkgs.writeShellScript "noctalia-media-inhibit" ''
         qs_shell="$HOME/.dotfiles.di/quickshell/noctalia-shell"
         inhibited=false
         while true; do
@@ -49,7 +50,10 @@ in
           fi
           sleep 5
         done
-      '';
+      '');
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
     };
   };
 
