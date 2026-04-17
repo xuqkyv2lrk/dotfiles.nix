@@ -25,6 +25,36 @@ in
     wlsunset
   ];
 
+  # Polls playerctl every 5 s and toggles noctalia idle inhibitor while media plays
+  systemd.user.services.noctalia-media-inhibit = {
+    description = "Inhibit noctalia idle when media is playing";
+    partOf = [ "graphical-session.target" ];
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "simple";
+      Restart = "on-failure";
+      RestartSec = 5;
+      ExecStart = pkgs.writeShellScript "noctalia-media-inhibit" ''
+        qs_shell="$HOME/.dotfiles.di/quickshell/noctalia-shell"
+        inhibited=false
+        while true; do
+          status="$(${pkgs.playerctl}/bin/playerctl status 2>/dev/null || printf "Stopped")"
+          if [[ "$status" == "Playing" ]] && [[ "$inhibited" == "false" ]]; then
+            ${pkgs.noctalia-qs}/bin/quickshell ipc --any-display \
+              -p "$qs_shell" call idleInhibitor enable 2>/dev/null || true
+            inhibited=true
+          elif [[ "$status" != "Playing" ]] && [[ "$inhibited" == "true" ]]; then
+            ${pkgs.noctalia-qs}/bin/quickshell ipc --any-display \
+              -p "$qs_shell" call idleInhibitor disable 2>/dev/null || true
+            inhibited=false
+          fi
+          sleep 5
+        done
+      '';
+    };
+  };
+
   # Noctalia user configuration and shell
   xdg.configFile."noctalia".source    = lnDi "quickshell/noctalia/.config/noctalia";
   xdg.configFile."quickshell".source  = lnDi "quickshell/noctalia-shell";
