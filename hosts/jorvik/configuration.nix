@@ -75,6 +75,19 @@
     options   = "--delete-older-than 7d";
   };
 
+  systemd.services.lock-before-suspend = {
+    description = "Lock noctalia screen before suspend";
+    before = [ "sleep.target" ];
+    wantedBy = [ "sleep.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      User = "bxxjs";
+      Environment = "XDG_RUNTIME_DIR=/run/user/1000";
+      ExecStart = "${pkgs.noctalia-qs}/bin/quickshell ipc --any-display -p /home/bxxjs/.dotfiles.di/quickshell/noctalia-shell call lockScreen lock";
+      TimeoutSec = 10;
+    };
+  };
+
   # First NixOS version installed on this machine — do not change.
   system.stateVersion = "25.11";
 }
