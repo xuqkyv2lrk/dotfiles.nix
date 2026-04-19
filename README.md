@@ -49,6 +49,8 @@ sudo nixos-rebuild switch --flake "${HOME}/.dotfiles.nix#$(hostname)"
 │   └── <user>.nix         # user identity + module imports
 └── modules/
     └── nixos/
+        ├── noctalia.nix   # system hooks (lock + wifi resume); auto-activates when any HM user has noctalia
+        ├── laptop.nix     # shared laptop power settings
         └── hardware/      # reusable per-hardware NixOS modules
 ```
 
@@ -255,7 +257,7 @@ sudo nixos-rebuild switch --flake "${HOME}/.dotfiles.nix#$(hostname)"
 3. Create `home/<user>.nix` with the right module imports:
    - Wayland compositor: `base.nix` + `noctalia.nix` + one of `hyprland.nix` / `niri.nix` / `sway.nix`
    - GNOME: `base.nix` + `gnome.nix` (+ `paperwm.nix` if using PaperWM)
-4. Wire it in `flake.nix` under `nixosConfigurations.<hostname>`.
+4. Wire it in `flake.nix` under `nixosConfigurations.<hostname>`, including `./modules/nixos/noctalia.nix` in the modules list. It is a no-op on hosts without a noctalia user.
 
 ---
 
