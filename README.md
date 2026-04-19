@@ -27,32 +27,7 @@ sudo nixos-rebuild switch --flake "${HOME}/.dotfiles.nix#$(hostname)"
 
 ---
 
-## Repository layout
-
-```
-.
-├── flake.nix                          # entry point — inputs and outputs
-├── flake.lock                         # pinned input revisions
-├── hosts/
-│   └── xiuhcoatl/
-│       ├── configuration.nix          # system-level config
-│       └── hardware-configuration.nix # generated, do not edit manually
-├── home/
-│   ├── modules/
-│   │   ├── base.nix       # packages, dotfiles.core symlinks, activation scripts
-│   │   ├── noctalia.nix   # quickshell + runtime deps (shared by all WMs)
-│   │   ├── hyprland.nix   # hyprland tools + dotfiles.di symlinks
-│   │   ├── niri.nix       # niri tools + dotfiles.di symlinks
-│   │   ├── sway.nix       # sway tools + dotfiles.di symlinks
-│   │   ├── gnome.nix      # GNOME dconf settings + extension packages
-│   │   └── paperwm.nix    # optional PaperWM add-on for GNOME
-│   └── <user>.nix         # user identity + module imports
-└── modules/
-    └── nixos/
-        ├── noctalia.nix   # system hooks (lock + wifi resume); auto-activates when any HM user has noctalia
-        ├── laptop.nix     # shared laptop power settings
-        └── hardware/      # reusable per-hardware NixOS modules
-```
+## Module conventions
 
 Each user config (`home/<user>.nix`) declares the user identity and imports exactly the
 modules it needs. A headless server imports only `base.nix`. A desktop machine adds one
@@ -61,6 +36,10 @@ GNOME manages its own shell, so `noctalia.nix` is not used with `gnome.nix`.
 Only one DE module should be imported per user — configs are DE-specific and will
 conflict if combined. `paperwm.nix` is the sole exception: it is an optional add-on
 imported alongside `gnome.nix` when PaperWM tiling is wanted.
+
+When `noctalia.nix` is added to a user config, the system-level noctalia hooks
+(screen lock before suspend, WiFi widget refresh after resume) activate automatically
+via `modules/nixos/noctalia.nix`, which is included in every host's flake module list.
 
 ## Relationship to other dotfiles repos
 
@@ -257,7 +236,7 @@ sudo nixos-rebuild switch --flake "${HOME}/.dotfiles.nix#$(hostname)"
 3. Create `home/<user>.nix` with the right module imports:
    - Wayland compositor: `base.nix` + `noctalia.nix` + one of `hyprland.nix` / `niri.nix` / `sway.nix`
    - GNOME: `base.nix` + `gnome.nix` (+ `paperwm.nix` if using PaperWM)
-4. Wire it in `flake.nix` under `nixosConfigurations.<hostname>`, including `./modules/nixos/noctalia.nix` in the modules list. It is a no-op on hosts without a noctalia user.
+4. Wire it in `flake.nix` under `nixosConfigurations.<hostname>`, including `./modules/nixos/noctalia.nix` in the modules list. It activates only when a user's HM config imports `noctalia.nix`, so it is safe to include on all hosts.
 
 ---
 
