@@ -43,7 +43,9 @@ sudo nixos-rebuild switch --flake "${HOME}/.dotfiles.nix#$(hostname)"
 │   │   ├── noctalia.nix   # quickshell + runtime deps (shared by all WMs)
 │   │   ├── hyprland.nix   # hyprland tools + dotfiles.di symlinks
 │   │   ├── niri.nix       # niri tools + dotfiles.di symlinks
-│   │   └── sway.nix       # sway tools + dotfiles.di symlinks
+│   │   ├── sway.nix       # sway tools + dotfiles.di symlinks
+│   │   ├── gnome.nix      # GNOME dconf settings + extension packages
+│   │   └── paperwm.nix    # optional PaperWM add-on for GNOME
 │   └── <user>.nix         # user identity + module imports
 └── modules/
     └── nixos/
@@ -51,9 +53,12 @@ sudo nixos-rebuild switch --flake "${HOME}/.dotfiles.nix#$(hostname)"
 ```
 
 Each user config (`home/<user>.nix`) declares the user identity and imports exactly the
-modules it needs. A headless server imports only `base.nix`. A desktop machine adds
-`noctalia.nix` and one WM module. Only one WM module should be imported per user — WM
-configs (gtk theming, hypr config, etc.) are WM-specific and will conflict if combined.
+modules it needs. A headless server imports only `base.nix`. A desktop machine adds one
+DE module, plus `noctalia.nix` if using a Wayland compositor (Hyprland, Niri, Sway).
+GNOME manages its own shell, so `noctalia.nix` is not used with `gnome.nix`.
+Only one DE module should be imported per user — configs are DE-specific and will
+conflict if combined. `paperwm.nix` is the sole exception: it is an optional add-on
+imported alongside `gnome.nix` when PaperWM tiling is wanted.
 
 ## Relationship to other dotfiles repos
 
@@ -245,9 +250,11 @@ sudo nixos-rebuild switch --flake "${HOME}/.dotfiles.nix#$(hostname)"
 
 ## Adding a new machine
 
-1. Create `hosts/<hostname>/configuration.nix` — enable the compositor, declare the user, import the appropriate hardware module.
+1. Create `hosts/<hostname>/configuration.nix` — enable the compositor or GNOME, declare the user, import the appropriate hardware module.
 2. Run `nixos-generate-config` during install and commit `hardware-configuration.nix`.
-3. Create `home/<user>.nix` importing `base.nix`, `noctalia.nix`, and one WM module.
+3. Create `home/<user>.nix` with the right module imports:
+   - Wayland compositor: `base.nix` + `noctalia.nix` + one of `hyprland.nix` / `niri.nix` / `sway.nix`
+   - GNOME: `base.nix` + `gnome.nix` (+ `paperwm.nix` if using PaperWM)
 4. Wire it in `flake.nix` under `nixosConfigurations.<hostname>`.
 
 ---

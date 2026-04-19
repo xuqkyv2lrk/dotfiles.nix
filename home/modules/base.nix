@@ -30,6 +30,15 @@ in
     fi
   '';
 
+  home.activation.cloneUtilityScripts = lib.hm.dag.entryBefore ["writeBoundary"] ''
+    if [ ! -d "${config.home.homeDirectory}/utility-scripts" ]; then
+      $DRY_RUN_CMD ${pkgs.git}/bin/git clone \
+        https://gitlab.com/wd2nf8gqct/utility_scripts.git \
+        "${config.home.homeDirectory}/utility-scripts"
+    fi
+    $DRY_RUN_CMD bash "${config.home.homeDirectory}/utility-scripts/setup.sh"
+  '';
+
   # dotfiles.core symlinks
   # mkOutOfStoreSymlink points directly to files on disk — edits are live, no rebuild needed
   xdg.configFile."bat".source       = lnCore "bat/.config/bat";
