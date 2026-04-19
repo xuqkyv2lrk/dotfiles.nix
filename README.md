@@ -236,7 +236,7 @@ sudo nixos-rebuild switch --flake "${HOME}/.dotfiles.nix#$(hostname)"
 3. Create `home/<user>.nix` with the right module imports:
    - Wayland compositor: `base.nix` + `noctalia.nix` + one of `hyprland.nix` / `niri.nix` / `sway.nix`
    - GNOME: `base.nix` + `gnome.nix` (+ `paperwm.nix` if using PaperWM)
-4. Wire it in `flake.nix` under `nixosConfigurations.<hostname>`, including `./modules/nixos/noctalia.nix` in the modules list. It activates only when a user's HM config imports `noctalia.nix`, so it is safe to include on all hosts.
+4. Wire it in `flake.nix` under `nixosConfigurations.<hostname>`, including `./modules/nixos/noctalia.nix` in the modules list. It activates only when a user's Home Manager config imports `noctalia.nix`, so it is safe to include on all hosts.
 
 ---
 
