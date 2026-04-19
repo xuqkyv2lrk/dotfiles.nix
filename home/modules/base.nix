@@ -35,8 +35,8 @@ in
       $DRY_RUN_CMD ${pkgs.git}/bin/git clone \
         https://gitlab.com/wd2nf8gqct/utility_scripts.git \
         "${config.home.homeDirectory}/utility-scripts"
+      $DRY_RUN_CMD bash "${config.home.homeDirectory}/utility-scripts/setup.sh"
     fi
-    $DRY_RUN_CMD bash "${config.home.homeDirectory}/utility-scripts/setup.sh"
   '';
 
   # dotfiles.core symlinks
