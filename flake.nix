@@ -21,6 +21,7 @@
       specialArgs = { inherit inputs; };
       modules = [
         ./hosts/xiuhcoatl/configuration.nix
+        ./modules/nixos/noctalia.nix
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
@@ -35,6 +36,7 @@
       specialArgs = { inherit inputs; };
       modules = [
         ./hosts/jorvik/configuration.nix
+        ./modules/nixos/noctalia.nix
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs   = true;

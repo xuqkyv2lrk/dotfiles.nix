@@ -4,8 +4,6 @@
     ./hardware-configuration.nix
     ../../modules/nixos/hardware/thinkpad-t480s.nix
     ../../modules/nixos/laptop.nix
-    ../../modules/nixos/noctalia-lock.nix
-    ../../modules/nixos/noctalia-wifi-refresh.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
@@ -75,8 +73,6 @@
     dates     = "weekly";
     options   = "--delete-older-than 7d";
   };
-
-  custom.noctaliaLock = true;
 
   # First NixOS version installed on this machine — do not change.
   system.stateVersion = "25.11";

@@ -1,8 +1,14 @@
-{ config, pkgs, lib, ... }:
+{ config, lib, pkgs, ... }:
+let
+  hmUsers = config.home-manager.users or {};
+  hasNoctalia = builtins.any (name:
+    builtins.any (p: (p.pname or p.name or "") == "noctalia-qs")
+      (hmUsers.${name}.home.packages or [])
+  ) (builtins.attrNames hmUsers);
+in
 {
-  options.custom.noctaliaLock = lib.mkEnableOption "lock noctalia screen before suspend";
-
-  config = lib.mkIf config.custom.noctaliaLock {
+  config = lib.mkIf hasNoctalia {
+    # Lock screen before the system suspends.
     systemd.services.lock-before-suspend = {
       description = "Lock noctalia screen before suspend";
       before = [ "sleep.target" ];
@@ -25,5 +31,14 @@
         TimeoutSec = 15;
       };
     };
+
+    # After resume, NM reconnects but emits its StateChanged signal before
+    # Quickshell's listener is ready, leaving the WiFi widget stale. Triggering
+    # a rescan 5 seconds later causes NM to re-emit device state signals without
+    # dropping the connection.
+    powerManagement.resumeCommands = ''
+      { ${pkgs.coreutils}/bin/sleep 5; \
+        ${pkgs.networkmanager}/bin/nmcli device wifi rescan 2>/dev/null || true; } &
+    '';
   };
 }
