@@ -5,6 +5,7 @@
     ../../modules/nixos/hardware/thinkpad-t480s.nix
     ../../modules/nixos/laptop.nix
     ../../modules/nixos/noctalia-lock.nix
+    ../../modules/nixos/noctalia-wifi-refresh.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
