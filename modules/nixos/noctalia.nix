@@ -32,13 +32,5 @@ in
       };
     };
 
-    # After resume, NM reconnects but emits its StateChanged signal before
-    # Quickshell's listener is ready, leaving the WiFi widget stale. Triggering
-    # a rescan 5 seconds later causes NM to re-emit device state signals without
-    # dropping the connection.
-    powerManagement.resumeCommands = ''
-      { ${pkgs.coreutils}/bin/sleep 5; \
-        ${pkgs.networkmanager}/bin/nmcli device wifi rescan 2>/dev/null || true; } &
-    '';
   };
 }
