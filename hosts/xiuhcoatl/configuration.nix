@@ -5,6 +5,7 @@
     ../../modules/nixos/hardware/dell-xps-13-9350.nix
     ../../modules/nixos/laptop.nix
     ../../modules/nixos/noctalia-lock.nix
+    ../../modules/nixos/virtualisation.nix
   ];
 
   # Boot
@@ -56,7 +57,6 @@
     nerd-fonts.jetbrains-mono
   ];
 
-  # Virtualisation
   # Desktop environment
   programs.niri.enable = true;
 
@@ -66,14 +66,6 @@
       "org.freedesktop.impl.portal.ScreenCast" = [ "gtk" ];
     };
   };
-
-  virtualisation.docker = {
-    enable = true;
-    enableOnBoot = true;
-  };
-
-  virtualisation.libvirtd.enable = true;
-  programs.virt-manager.enable = true;
 
   # Allow unfree packages (Broadcom WiFi, 1password, etc.)
   nixpkgs.config.allowUnfree = true;

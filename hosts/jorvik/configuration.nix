@@ -4,6 +4,7 @@
     ./hardware-configuration.nix
     ../../modules/nixos/hardware/thinkpad-t480s.nix
     ../../modules/nixos/laptop.nix
+    ../../modules/nixos/virtualisation.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
@@ -46,10 +47,6 @@
   ];
 
   programs.niri.enable = true;
-
-  virtualisation.docker    = { enable = true; enableOnBoot = true; };
-  virtualisation.libvirtd.enable = true;
-  programs.virt-manager.enable = true;
 
   nixpkgs.config.allowUnfree = true;
 
