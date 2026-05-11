@@ -19,9 +19,14 @@
 
   hardware.nvidia = {
     modesetting.enable = true;
+    powerManagement.enable = true;
     open = false;
     # package defaults to config.boot.kernelPackages.nvidiaPackages.stable
   };
+
+  boot.extraModprobeConfig = ''
+    options nvidia NVreg_PreserveVideoMemoryAllocations=1
+  '';
 
   environment.variables = {
     WLR_NO_HARDWARE_CURSORS = "1";
