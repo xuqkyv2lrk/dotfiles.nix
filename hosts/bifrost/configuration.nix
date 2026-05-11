@@ -3,6 +3,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/nixos/hardware/nvidia.nix
+    ../../modules/nixos/audio.nix
   ];
 
   # Bootloader & Kernel
@@ -24,16 +25,6 @@
 
   time.timeZone = "America/New_York";
 
-  # Audio
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    jack.enable = true;
-  };
 
   # Input & Peripherals
   services.libinput.enable = true;
