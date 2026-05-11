@@ -33,9 +33,9 @@ in
   home.activation.cloneUtilityScripts = lib.hm.dag.entryBefore ["writeBoundary"] ''
     if [ ! -d "${config.home.homeDirectory}/utility-scripts" ]; then
       $DRY_RUN_CMD ${pkgs.git}/bin/git clone \
-        https://gitlab.com/wd2nf8gqct/utility_scripts.git \
+        https://gitlab.com/wd2nf8gqct/utility-scripts.git \
         "${config.home.homeDirectory}/utility-scripts"
-      $DRY_RUN_CMD bash "${config.home.homeDirectory}/utility-scripts/setup.sh"
+      $DRY_RUN_CMD bash "${config.home.homeDirectory}/utility-scripts/setup.sh" || true
     fi
   '';
 
@@ -62,8 +62,12 @@ in
   home.file.".vim".source       = lnCore "vim/.vim";
   home.file.".doom.d".source    = lnCore "doom/.doom.d";
   home.file.".gitconfig".source = lnCore "gitconfig/.gitconfig";
+  home.file.".claude".source    = lnCore "claude/.claude";
 
   home.packages = with pkgs; [
+    # genai
+    claude-code
+
     # browsers & mail
     firefox
     thunderbird
@@ -90,6 +94,7 @@ in
     yt-dlp
     ffmpeg
     imagemagick
+    jellyfin
 
     # cli utilities
     bat
