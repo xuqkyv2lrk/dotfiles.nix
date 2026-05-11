@@ -94,7 +94,8 @@ in
     yt-dlp
     ffmpeg
     imagemagick
-    jellyfin
+    jellyfin-media-player
+    feishin
 
     # cli utilities
     bat
