@@ -94,8 +94,11 @@ in
     yt-dlp
     ffmpeg
     imagemagick
-    jellyfin-media-player
+    jellyfin-desktop
     feishin
+
+    # gaming
+    steam
 
     # cli utilities
     bat
