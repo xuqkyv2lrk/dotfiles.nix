@@ -195,6 +195,21 @@ in
   # Tell xdg-desktop-portal (and apps like Firefox) to use dark mode
   dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
 
+  xdg.desktopEntries."org.jellyfin.JellyfinDesktop" = {
+    name = "Jellyfin";
+    comment = "Desktop client for Jellyfin";
+    exec = "env QT_QPA_PLATFORM=wayland jellyfin-desktop";
+    icon = "org.jellyfin.JellyfinDesktop";
+    terminal = false;
+    categories = [ "AudioVideo" "Video" "Player" "TV" ];
+    actions = {
+      "DesktopF" = { name = "Desktop [Fullscreen]"; exec = "env QT_QPA_PLATFORM=wayland jellyfin-desktop --fullscreen --desktop"; };
+      "DesktopW" = { name = "Desktop [Windowed]";   exec = "env QT_QPA_PLATFORM=wayland jellyfin-desktop --windowed --desktop"; };
+      "TVF"      = { name = "TV [Fullscreen]";       exec = "env QT_QPA_PLATFORM=wayland jellyfin-desktop --fullscreen --tv"; };
+      "TVW"      = { name = "TV [Windowed]";         exec = "env QT_QPA_PLATFORM=wayland jellyfin-desktop --windowed --tv"; };
+    };
+  };
+
   services.mpd = {
     enable = true;
     musicDirectory = "~/music";
