@@ -30,8 +30,8 @@
           "actions": { "update-props": {
             "audio.rate":           192000,
             "audio.format":         "S24_3LE",
-            "api.alsa.period-size": 512,
-            "api.alsa.headroom":    4
+            "api.alsa.period-size": 1024,
+            "api.alsa.headroom":    2
           } }
         }
       ]
