@@ -28,7 +28,7 @@
               device.profile = pro-audio
             }
           }
-        }
+        },
         {
           matches = [{ node.name = "~alsa_.+\.usb-Behringer_UV1.*" }]
           actions = {
