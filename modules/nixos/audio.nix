@@ -22,7 +22,7 @@
     (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/10-pro-audio.conf" ''
       monitor.alsa.rules = [
         {
-          matches = [{ device.name = ~alsa_card\.usb-Behringer_UV1.* }]
+          matches = [{ device.name = "~alsa_card\.usb-Behringer_UV1.*" }]
           actions = {
             update-props = {
               device.profile = pro-audio
@@ -30,13 +30,13 @@
           }
         }
         {
-          matches = [{ node.name = ~alsa_.+\.usb-Behringer_UV1.* }]
+          matches = [{ node.name = "~alsa_.+\.usb-Behringer_UV1.*" }]
           actions = {
             update-props = {
-              audio.rate     = 192000
-              audio.format   = S24_3LE
+              audio.rate          = 192000
+              audio.format        = S24_3LE
               api.alsa.period-size = 512
-              api.alsa.headroom    = 4
+              api.alsa.headroom   = 4
             }
           }
         }
