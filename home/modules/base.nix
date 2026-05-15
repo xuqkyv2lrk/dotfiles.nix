@@ -67,6 +67,7 @@ in
   home.packages = with pkgs; [
     # genai
     claude-code
+    gemini-cli
 
     # browsers & mail
     firefox
@@ -142,6 +143,8 @@ in
     clippy
     rust-analyzer
     shellcheck
+    exercism
+    bind
 
     # devops / infra
     awscli2
