@@ -73,6 +73,7 @@ in
     _1password-cli
     _1password-gui
     steam
+    stremio-linux-shell
     # (nvidia drivers are unfree but managed in modules/nixos/hardware/nvidia.nix)
 
     # genai
@@ -107,7 +108,6 @@ in
     imagemagick
     jellyfin-desktop
     feishin
-    stremio-linux-shell
 
     # cli utilities
     bat
