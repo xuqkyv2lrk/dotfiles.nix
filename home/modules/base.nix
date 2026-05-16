@@ -54,6 +54,9 @@ in
   xdg.configFile."yazi".source      = lnCore "yazi/.config/yazi";
   xdg.configFile."zsh".source       = lnCore "zsh/.config/zsh";
 
+  # Allow unfree packages in nix-shell and other standalone nix commands
+  home.file.".config/nixpkgs/config.nix".text = "{ allowUnfree = true; }";
+
   home.file.".zshrc".source     = lnCore "zsh/.zshrc";
   home.file.".zshenv".source    = lnCore "zsh/.zshenv";
   home.file.".tmux.conf".source = lnCore "tmux/.tmux.conf";
@@ -65,21 +68,28 @@ in
   home.file.".claude".source    = lnCore "claude/.claude";
 
   home.packages = with pkgs; [
-    # genai
+    # unfree — audit list; each package requires allowUnfree in nixpkgs config
     claude-code
+    _1password-cli
+    _1password-gui
+    steam
+    # (nvidia drivers are unfree but managed in modules/nixos/hardware/nvidia.nix)
+
+    # genai
     gemini-cli
 
     # browsers & mail
     firefox
     thunderbird
 
+    # communication
+    signal-desktop
+
     # terminal emulator
     foot
 
     # password managers
     bitwarden-desktop
-    _1password-cli
-    _1password-gui
 
     # editors
     emacs
@@ -97,9 +107,7 @@ in
     imagemagick
     jellyfin-desktop
     feishin
-
-    # gaming
-    steam
+    stremio-linux-shell
 
     # cli utilities
     bat
