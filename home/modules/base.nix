@@ -82,6 +82,7 @@ in
 
     # browsers & mail
     firefox
+    ungoogled-chromium
     thunderbird
 
     # communication
@@ -97,9 +98,6 @@ in
     emacs
     vim
     tmux
-
-    # hardware configuration
-    betaflight-configurator
 
     # media
     mpv
