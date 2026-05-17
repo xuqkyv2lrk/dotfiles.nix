@@ -1,10 +1,6 @@
 { ... }: {
-  services.displayManager.sddm = {
+  programs.silentSDDM = {
     enable = true;
-    wayland.enable = true;
-    silent = {
-      enable = true;
-      theme = "catppuccin-mocha";
-    };
+    theme = "catppuccin-mocha";
   };
 }
