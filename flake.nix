@@ -13,15 +13,28 @@
       url = "gitlab:wd2nf8gqct/dotfiles.bootstrap";
       flake = false;
     };
+
+    silentsddm = {
+      url = "github:uiriansan/SilentSDDM";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    s4rchiso-plymouth = {
+      url = "github:SergioRibera/s4rchiso-plymouth-theme/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, dotfiles-bootstrap, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, dotfiles-bootstrap, silentsddm, s4rchiso-plymouth, ... }@inputs: {
     nixosConfigurations.xiuhcoatl = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
       modules = [
         ./hosts/xiuhcoatl/configuration.nix
         ./modules/nixos/noctalia.nix
+        ./modules/nixos/sddm.nix
+        ./modules/nixos/plymouth.nix
+        silentsddm.nixosModules.default
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
@@ -37,6 +50,9 @@
       modules = [
         ./hosts/jorvik/configuration.nix
         ./modules/nixos/noctalia.nix
+        ./modules/nixos/sddm.nix
+        ./modules/nixos/plymouth.nix
+        silentsddm.nixosModules.default
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs   = true;
@@ -52,6 +68,9 @@
       specialArgs = { inherit inputs; };
       modules = [
         ./hosts/bifrost/configuration.nix
+        ./modules/nixos/sddm.nix
+        ./modules/nixos/plymouth.nix
+        silentsddm.nixosModules.default
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs   = true;
