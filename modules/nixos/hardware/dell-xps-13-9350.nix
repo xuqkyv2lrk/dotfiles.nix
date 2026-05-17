@@ -4,8 +4,6 @@
     ./broadcom-wifi.nix
   ];
 
-  boot.initrd.kernelModules = [ "i915" ];
-
   # BCM4350 Bluetooth requires firmware not included in linux-firmware.
   hardware.firmware = [
     (pkgs.runCommand "bcm4350-bluetooth-firmware" {} ''

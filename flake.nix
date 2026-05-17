@@ -30,7 +30,6 @@
         ./modules/nixos/noctalia.nix
         ./modules/nixos/nix.nix
         ./modules/nixos/sddm.nix
-        ./modules/nixos/plymouth.nix
         silentsddm.nixosModules.default
         home-manager.nixosModules.home-manager
         {
@@ -67,7 +66,6 @@
         ./hosts/bifrost/configuration.nix
         ./modules/nixos/nix.nix
         ./modules/nixos/sddm.nix
-        ./modules/nixos/plymouth.nix
         silentsddm.nixosModules.default
         home-manager.nixosModules.home-manager
         {
