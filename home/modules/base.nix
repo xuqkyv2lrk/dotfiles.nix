@@ -98,6 +98,9 @@ in
     vim
     tmux
 
+    # hardware configuration
+    betaflight-configurator
+
     # media
     mpv
     cava

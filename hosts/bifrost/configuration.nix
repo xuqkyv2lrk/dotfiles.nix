@@ -53,16 +53,18 @@
   # User Configuration
   users.users.chdxn = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "video" "audio" "libvirtd" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "audio" "libvirtd" "dialout" ];
     shell = pkgs.zsh;
   };
 
-  environment.systemPackages = with pkgs; [ 
-    vim git wget curl pciutils 
+  environment.systemPackages = with pkgs; [
+    vim git wget curl pciutils usbutils
     # Adding display utils to help debug the 57" panel
-    wayland-utils 
+    wayland-utils
     vulkan-tools
   ];
+
+  services.udev.packages = with pkgs; [ betaflight-configurator ];
 
   programs.zsh.enable = true;
 

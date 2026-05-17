@@ -13,9 +13,6 @@ in
     # File manager
     nautilus
 
-    # XWayland compatibility
-    xwayland-satellite
-
     # Auth & secrets
     gnome-keyring
     polkit_gnome
@@ -35,10 +32,28 @@ in
     libva-utils
     nvidia-vaapi-driver
 
-    # Portals
+    # Portals (GTK only — GNOME portal conflicts with non-GNOME compositors)
     xdg-desktop-portal-gtk
-    xdg-desktop-portal-gnome
   ];
+
+  # xwayland-satellite as a managed service so it restarts on sleep/resume
+  systemd.user.services.xwayland-satellite = {
+    Unit = {
+      Description = "Xwayland outside your Wayland";
+      BindsTo = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+      Requisite = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "notify";
+      NotifyAccess = "all";
+      ExecStart = "${pkgs.xwayland-satellite}/bin/xwayland-satellite";
+      Restart = "on-failure";
+      RestartSec = "2";
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
 
   home.pointerCursor = {
     gtk.enable = true;
