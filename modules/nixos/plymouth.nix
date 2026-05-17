@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }: {
+{ pkgs, ... }: {
   boot.plymouth = {
     enable = true;
     theme = "tech_b";
@@ -7,12 +7,6 @@
 
   # Smooth handoff between Plymouth and the compositor
   boot.initrd.systemd.enable = true;
-
-  # Quit Plymouth as soon as the display manager is ready, not after session start
-  systemd.services.plymouth-quit = {
-    after = lib.mkForce [ "display-manager.service" ];
-    wants = lib.mkForce [ "display-manager.service" ];
-  };
 
   # Suppress Plymouth on shutdown/reboot — only show it on boot
   systemd.services.plymouth-reboot.enable = false;

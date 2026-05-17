@@ -9,7 +9,6 @@
   ];
 
   boot.loader.systemd-boot.enable = true;
-  boot.loader.systemd-boot.configurationLimit = 5;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
@@ -50,17 +49,6 @@
   environment.systemPackages = with pkgs; [ vim git wget curl pciutils ];
 
   programs.zsh.enable = true;
-
-  nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
-    auto-optimise-store   = true;
-  };
-
-  nix.gc = {
-    automatic = true;
-    dates     = "weekly";
-    options   = "--delete-older-than 7d";
-  };
 
   # First NixOS version installed on this machine — do not change.
   system.stateVersion = "25.11";
