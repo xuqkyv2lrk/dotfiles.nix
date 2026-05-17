@@ -7,6 +7,8 @@
 
   # Intel UHD 620 + NVIDIA MX150 (Optimus hybrid graphics)
   # niri runs on Intel; NVIDIA available for offloaded workloads.
+  boot.initrd.kernelModules = [ "i915" ];
+
   services.xserver.videoDrivers = [ "nvidia" ];
 
   hardware.graphics = {
