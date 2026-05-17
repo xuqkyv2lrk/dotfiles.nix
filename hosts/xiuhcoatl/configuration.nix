@@ -2,6 +2,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ../../modules/nixos/common.nix
     ../../modules/nixos/hardware/dell-xps-13-9350.nix
     ../../modules/nixos/audio.nix
     ../../modules/nixos/laptop.nix
@@ -51,7 +52,7 @@
 
   xdg.portal.config = {
     niri = {
-      default = [ "gnome" "gtk" ];
+      default = [ "gtk" ];
       "org.freedesktop.impl.portal.ScreenCast" = [ "gtk" ];
     };
   };
@@ -61,7 +62,7 @@
 
   users.users.lqnw3c = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "video" "audio" "libvirtd" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "audio" "libvirtd" "dialout" ];
     shell = pkgs.zsh;
   };
 

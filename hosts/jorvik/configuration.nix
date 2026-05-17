@@ -2,6 +2,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ../../modules/nixos/common.nix
     ../../modules/nixos/hardware/thinkpad-t480s.nix
     ../../modules/nixos/audio.nix
     ../../modules/nixos/laptop.nix
@@ -42,7 +43,7 @@
 
   users.users.bxxjs = {
     isNormalUser = true;
-    extraGroups  = [ "wheel" "networkmanager" "video" "audio" "libvirtd" ];
+    extraGroups  = [ "wheel" "networkmanager" "video" "audio" "libvirtd" "dialout" ];
     shell        = pkgs.zsh;
   };
 
