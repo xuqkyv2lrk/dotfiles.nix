@@ -74,6 +74,7 @@ in
     _1password-gui
     steam
     stremio-linux-shell
+    plex-desktop
     # (nvidia drivers are unfree but managed in modules/nixos/hardware/nvidia.nix)
 
     # genai
