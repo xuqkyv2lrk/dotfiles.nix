@@ -153,6 +153,7 @@ in
     shellcheck
     exercism
     bind
+    uv
 
     # devops / infra
     awscli2
