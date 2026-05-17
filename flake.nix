@@ -19,13 +19,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    s4rchiso-plymouth = {
-      url = "github:SergioRibera/s4rchiso-plymouth-theme/nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
-  outputs = { self, nixpkgs, home-manager, dotfiles-bootstrap, silentsddm, s4rchiso-plymouth, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, dotfiles-bootstrap, silentsddm, ... }@inputs: {
     nixosConfigurations.xiuhcoatl = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };

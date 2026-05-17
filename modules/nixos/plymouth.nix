@@ -1,10 +1,8 @@
-{ inputs, pkgs, ... }: {
+{ pkgs, ... }: {
   boot.plymouth = {
     enable = true;
-    theme = "mac-style";
-    themePackages = [
-      inputs.s4rchiso-plymouth.packages.${pkgs.system}.default
-    ];
+    theme = "tech_b";
+    themePackages = [ pkgs.adi1090x-plymouth-themes ];
   };
 
   # Smooth handoff between Plymouth and the compositor
