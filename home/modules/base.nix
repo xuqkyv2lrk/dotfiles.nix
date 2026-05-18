@@ -246,14 +246,6 @@ in
     };
   };
 
-  xdg.desktopEntries."plex-desktop" = {
-    name = "Plex";
-    exec = "env -u DISPLAY plex-desktop";
-    icon = "plex-desktop";
-    terminal = false;
-    categories = [ "AudioVideo" "Video" "Player" ];
-  };
-
   # Unset DISPLAY so jellyfin-desktop skips DisplayManagerX11 initialization,
   # which crashes on wake-from-sleep when the XWayland connection is broken.
   xdg.desktopEntries."org.jellyfin.JellyfinDesktop" = {
