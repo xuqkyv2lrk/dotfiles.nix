@@ -209,6 +209,7 @@ in
   home.sessionVariables = {
     MOZ_ENABLE_WAYLAND = "1";
     NIXOS_OZONE_WL = "1";
+    GDK_BACKEND = "wayland";
   };
 
   # Tell xdg-desktop-portal (and apps like Firefox) to use dark mode
