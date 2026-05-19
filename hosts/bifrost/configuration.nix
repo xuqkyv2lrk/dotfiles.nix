@@ -11,7 +11,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
-
   # DRM device order for the 57" Samsung — swap card0/card1 if 7680x2160 doesn't appear
   environment.variables.WLR_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
 
@@ -62,6 +61,7 @@
     vim git wget curl pciutils
     # display utils to help debug the 57" panel
     wayland-utils vulkan-tools
+    iriun-webcam
   ];
 
   programs.zsh.enable = true;

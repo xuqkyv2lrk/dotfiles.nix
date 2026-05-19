@@ -25,6 +25,7 @@
   let
     overlay = final: prev: {
       ffmpeg-lh = final.callPackage ./pkgs/ffmpeg-lh.nix {};
+      iriun-webcam = final.callPackage ./pkgs/iriun-webcam.nix {};
     };
   in {
     nixosConfigurations.xiuhcoatl = nixpkgs.lib.nixosSystem {
@@ -71,6 +72,7 @@
       modules = [
         { nixpkgs.overlays = [ overlay ]; }
         ./hosts/bifrost/configuration.nix
+        ./modules/nixos/common.nix
         ./modules/nixos/nix.nix
         ./modules/nixos/sddm.nix
         silentsddm.nixosModules.default
