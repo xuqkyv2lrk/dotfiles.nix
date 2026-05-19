@@ -21,11 +21,17 @@
 
   };
 
-  outputs = { self, nixpkgs, home-manager, dotfiles-bootstrap, silentsddm, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, dotfiles-bootstrap, silentsddm, ... }@inputs:
+  let
+    overlay = final: prev: {
+      ffmpeg-lh = final.callPackage ./pkgs/ffmpeg-lh.nix {};
+    };
+  in {
     nixosConfigurations.xiuhcoatl = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
       modules = [
+        { nixpkgs.overlays = [ overlay ]; }
         ./hosts/xiuhcoatl/configuration.nix
         ./modules/nixos/noctalia.nix
         ./modules/nixos/nix.nix
@@ -44,6 +50,7 @@
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
       modules = [
+        { nixpkgs.overlays = [ overlay ]; }
         ./hosts/jorvik/configuration.nix
         ./modules/nixos/noctalia.nix
         ./modules/nixos/nix.nix
@@ -58,11 +65,11 @@
       ];
     };
 
-
     nixosConfigurations.bifrost = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
       modules = [
+        { nixpkgs.overlays = [ overlay ]; }
         ./hosts/bifrost/configuration.nix
         ./modules/nixos/nix.nix
         ./modules/nixos/sddm.nix

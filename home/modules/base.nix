@@ -22,6 +22,14 @@ in
     fi
   '';
 
+  home.activation.doomSync = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    DOOM_BIN="${config.home.homeDirectory}/.emacs.d/bin/doom"
+    DOOM_LOCAL="${config.home.homeDirectory}/.emacs.d/.local"
+    if [ -x "$DOOM_BIN" ] && [ ! -d "$DOOM_LOCAL" ]; then
+      $DRY_RUN_CMD "$DOOM_BIN" sync || true
+    fi
+  '';
+
   home.activation.cloneDotfilesDi = lib.hm.dag.entryBefore ["writeBoundary"] ''
     if [ ! -d "${config.home.homeDirectory}/.dotfiles.di" ]; then
       $DRY_RUN_CMD ${pkgs.git}/bin/git clone --recurse-submodules \
@@ -107,6 +115,7 @@ in
     ncspot
     yt-dlp
     ffmpeg
+    ffmpeg-lh
     imagemagick
     jellyfin-desktop
     feishin
@@ -176,11 +185,26 @@ in
     virt-viewer
   ];
 
+  home.activation.createWorkingDirs = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    for dir in \
+      "${config.home.homeDirectory}/bin" \
+      "${config.home.homeDirectory}/notes/tome" \
+      "${config.home.homeDirectory}/work/priming" \
+      "${config.home.homeDirectory}/work/projects" \
+      "${config.home.homeDirectory}/work/sandbox"; do
+      $DRY_RUN_CMD mkdir -p "$dir"
+    done
+  '';
+
   home.activation.vimPlugins = lib.hm.dag.entryAfter ["writeBoundary"] ''
     PLUG_VIM="${config.home.homeDirectory}/.vim/autoload/plug.vim"
+    PLUG_DIR="${config.home.homeDirectory}/.vim/plugged"
     if [ ! -f "$PLUG_VIM" ]; then
       $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fLo "$PLUG_VIM" --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    fi
+    if [ ! -d "$PLUG_DIR" ]; then
+      $DRY_RUN_CMD ${pkgs.vim}/bin/vim +'PlugInstall --sync' +qa < /dev/null || true
     fi
   '';
 
@@ -190,6 +214,14 @@ in
       $DRY_RUN_CMD ${pkgs.git}/bin/git clone https://github.com/tmux-plugins/tpm "$TPM_DIR"
       TMUX_PLUGIN_MANAGER_PATH="${config.home.homeDirectory}/.tmux/plugins" \
         $DRY_RUN_CMD bash "$TPM_DIR/scripts/install_plugins.sh" || true
+    fi
+  '';
+
+  home.activation.yaziPackages = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    YAZI_PLUGINS="${config.home.homeDirectory}/.config/yazi/plugins"
+    YAZI_PKG="${config.home.homeDirectory}/.config/yazi/package.toml"
+    if [ ! -d "$YAZI_PLUGINS" ] && [ -f "$YAZI_PKG" ]; then
+      $DRY_RUN_CMD ${pkgs.yazi}/bin/ya pkg install || true
     fi
   '';
 
