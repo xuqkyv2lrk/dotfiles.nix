@@ -12,6 +12,7 @@ in
 
     # File manager
     nautilus
+    gnome-disk-utility
 
     # Auth & secrets
     gnome-keyring
