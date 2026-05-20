@@ -253,11 +253,6 @@ in
     MOZ_ENABLE_WAYLAND=1
   '';
 
-  xdg.mimeApps = {
-    enable = true;
-    defaultApplications."inode/directory" = "org.gnome.Nautilus.desktop";
-  };
-
   # Tell xdg-desktop-portal (and apps like Firefox) to use dark mode
   dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
 
