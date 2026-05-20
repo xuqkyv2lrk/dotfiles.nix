@@ -48,6 +48,29 @@ in
     size = 24;
   };
 
+  # Cycle the output scale after resume to work around a Firefox 150 Wayland bug
+  # where popup/context-menu surfaces are invisible after the display disconnects
+  # and reconnects on wake. The scale nudge sends an output-changed event that
+  # forces Firefox (and Electron apps) to re-initialise their popup state.
+  systemd.user.services.niri-scale-cycle-on-resume = {
+    Unit = {
+      Description = "Cycle niri output scale after resume to fix Firefox popups";
+      After = [ "suspend.target" "hybrid-sleep.target" "hibernate.target" ];
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = pkgs.writeShellScript "niri-scale-cycle" ''
+        sleep 2
+        niri msg output HDMI-A-1 scale 1.501
+        sleep 0.5
+        niri msg output HDMI-A-1 scale 1.5
+      '';
+    };
+    Install = {
+      WantedBy = [ "suspend.target" "hybrid-sleep.target" "hibernate.target" ];
+    };
+  };
+
   # dotfiles.di niri symlinks
   home.file."bin/start-niri".source     = lnDi "niri/bin/bin/start-niri";
 
