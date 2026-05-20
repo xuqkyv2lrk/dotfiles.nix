@@ -4,6 +4,10 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    # Pinned to the last nixpkgs commit before kernel 7.0.5 → 7.0.8, which
+    # introduced a regression in NVIDIA DRM suspend/resume on niri.
+    nixpkgs-kernel.url = "github:nixos/nixpkgs/da5ad661ba4e5ef59ba743f0d112cbc30e474f32";
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -71,6 +75,7 @@
       specialArgs = { inherit inputs; };
       modules = [
         { nixpkgs.overlays = [ overlay ]; }
+        { boot.kernelPackages = inputs.nixpkgs-kernel.legacyPackages.x86_64-linux.linuxPackages_latest; }
         ./hosts/bifrost/configuration.nix
         ./modules/nixos/common.nix
         ./modules/nixos/nix.nix
