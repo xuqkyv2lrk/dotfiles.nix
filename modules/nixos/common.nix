@@ -30,6 +30,9 @@
     options v4l2loopback exclusive_caps=1 video_nr=2 card_label="Iriun Webcam"
   '';
 
+  services.udisks2.enable = true;
+  services.gvfs.enable = true;
+
   services.avahi = {
     enable = true;
     nssmdns4 = true;

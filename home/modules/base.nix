@@ -267,6 +267,12 @@ in
     categories = [ "AudioVideo" "Video" "Player" "TV" ];
   };
 
+  services.udiskie = {
+    enable = true;
+    automount = true;
+    notify = true;
+  };
+
   services.mpd = {
     enable = true;
     musicDirectory = "~/music";
