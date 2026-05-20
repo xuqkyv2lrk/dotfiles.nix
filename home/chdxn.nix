@@ -4,6 +4,7 @@
     ./modules/base.nix
     ./modules/noctalia.nix
     ./modules/niri.nix
+    ./modules/nvidia.nix
   ];
 
   home.username      = "chdxn";
