@@ -8,10 +8,6 @@
     # introduced a regression in NVIDIA DRM suspend/resume on niri.
     nixpkgs-kernel.url = "github:nixos/nixpkgs/da5ad661ba4e5ef59ba743f0d112cbc30e474f32";
 
-    # Pinned to nixpkgs at Firefox 150.0.2, before the 150.0.3 Wayland popup
-    # regression where context menus break after monitor reconnect on wake.
-    nixpkgs-firefox.url = "github:nixos/nixpkgs/92a67e0f99c5ea44bfc26c07ebcfc26dbc129732";
-
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -34,7 +30,10 @@
     overlay = final: prev: {
       ffmpeg-lh = final.callPackage ./pkgs/ffmpeg-lh.nix {};
       iriun-webcam = final.callPackage ./pkgs/iriun-webcam.nix {};
-      firefox = (import inputs.nixpkgs-firefox {
+      # Pin to pre-upgrade nixpkgs (da5ad66) which has Firefox 150.0.2,
+      # before the 150.0.3 Wayland popup regression. Reuses nixpkgs-kernel
+      # input since it points to the same commit.
+      firefox = (import inputs.nixpkgs-kernel {
         system = final.system;
         config.allowUnfree = true;
       }).firefox;
