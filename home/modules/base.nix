@@ -267,19 +267,6 @@ in
     categories = [ "AudioVideo" "Video" "Player" "TV" ];
   };
 
-  services.udiskie = {
-    enable = true;
-    automount = true;
-    notify = true;
-    settings = {
-      program_options.file_manager = "nautilus";
-      notifications = {
-        device_added = false;
-        device_removed = false;
-      };
-    };
-  };
-
   services.mpd = {
     enable = true;
     musicDirectory = "~/music";
