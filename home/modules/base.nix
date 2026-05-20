@@ -271,6 +271,10 @@ in
     enable = true;
     automount = true;
     notify = true;
+    settings.notifications = {
+      device_added = false;
+      device_removed = false;
+    };
   };
 
   services.mpd = {
