@@ -4,13 +4,6 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    # Pinned nixpkgs used for two packages with regressions in the current
-    # nixpkgs-unstable bump (nixpkgs rev d233902):
-    #   - kernel: staying on 7.0.5 (linuxPackages_latest) while testing stability
-    #   - firefox: 150.0.3 broke Wayland popup/context-menu surfaces after
-    #     display reconnect (DPMS or wake); 150.0.2 from this rev is unaffected
-    nixpkgs-kernel.url = "github:nixos/nixpkgs/da5ad661ba4e5ef59ba743f0d112cbc30e474f32";
-
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -33,13 +26,6 @@
     overlay = final: prev: {
       ffmpeg-lh = final.callPackage ./pkgs/ffmpeg-lh.nix {};
       iriun-webcam = final.callPackage ./pkgs/iriun-webcam.nix {};
-      # Pin to pre-upgrade nixpkgs (da5ad66) which has Firefox 150.0.2,
-      # before the 150.0.3 Wayland popup regression. Reuses nixpkgs-kernel
-      # input since it points to the same commit.
-      firefox = (import inputs.nixpkgs-kernel {
-        system = final.system;
-        config.allowUnfree = true;
-      }).firefox;
     };
   in {
     nixosConfigurations.xiuhcoatl = nixpkgs.lib.nixosSystem {
@@ -85,10 +71,6 @@
       specialArgs = { inherit inputs; };
       modules = [
         { nixpkgs.overlays = [ overlay ]; }
-        { boot.kernelPackages = (import inputs.nixpkgs-kernel {
-            system = "x86_64-linux";
-            config.allowUnfree = true;
-          }).linuxPackages_latest; }
         ./hosts/bifrost/configuration.nix
         ./modules/nixos/common.nix
         ./modules/nixos/nix.nix

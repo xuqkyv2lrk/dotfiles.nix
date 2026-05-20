@@ -256,38 +256,6 @@ in
   # Tell xdg-desktop-portal (and apps like Firefox) to use dark mode
   dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
 
-  # Unset DISPLAY on Firefox and Electron media apps so they can't fall back to
-  # the stale XWayland socket during the brief window after wake-from-sleep where
-  # xwayland-satellite hasn't finished restarting yet.
-  xdg.desktopEntries."firefox" = {
-    name = "Firefox";
-    genericName = "Web Browser";
-    exec = "env -u DISPLAY firefox --name firefox %U";
-    icon = "firefox";
-    terminal = false;
-    categories = [ "Network" "WebBrowser" ];
-    mimeType = [
-      "text/html" "text/xml" "application/xhtml+xml"
-      "application/vnd.mozilla.xul+xml"
-      "x-scheme-handler/http" "x-scheme-handler/https"
-    ];
-    startupNotify = true;
-    actions = {
-      "new-private-window" = {
-        name = "New Private Window";
-        exec = "env -u DISPLAY firefox --private-window %U";
-      };
-      "new-window" = {
-        name = "New Window";
-        exec = "env -u DISPLAY firefox --new-window %U";
-      };
-      "profile-manager-window" = {
-        name = "Profile Manager";
-        exec = "env -u DISPLAY firefox --ProfileManager";
-      };
-    };
-  };
-
   # Unset DISPLAY so jellyfin-desktop skips DisplayManagerX11 initialization,
   # which crashes on wake-from-sleep when the XWayland connection is broken.
   xdg.desktopEntries."org.jellyfin.JellyfinDesktop" = {
