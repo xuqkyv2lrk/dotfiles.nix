@@ -4,8 +4,11 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    # Pinned to the last nixpkgs commit before kernel 7.0.5 → 7.0.8, which
-    # introduced a regression in NVIDIA DRM suspend/resume on niri.
+    # Pinned nixpkgs used for two packages with regressions in the current
+    # nixpkgs-unstable bump (nixpkgs rev d233902):
+    #   - kernel: staying on 7.0.5 (linuxPackages_latest) while testing stability
+    #   - firefox: 150.0.3 broke Wayland popup/context-menu surfaces after
+    #     display reconnect (DPMS or wake); 150.0.2 from this rev is unaffected
     nixpkgs-kernel.url = "github:nixos/nixpkgs/da5ad661ba4e5ef59ba743f0d112cbc30e474f32";
 
     home-manager = {
