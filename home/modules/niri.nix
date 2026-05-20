@@ -34,26 +34,12 @@ in
 
     # Portals (GTK only — GNOME portal conflicts with non-GNOME compositors)
     xdg-desktop-portal-gtk
-  ];
 
-  # xwayland-satellite as a managed service so it restarts on sleep/resume
-  systemd.user.services.xwayland-satellite = {
-    Unit = {
-      Description = "Xwayland outside your Wayland";
-      BindsTo = [ "graphical-session.target" ];
-      PartOf = [ "graphical-session.target" ];
-      After = [ "graphical-session.target" ];
-      Requisite = [ "graphical-session.target" ];
-    };
-    Service = {
-      Type = "notify";
-      NotifyAccess = "all";
-      ExecStart = "${pkgs.xwayland-satellite}/bin/xwayland-satellite";
-      Restart = "on-failure";
-      RestartSec = "2";
-    };
-    Install.WantedBy = [ "graphical-session.target" ];
-  };
+    # Xwayland — managed by niri's built-in integration (niri 26.04+),
+    # which handles sleep/resume without the crash-on-resume bug that the
+    # standalone systemd service had. Must be in PATH for niri to find it.
+    xwayland-satellite
+  ];
 
   home.pointerCursor = {
     gtk.enable = true;
@@ -64,6 +50,23 @@ in
 
   # dotfiles.di niri symlinks
   home.file."bin/start-niri".source     = lnDi "niri/bin/bin/start-niri";
+
+  # Cycle the output off/on after resume to recover niri's rendering state
+  # after the NVIDIA DRM disconnect/reconnect that happens on every wake.
+  systemd.user.services.niri-output-cycle-on-resume = {
+    Unit = {
+      Description = "Cycle niri output after system resume";
+      After = [ "sleep.target" ];
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = let
+        niriMsg = "${pkgs.niri}/bin/niri msg";
+        output = "HDMI-A-1";
+      in "${pkgs.bash}/bin/bash -c '${niriMsg} output ${output} off && sleep 2 && ${niriMsg} output ${output} on'";
+    };
+    Install.WantedBy = [ "sleep.target" ];
+  };
 
   xdg.configFile."niri".source          = lnDi "niri/niri/.config/niri";
   xdg.configFile."hypr".source          = lnDi "niri/hypr/.config/hypr";

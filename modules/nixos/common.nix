@@ -2,6 +2,26 @@
 {
   environment.systemPackages = with pkgs; [ usbutils ];
 
+  fonts.enableDefaultPackages = true;
+
+  fonts.packages = with pkgs; [
+    noto-fonts
+    noto-fonts-cjk-sans
+    noto-fonts-cjk-serif
+    noto-fonts-color-emoji
+    nerd-fonts.jetbrains-mono
+    roboto
+    cantarell-fonts
+    liberation_ttf
+  ];
+
+  fonts.fontconfig.defaultFonts = {
+    sansSerif = [ "Noto Sans" ];
+    serif     = [ "Noto Serif" ];
+    monospace = [ "JetBrainsMono Nerd Font" ];
+    emoji     = [ "Noto Color Emoji" ];
+  };
+
   programs.nix-ld.enable = true;
 
   boot.kernelModules = [ "v4l2loopback" ];

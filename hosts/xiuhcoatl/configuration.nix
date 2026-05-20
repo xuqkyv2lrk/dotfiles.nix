@@ -39,14 +39,6 @@
   # Bluetooth
   hardware.bluetooth.enable = true;
 
-  # Fonts
-  fonts.packages = with pkgs; [
-    noto-fonts
-    noto-fonts-cjk-sans
-    noto-fonts-color-emoji
-    nerd-fonts.jetbrains-mono
-  ];
-
   # Desktop environment
   programs.niri.enable = true;
 

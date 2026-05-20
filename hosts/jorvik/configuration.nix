@@ -30,13 +30,6 @@
   hardware.bluetooth.enable = true;
   hardware.acpilight.enable = true;
 
-  fonts.packages = with pkgs; [
-    noto-fonts
-    noto-fonts-cjk-sans
-    noto-fonts-color-emoji
-    nerd-fonts.jetbrains-mono
-  ];
-
   programs.niri.enable = true;
 
   nixpkgs.config.allowUnfree = true;
