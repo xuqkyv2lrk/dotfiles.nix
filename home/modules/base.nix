@@ -107,9 +107,6 @@ in
     vim
     tmux
 
-    # file manager
-    nautilus
-
     # media
     mpv
     cava
