@@ -48,26 +48,43 @@ in
     size = 24;
   };
 
-  # Cycle the output scale after resume to work around a Firefox 150 Wayland bug
-  # where popup/context-menu surfaces are invisible after the display disconnects
-  # and reconnects on wake. The scale nudge sends an output-changed event that
-  # forces Firefox (and Electron apps) to re-initialise their popup state.
-  systemd.user.services.niri-scale-cycle-on-resume = {
+  # Workaround for a Firefox 150 Wayland bug where popup/context-menu surfaces
+  # break after the display disconnects and reconnects (DPMS or wake from sleep).
+  # Watches the niri event stream for the workspace output going None → Some,
+  # which signals a display reconnect, then nudges the output scale to force
+  # Firefox and Electron apps to re-initialise their popup surfaces.
+  systemd.user.services.niri-output-watcher = {
     Unit = {
-      Description = "Cycle niri output scale after resume to fix Firefox popups";
-      After = [ "suspend.target" "hybrid-sleep.target" "hibernate.target" ];
+      Description = "Cycle niri output scale on reconnect to fix Firefox popups";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
     };
     Service = {
-      Type = "oneshot";
-      ExecStart = pkgs.writeShellScript "niri-scale-cycle" ''
-        sleep 2
-        niri msg output HDMI-A-1 scale 1.501
-        sleep 0.5
-        niri msg output HDMI-A-1 scale 1.5
+      Type = "simple";
+      Restart = "on-failure";
+      RestartSec = "3s";
+      ExecStart = pkgs.writeShellScript "niri-output-watcher" ''
+        STATE_FILE="''${XDG_RUNTIME_DIR}/niri-output-was-off"
+
+        niri msg event-stream | while IFS= read -r line; do
+          case "$line" in
+            *"Workspaces changed:"*)
+              if echo "$line" | grep -q "output: None"; then
+                touch "$STATE_FILE"
+              elif [[ -f "$STATE_FILE" ]] && echo "$line" | grep -q "output: Some"; then
+                rm "$STATE_FILE"
+                sleep 1
+                niri msg output HDMI-A-1 scale 1.501
+                sleep 0.3
+                niri msg output HDMI-A-1 scale 1.5
+              fi
+              ;;
+          esac
+        done
       '';
     };
     Install = {
-      WantedBy = [ "suspend.target" "hybrid-sleep.target" "hibernate.target" ];
+      WantedBy = [ "graphical-session.target" ];
     };
   };
 
