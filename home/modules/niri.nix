@@ -51,23 +51,6 @@ in
   # dotfiles.di niri symlinks
   home.file."bin/start-niri".source     = lnDi "niri/bin/bin/start-niri";
 
-  # Cycle the output off/on after resume to recover niri's rendering state
-  # after the NVIDIA DRM disconnect/reconnect that happens on every wake.
-  systemd.user.services.niri-output-cycle-on-resume = {
-    Unit = {
-      Description = "Cycle niri output after system resume";
-      After = [ "sleep.target" ];
-    };
-    Service = {
-      Type = "oneshot";
-      ExecStart = let
-        niriMsg = "${pkgs.niri}/bin/niri msg";
-        output = "HDMI-A-1";
-      in "${pkgs.bash}/bin/bash -c '${niriMsg} output ${output} off && sleep 2 && ${niriMsg} output ${output} on'";
-    };
-    Install.WantedBy = [ "sleep.target" ];
-  };
-
   xdg.configFile."niri".source          = lnDi "niri/niri/.config/niri";
   xdg.configFile."hypr".source          = lnDi "niri/hypr/.config/hypr";
   xdg.configFile."swappy".source        = lnDi "niri/swappy/.config/swappy";
