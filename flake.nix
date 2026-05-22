@@ -2,10 +2,7 @@
   description = "NixOS system configurations";
 
   inputs = {
-    # Pinned to last known-good rev before d233902 introduced video stuttering
-    # on NVIDIA/Niri (both Plex and Jellyfin affected). Remove pin once the
-    # regression is identified and fixed upstream.
-    nixpkgs.url = "github:nixos/nixpkgs/da5ad661ba4e5ef59ba743f0d112cbc30e474f32";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     home-manager = {
       url = "github:nix-community/home-manager";

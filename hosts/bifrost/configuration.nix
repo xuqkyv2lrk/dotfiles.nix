@@ -10,6 +10,7 @@
   # Bootloader & Kernel
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   # DRM device order for the 57" Samsung — swap card0/card1 if 7680x2160 doesn't appear
   environment.variables.WLR_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
 
