@@ -1,6 +1,9 @@
 { pkgs, config, ... }:
 {
-  environment.systemPackages = with pkgs; [ usbutils ];
+  environment.systemPackages = with pkgs; [
+    usbutils
+    qt6.qtmultimedia
+  ];
 
   fonts.enableDefaultPackages = true;
 
