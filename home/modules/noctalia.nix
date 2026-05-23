@@ -41,11 +41,11 @@ in
           status="$(${pkgs.playerctl}/bin/playerctl status 2>/dev/null || printf "Stopped")"
           if [[ "$status" == "Playing" ]] && [[ "$inhibited" == "false" ]]; then
             ${pkgs.noctalia-qs}/bin/quickshell ipc --any-display \
-              -p "$qs_shell" call idleInhibitor enable 2>/dev/null || true
+              -p "$qs_shell" call idleInhibitor enableSilent 2>/dev/null || true
             inhibited=true
           elif [[ "$status" != "Playing" ]] && [[ "$inhibited" == "true" ]]; then
             ${pkgs.noctalia-qs}/bin/quickshell ipc --any-display \
-              -p "$qs_shell" call idleInhibitor disable 2>/dev/null || true
+              -p "$qs_shell" call idleInhibitor disableSilent 2>/dev/null || true
             inhibited=false
           fi
           sleep 5
