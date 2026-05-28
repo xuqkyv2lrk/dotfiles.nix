@@ -236,15 +236,7 @@ in
     nix-direnv.enable = true;
   };
 
-  programs.mise = {
-    enable = true;
-    globalConfig = {
-      settings = {
-        experimental = true;
-        verbose = false;
-      };
-    };
-  };
+  programs.mise.enable = true;
 
   programs.fzf.enable = true;
   programs.zoxide.enable = true;
