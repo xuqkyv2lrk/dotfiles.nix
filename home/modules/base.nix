@@ -150,6 +150,7 @@ in
     go
     graphviz
     kubectl
+    manix
     meson
     nodejs
     openssl
@@ -233,6 +234,16 @@ in
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
+  };
+
+  programs.mise = {
+    enable = true;
+    globalConfig = {
+      settings = {
+        experimental = true;
+        verbose = false;
+      };
+    };
   };
 
   programs.fzf.enable = true;
