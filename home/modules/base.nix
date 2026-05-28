@@ -177,7 +177,7 @@ in
 
     # shell utilities
     atuin
-    diff-so-fancy
+
     dyff
     oh-my-posh
 
