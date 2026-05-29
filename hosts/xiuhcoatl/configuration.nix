@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ pkgs, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -10,66 +10,15 @@
     ../../modules/nixos/virtualisation.nix
   ];
 
-  # Boot
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-
-  # btrfs maintenance
-  services.btrfs.autoScrub.enable = true;
-
-  # zram swap
-  zramSwap = {
-    enable = true;
-    algorithm = "zstd";
-  };
-
-  # Network
   networking.hostName = "xiuhcoatl";
-  networking.networkmanager.enable = true;
 
-  # Locale
-  time.timeZone = "America/New_York";
-
-  services.libinput.enable = true;
-  services.printing.enable = true;
-  services.openssh.enable = true;
-  services.upower.enable = true;
-
-  # Bluetooth
-  hardware.bluetooth.enable = true;
-
-  # Desktop environment
-  programs.niri.enable = true;
-
-  xdg.portal.config = {
-    niri = {
-      default = [ "gtk" ];
-      "org.freedesktop.impl.portal.ScreenCast" = [ "gtk" ];
-    };
-  };
-
-  # Allow unfree packages (Broadcom WiFi, 1password, etc.)
-  nixpkgs.config.allowUnfree = true;
+  custom.noctaliaLock = true;
 
   users.users.lqnw3c = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" "video" "audio" "libvirtd" "dialout" ];
     shell = pkgs.zsh;
   };
-
-  # Bootstrap packages available before home-manager activates
-  environment.systemPackages = with pkgs; [
-    vim
-    git
-    wget
-    curl
-    pciutils
-  ];
-
-  programs.zsh.enable = true;
-
-  custom.noctaliaLock = true;
 
   # First NixOS version installed on this machine — do not change.
   system.stateVersion = "25.11";

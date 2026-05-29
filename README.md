@@ -29,6 +29,20 @@ sudo nixos-rebuild switch --flake "${HOME}/.dotfiles.nix#$(hostname)"
 
 ## Module conventions
 
+### System modules
+
+`modules/nixos/common.nix` is imported by every host and establishes shared defaults:
+boot loader (systemd-boot + EFI), latest kernel, zram swap, NetworkManager, Bluetooth,
+Niri, zsh, btrfs scrub, printing with Canon drivers, Avahi for network printer discovery,
+and the base package set. All of these are set with `lib.mkDefault`, so any host config
+can override them with a plain assignment — no `lib.mkForce` needed.
+
+Host configs (`hosts/<hostname>/configuration.nix`) declare only what is unique to that
+machine: `networking.hostName`, the user account, `system.stateVersion`, and any
+hardware-specific overrides or extra services.
+
+### Home Manager modules
+
 Each user config (`home/<user>.nix`) declares the user identity and imports exactly the
 modules it needs. A headless server imports only `base.nix`. A desktop machine adds one
 DE module, plus `noctalia.nix` if using a Wayland compositor (Hyprland, Niri, Sway).
@@ -231,7 +245,7 @@ sudo nixos-rebuild switch --flake "${HOME}/.dotfiles.nix#$(hostname)"
 
 ## Adding a new machine
 
-1. Create `hosts/<hostname>/configuration.nix` — enable the compositor or GNOME, declare the user, import the appropriate hardware module.
+1. Create `hosts/<hostname>/configuration.nix` — declare `networking.hostName`, the user account, `system.stateVersion`, and import the appropriate hardware module. All common defaults are inherited from `modules/nixos/common.nix`; override any of them with a plain assignment.
 2. Run `nixos-generate-config` during install and commit `hardware-configuration.nix`.
 3. Create `home/<user>.nix` with the right module imports:
    - Wayland compositor: `base.nix` + `noctalia.nix` + one of `hyprland.nix` / `niri.nix` / `sway.nix`

@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inputs, ... }:
+{ pkgs, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -9,40 +9,15 @@
     ../../modules/nixos/virtualisation.nix
   ];
 
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-
-  services.btrfs.autoScrub.enable = true;
-
-  zramSwap = { enable = true; algorithm = "zstd"; };
-
   networking.hostName = "jorvik";
-  networking.networkmanager.enable = true;
 
-  time.timeZone = "America/New_York";
-
-  services.libinput.enable = true;
-  services.printing.enable = true;
-  services.openssh.enable = true;
-  services.upower.enable = true;
-
-  hardware.bluetooth.enable = true;
   hardware.acpilight.enable = true;
-
-  programs.niri.enable = true;
-
-  nixpkgs.config.allowUnfree = true;
 
   users.users.bxxjs = {
     isNormalUser = true;
     extraGroups  = [ "wheel" "networkmanager" "video" "audio" "libvirtd" "dialout" ];
     shell        = pkgs.zsh;
   };
-
-  environment.systemPackages = with pkgs; [ vim git wget curl pciutils ];
-
-  programs.zsh.enable = true;
 
   # First NixOS version installed on this machine — do not change.
   system.stateVersion = "25.11";
