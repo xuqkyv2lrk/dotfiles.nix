@@ -171,9 +171,11 @@ in
     awscli2
     fluxcd
     kubernetes-helm
+    opentofu
     sops
     talosctl
     terraform
+    terraform-ls
 
     # shell utilities
     atuin
