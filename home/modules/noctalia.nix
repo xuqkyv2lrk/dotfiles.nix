@@ -25,6 +25,38 @@ in
     wlsunset
   ];
 
+  # Polls playerctl every 5 s; enables noctalia DND while Plex is playing
+  systemd.user.services.noctalia-plex-dnd = {
+    Unit = {
+      Description = "Enable noctalia DND while Plex is playing";
+    };
+    Service = {
+      Type = "simple";
+      Restart = "on-failure";
+      RestartSec = "5";
+      ExecStart = toString (pkgs.writeShellScript "noctalia-plex-dnd" ''
+        qs_shell="$HOME/.dotfiles.di/quickshell/noctalia-shell"
+        dnd_enabled=false
+        while true; do
+          status="$(${pkgs.playerctl}/bin/playerctl --player=%plex% status 2>/dev/null || printf "Stopped")"
+          if [[ "$status" == "Playing" ]] && [[ "$dnd_enabled" == "false" ]]; then
+            ${pkgs.noctalia-qs}/bin/quickshell ipc --any-display \
+              -p "$qs_shell" call notifications enableDND 2>/dev/null || true
+            dnd_enabled=true
+          elif [[ "$status" != "Playing" ]] && [[ "$dnd_enabled" == "true" ]]; then
+            ${pkgs.noctalia-qs}/bin/quickshell ipc --any-display \
+              -p "$qs_shell" call notifications disableDND 2>/dev/null || true
+            dnd_enabled=false
+          fi
+          sleep 5
+        done
+      '');
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
+
   # Polls playerctl every 5 s and toggles noctalia idle inhibitor while media plays
   systemd.user.services.noctalia-media-inhibit = {
     Unit = {
