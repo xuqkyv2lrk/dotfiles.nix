@@ -14,6 +14,16 @@
 
   hardware.bluetooth.powerOnBoot = true;
 
+  hardware.printers = {
+    ensurePrinters = [{
+      name = "Canon_iP8700";
+      deviceUri = "ipp://192.168.22.80/ipp/print";
+      model = "gutenprint.5.3://bjc-iP8700-series/expert";
+      ppdOptions.PageSize = "Letter";
+    }];
+    ensureDefaultPrinter = "Canon_iP8700";
+  };
+
   virtualisation.docker = { enable = true; enableOnBoot = true; };
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;

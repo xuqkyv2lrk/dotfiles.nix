@@ -27,7 +27,7 @@
 
   services.printing = {
     enable = true;
-    drivers = with pkgs; [ gutenprint gutenprintBin cnijfilter2 ];
+    drivers = with pkgs; [ gutenprint gutenprintBin cnijfilter2 cups-filters ];
   };
 
   services.avahi = {
@@ -46,7 +46,7 @@
 
   xdg.portal.config = {
     niri = {
-      default = [ "gtk" ];
+      default = lib.mkForce [ "gtk" ];
       "org.freedesktop.impl.portal.ScreenCast" = [ "gtk" ];
     };
   };
