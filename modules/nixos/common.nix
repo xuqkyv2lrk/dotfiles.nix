@@ -25,6 +25,8 @@
   services.udisks2.enable = true;
   services.gvfs.enable = true;
 
+  services.mullvad-vpn.enable = true;
+
   services.printing = {
     enable = true;
     drivers = with pkgs; [ gutenprint gutenprintBin cnijfilter2 cups-filters ];
@@ -43,6 +45,9 @@
   programs.zsh.enable = lib.mkDefault true;
 
   nixpkgs.config.allowUnfree = lib.mkDefault true;
+  nixpkgs.config.permittedInsecurePackages = [
+    "electron-39.8.10"
+  ];
 
   xdg.portal.config = {
     niri = {
