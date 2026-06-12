@@ -29,11 +29,14 @@
     options nvidia NVreg_PreserveVideoMemoryAllocations=1
   '';
 
+  programs.gamescope.enable = true;
+
   environment.variables = {
     WLR_NO_HARDWARE_CURSORS = "1";
     LIBVA_DRIVER_NAME = "nvidia";
     NVD_BACKEND = "direct";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     DISABLE_WAYLAND = "0";
+    ENABLE_GAMESCOPE_WSI = "1";
   };
 }
