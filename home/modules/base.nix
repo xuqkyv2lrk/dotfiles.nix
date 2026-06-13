@@ -120,6 +120,10 @@ in
     jellyfin-desktop
     feishin
 
+    # rom management
+    igir
+    mame-tools
+
     # cli utilities
     bat
     bc
@@ -131,7 +135,10 @@ in
     eza
     fastfetch
     fd
+    file
     jq
+    p7zip
+    zstd
     ripgrep
     rsync
     unzip
