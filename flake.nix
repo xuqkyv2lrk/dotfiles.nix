@@ -34,9 +34,10 @@
       modules = [
         { nixpkgs.overlays = [ overlay ]; }
         ./hosts/xiuhcoatl/configuration.nix
-        ./modules/nixos/noctalia.nix
+        ./modules/nixos/common.nix
         ./modules/nixos/nix.nix
         ./modules/nixos/sddm.nix
+        ./modules/nixos/noctalia.nix
         silentsddm.nixosModules.default
         home-manager.nixosModules.home-manager
         {
@@ -53,9 +54,10 @@
       modules = [
         { nixpkgs.overlays = [ overlay ]; }
         ./hosts/jorvik/configuration.nix
-        ./modules/nixos/noctalia.nix
+        ./modules/nixos/common.nix
         ./modules/nixos/nix.nix
         ./modules/nixos/sddm.nix
+        ./modules/nixos/noctalia.nix
         silentsddm.nixosModules.default
         home-manager.nixosModules.home-manager
         {
@@ -75,6 +77,7 @@
         ./modules/nixos/common.nix
         ./modules/nixos/nix.nix
         ./modules/nixos/sddm.nix
+        ./modules/nixos/noctalia.nix
         silentsddm.nixosModules.default
         home-manager.nixosModules.home-manager
         {
