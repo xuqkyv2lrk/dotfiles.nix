@@ -204,9 +204,19 @@ reboot
 
 ### 9. First boot
 
-`home-manager-<user>.service` runs automatically at first boot. Both dotfiles repos
-are pre-cloned during installation, so activation just writes symlinks — no network
-dependency at boot.
+Log in and connect to WiFi:
+
+```bash
+nmtui
+```
+
+Then run a rebuild to trigger home-manager activation with network available. The
+activation scripts clone dotfiles.core, dotfiles.di, doomemacs, utility-scripts, and
+editor plugins — all of which require network:
+
+```bash
+sudo nixos-rebuild switch --flake "${HOME}/.dotfiles.nix#$(hostname)"
+```
 
 ### 10. Switch remotes to SSH
 
