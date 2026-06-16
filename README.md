@@ -204,17 +204,14 @@ reboot
 
 ### 9. First boot
 
-Log in and connect to WiFi:
+Bootstrap runs home-manager activation inside the chroot before you reboot, so the
+desktop should be fully configured on first login. Any network-dependent steps that
+failed silently (editor plugins, etc.) will complete on the next rebuild.
+
+If something looks wrong, connect to WiFi and run a rebuild:
 
 ```bash
 nmtui
-```
-
-Then run a rebuild to trigger home-manager activation with network available. The
-activation scripts clone dotfiles.core, dotfiles.di, doomemacs, utility-scripts, and
-editor plugins — all of which require network:
-
-```bash
 sudo nixos-rebuild switch --flake "${HOME}/.dotfiles.nix#$(hostname)"
 ```
 

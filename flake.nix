@@ -41,9 +41,10 @@
         silentsddm.nixosModules.default
         home-manager.nixosModules.home-manager
         {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.users.lqnw3c = import ./home/lqnw3c.nix;
+          home-manager.useGlobalPkgs        = true;
+          home-manager.useUserPackages      = true;
+          home-manager.backupFileExtension  = "backup";
+          home-manager.users.lqnw3c        = import ./home/lqnw3c.nix;
         }
       ];
     };
@@ -61,9 +62,10 @@
         silentsddm.nixosModules.default
         home-manager.nixosModules.home-manager
         {
-          home-manager.useGlobalPkgs   = true;
-          home-manager.useUserPackages = true;
-          home-manager.users.bxxjs = import ./home/bxxjs.nix;
+          home-manager.useGlobalPkgs       = true;
+          home-manager.useUserPackages     = true;
+          home-manager.backupFileExtension = "backup";
+          home-manager.users.bxxjs        = import ./home/bxxjs.nix;
         }
       ];
     };
@@ -81,9 +83,10 @@
         silentsddm.nixosModules.default
         home-manager.nixosModules.home-manager
         {
-          home-manager.useGlobalPkgs   = true;
-          home-manager.useUserPackages = true;
-          home-manager.users.chdxn = import ./home/chdxn.nix;
+          home-manager.useGlobalPkgs       = true;
+          home-manager.useUserPackages     = true;
+          home-manager.backupFileExtension = "backup";
+          home-manager.users.chdxn        = import ./home/chdxn.nix;
         }
       ];
     };

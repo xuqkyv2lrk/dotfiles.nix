@@ -18,7 +18,7 @@ in
     if [ ! -d "${config.home.homeDirectory}/.emacs.d" ]; then
       $DRY_RUN_CMD ${pkgs.git}/bin/git clone --depth 1 \
         https://github.com/doomemacs/doomemacs \
-        "${config.home.homeDirectory}/.emacs.d"
+        "${config.home.homeDirectory}/.emacs.d" || true
     fi
   '';
 
@@ -42,8 +42,10 @@ in
     if [ ! -d "${config.home.homeDirectory}/utility-scripts" ]; then
       $DRY_RUN_CMD ${pkgs.git}/bin/git clone \
         https://gitlab.com/wd2nf8gqct/utility-scripts.git \
-        "${config.home.homeDirectory}/utility-scripts"
-      $DRY_RUN_CMD bash "${config.home.homeDirectory}/utility-scripts/setup.sh" || true
+        "${config.home.homeDirectory}/utility-scripts" || true
+      if [ -f "${config.home.homeDirectory}/utility-scripts/setup.sh" ]; then
+        $DRY_RUN_CMD bash "${config.home.homeDirectory}/utility-scripts/setup.sh" || true
+      fi
     fi
   '';
 
@@ -211,9 +213,9 @@ in
     PLUG_DIR="${config.home.homeDirectory}/.vim/plugged"
     if [ ! -f "$PLUG_VIM" ]; then
       $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fLo "$PLUG_VIM" --create-dirs \
-        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim || true
     fi
-    if [ ! -d "$PLUG_DIR" ]; then
+    if [ ! -d "$PLUG_DIR" ] && [ -f "$PLUG_VIM" ]; then
       $DRY_RUN_CMD ${pkgs.vim}/bin/vim +'PlugInstall --sync' +qa < /dev/null || true
     fi
   '';
