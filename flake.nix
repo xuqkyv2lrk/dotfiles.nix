@@ -91,5 +91,26 @@
       ];
     };
 
+
+    nixosConfigurations.sleipnir = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      specialArgs = { inherit inputs; };
+      modules = [
+        { nixpkgs.overlays = [ overlay ]; }
+        ./hosts/sleipnir/configuration.nix
+        ./modules/nixos/common.nix
+        ./modules/nixos/nix.nix
+        ./modules/nixos/sddm.nix
+        ./modules/nixos/noctalia.nix
+        silentsddm.nixosModules.default
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.useGlobalPkgs   = true;
+          home-manager.useUserPackages = true;
+          home-manager.users.x0xgo = import ./home/x0xgo.nix;
+        }
+      ];
+    };
+
   };
 }
