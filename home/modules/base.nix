@@ -230,9 +230,8 @@ in
   '';
 
   home.activation.yaziPackages = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    YAZI_PLUGINS="${config.home.homeDirectory}/.config/yazi/plugins"
     YAZI_PKG="${config.home.homeDirectory}/.config/yazi/package.toml"
-    if [ ! -d "$YAZI_PLUGINS" ] && [ -f "$YAZI_PKG" ]; then
+    if [ -f "$YAZI_PKG" ]; then
       $DRY_RUN_CMD ${pkgs.yazi}/bin/ya pkg install || true
     fi
   '';
