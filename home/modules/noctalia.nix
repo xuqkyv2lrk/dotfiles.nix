@@ -89,6 +89,14 @@ in
     };
   };
 
+  # Shadow the tracker3 D-Bus service file so nautilus doesn't block on a
+  # 25-second activation timeout in non-GNOME sessions where tracker never runs.
+  xdg.dataFile."dbus-1/services/org.freedesktop.Tracker3.Miner.Files.service".text = ''
+    [D-BUS Service]
+    Name=org.freedesktop.Tracker3.Miner.Files
+    Exec=${pkgs.coreutils}/bin/false
+  '';
+
   # Noctalia user configuration and shell
   xdg.configFile."noctalia".source    = lnDi "quickshell/noctalia/.config/noctalia";
   xdg.configFile."quickshell".source  = lnDi "quickshell/noctalia-shell";
