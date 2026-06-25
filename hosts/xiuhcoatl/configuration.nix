@@ -14,6 +14,8 @@
 
   custom.noctaliaLock = true;
 
+  programs.sway.enable = true;
+
   users.users.lqnw3c = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" "video" "audio" "libvirtd" "dialout" ];

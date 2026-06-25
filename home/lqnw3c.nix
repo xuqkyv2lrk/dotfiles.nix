@@ -3,7 +3,7 @@
   imports = [
     ./modules/base.nix
     ./modules/noctalia.nix
-    ./modules/hyprland.nix
+    ./modules/sway.nix
   ];
 
   home.username = "lqnw3c";
