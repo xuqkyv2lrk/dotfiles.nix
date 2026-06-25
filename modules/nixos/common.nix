@@ -40,6 +40,7 @@
 
   hardware.bluetooth.enable = lib.mkDefault true;
 
+  programs.dconf.enable = lib.mkDefault true;
   programs.niri.enable = lib.mkDefault true;
   programs.river-classic.enable = lib.mkDefault true;
   programs.nix-ld.enable = true;
