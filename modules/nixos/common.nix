@@ -55,6 +55,10 @@
       default = lib.mkForce [ "gtk" ];
       "org.freedesktop.impl.portal.ScreenCast" = [ "gtk" ];
     };
+    river = {
+      default = [ "gtk" ];
+      "org.freedesktop.impl.portal.ScreenCast" = [ "wlr" ];
+    };
   };
 
   environment.systemPackages = with pkgs; [
