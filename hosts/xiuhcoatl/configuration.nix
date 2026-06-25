@@ -11,7 +11,7 @@
 
   networking.hostName = "xiuhcoatl";
 
-  programs.river.enable = true;
+  programs.river-classic.enable = true;
 
   users.users.lqnw3c = {
     isNormalUser = true;

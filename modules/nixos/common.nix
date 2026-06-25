@@ -41,7 +41,7 @@
   hardware.bluetooth.enable = lib.mkDefault true;
 
   programs.niri.enable = lib.mkDefault true;
-  programs.river.enable = lib.mkDefault true;
+  programs.river-classic.enable = lib.mkDefault true;
   programs.nix-ld.enable = true;
   programs.zsh.enable = lib.mkDefault true;
 
