@@ -14,7 +14,7 @@
   programs.niri.enable = false;
   programs.river-classic.enable = true;
 
-  services.displayManager.sddm.settings.X11.ServerArguments = "-nolisten tcp -dpi 192";
+  services.displayManager.sddm.settings.Wayland.ScaleFactor = 2;
 
   users.users.lqnw3c = {
     isNormalUser = true;
