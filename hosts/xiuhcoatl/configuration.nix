@@ -6,13 +6,10 @@
     ../../modules/nixos/hardware/dell-xps-13-9350.nix
     ../../modules/nixos/audio.nix
     ../../modules/nixos/laptop.nix
-    ../../modules/nixos/noctalia-lock.nix
     ../../modules/nixos/virtualisation.nix
   ];
 
   networking.hostName = "xiuhcoatl";
-
-  custom.noctaliaLock = true;
 
   programs.river.enable = true;
 
