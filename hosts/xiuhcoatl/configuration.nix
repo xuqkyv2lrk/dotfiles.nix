@@ -14,7 +14,7 @@
   programs.niri.enable = false;
   programs.river-classic.enable = true;
 
-  services.displayManager.sddm.settings.General.GreeterEnvironment = "QT_SCALE_FACTOR=1.5";
+  services.displayManager.sddm.settings.X11.ServerArguments = "-nolisten tcp -dpi 144";
 
   users.users.lqnw3c = {
     isNormalUser = true;
