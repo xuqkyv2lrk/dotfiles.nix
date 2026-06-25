@@ -14,7 +14,7 @@
 
   custom.noctaliaLock = true;
 
-  programs.sway.enable = true;
+  programs.river.enable = true;
 
   users.users.lqnw3c = {
     isNormalUser = true;

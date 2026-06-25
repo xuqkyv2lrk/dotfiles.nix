@@ -16,6 +16,7 @@ in
     nautilus
     papirus-icon-theme
     pwvucontrol
+    river-tag-watcher
     sassc
     xdg-desktop-portal-gtk
     xdg-desktop-portal-wlr

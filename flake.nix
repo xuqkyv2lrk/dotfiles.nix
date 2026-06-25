@@ -24,8 +24,9 @@
   outputs = { self, nixpkgs, home-manager, dotfiles-bootstrap, silentsddm, ... }@inputs:
   let
     overlay = final: prev: {
-      ffmpeg-lh = final.callPackage ./pkgs/ffmpeg-lh.nix {};
-      iriun-webcam = final.callPackage ./pkgs/iriun-webcam.nix {};
+      ffmpeg-lh         = final.callPackage ./pkgs/ffmpeg-lh.nix {};
+      iriun-webcam      = final.callPackage ./pkgs/iriun-webcam.nix {};
+      river-tag-watcher = final.callPackage ./pkgs/river-tag-watcher {};
     };
   in {
     nixosConfigurations.xiuhcoatl = nixpkgs.lib.nixosSystem {
