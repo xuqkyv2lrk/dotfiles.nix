@@ -32,7 +32,6 @@ in
   home.file."bin/start-river".source = lnDi "river/bin/bin/start-river";
 
   xdg.configFile."river".source   = lnDi "river/river/.config/river";
-  xdg.configFile."hypr".source    = lnDi "river/hypr/.config/hypr";
   xdg.configFile."kanshi".source  = lnDi "river/kanshi/.config/kanshi";
   xdg.configFile."gtk-3.0".source = lnDi "river/gtk-3.0/.config/gtk-3.0";
   xdg.configFile."gtk-4.0".source = lnDi "river/gtk-4.0/.config/gtk-4.0";
