@@ -29,10 +29,6 @@ in
     sassc
     dart-sass
 
-    # NVIDIA VA-API
-    libva-utils
-    nvidia-vaapi-driver
-
     # Portals (GTK only — GNOME portal conflicts with non-GNOME compositors)
     xdg-desktop-portal-gtk
 
