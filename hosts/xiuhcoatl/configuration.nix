@@ -14,6 +14,8 @@
   programs.niri.enable = false;
   programs.river-classic.enable = true;
 
+  services.displayManager.sddm.settings.General.GreeterEnvironment = "QT_SCALE_FACTOR=1.5";
+
   users.users.lqnw3c = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" "video" "audio" "libvirtd" "dialout" ];
