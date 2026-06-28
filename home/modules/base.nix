@@ -85,6 +85,8 @@ in
     steam
     stremio-linux-shell
     plex-desktop
+    jetbrains-toolbox
+    jetbrains.goland
     # (nvidia drivers are unfree but managed in modules/nixos/hardware/nvidia.nix)
 
     # genai
