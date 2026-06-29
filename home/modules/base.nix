@@ -86,7 +86,6 @@ in
     stremio-linux-shell
     plex-desktop
     jetbrains-toolbox
-    jetbrains.goland
     # (nvidia drivers are unfree but managed in modules/nixos/hardware/nvidia.nix)
 
     # genai
@@ -266,10 +265,20 @@ in
     GDK_BACKEND=wayland
     NIXOS_OZONE_WL=1
     MOZ_ENABLE_WAYLAND=1
+    PATH=$HOME/.local/share/JetBrains/Toolbox/scripts:$PATH
   '';
 
   # Tell xdg-desktop-portal (and apps like Firefox) to use dark mode
   dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
+
+  xdg.desktopEntries."jetbrains-toolbox" = {
+    name = "JetBrains Toolbox";
+    exec = "jetbrains-toolbox %U";
+    icon = "jetbrains-toolbox";
+    terminal = false;
+    categories = [ "Development" ];
+    mimeType = [ "x-scheme-handler/jetbrains" ];
+  };
 
   # Unset DISPLAY so jellyfin-desktop skips DisplayManagerX11 initialization,
   # which crashes on wake-from-sleep when the XWayland connection is broken.
