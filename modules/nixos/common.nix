@@ -3,6 +3,7 @@
   boot.loader.systemd-boot.enable = lib.mkDefault true;
   boot.loader.efi.canTouchEfiVariables = lib.mkDefault true;
   boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
+  boot.kernelParams = lib.mkDefault [ "usbcore.autosuspend=-1" ];
   boot.kernelModules = [ "v4l2loopback" ];
   boot.extraModulePackages = [ config.boot.kernelPackages.v4l2loopback ];
   boot.extraModprobeConfig = ''
@@ -17,6 +18,10 @@
   networking.networkmanager.enable = lib.mkDefault true;
 
   time.timeZone = lib.mkDefault "America/New_York";
+
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="usb", TEST=="power/autosuspend", ATTR{power/autosuspend}="-1"
+  '';
 
   services.btrfs.autoScrub.enable = lib.mkDefault true;
   services.libinput.enable = lib.mkDefault true;
