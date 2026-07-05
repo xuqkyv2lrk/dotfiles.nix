@@ -24,6 +24,13 @@
   outputs = { self, nixpkgs, home-manager, dotfiles-bootstrap, silentsddm, ... }@inputs:
   let
     overlay = final: prev: {
+      # afdko 5.0.1 exits non-zero autohinting Cantarell-VF.otf; ignore the failure
+      cantarell-fonts = prev.cantarell-fonts.overrideAttrs (old: {
+        postPatch = (old.postPatch or "") + ''
+          substituteInPlace scripts/make-variable-font.py \
+            --replace-fail 'subprocess.check_call(' 'subprocess.run('
+        '';
+      });
       ffmpeg-lh         = final.callPackage ./pkgs/ffmpeg-lh.nix {};
       iriun-webcam      = final.callPackage ./pkgs/iriun-webcam.nix {};
       river-tag-watcher = final.callPackage ./pkgs/river-tag-watcher {};
