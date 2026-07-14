@@ -9,7 +9,7 @@
 
   networking.hostName = "bifrost";
 
-  boot.kernelParams = [ "mem_sleep_default=s2idle" ];
+  boot.kernelParams = [ "mem_sleep_default=deep" ];
 
   # DRM device order for the 57" Samsung — swap card0/card1 if 7680x2160 doesn't appear
   environment.variables.WLR_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
