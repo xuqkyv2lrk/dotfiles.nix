@@ -78,6 +78,7 @@
     wget
     curl
     pciutils
+    glow
   ];
 
   fonts.enableDefaultPackages = true;
