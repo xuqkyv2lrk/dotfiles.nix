@@ -17,6 +17,42 @@ in
     slurp
     swappy
 
+    # Screen recording pipeline
+    wf-recorder
+    libnotify
+    xdg-utils
+    (pkgs.writeShellScriptBin "record-region" ''
+      set -euo pipefail
+
+      PID_FILE="''${XDG_RUNTIME_DIR:-/tmp}/wf-recorder.pid"
+      OUT_FILE="''${XDG_RUNTIME_DIR:-/tmp}/wf-recorder.out"
+      OUTPUT_DIR="$HOME/Videos/recordings"
+
+      if [[ -f "$PID_FILE" ]]; then
+        kill -SIGINT "$(cat "$PID_FILE")" 2>/dev/null || true
+        rm -f "$PID_FILE"
+        output="$(cat "$OUT_FILE")"
+        rm -f "$OUT_FILE"
+        (
+          action="$(notify-send -t 8000 -i video-x-generic \
+            --action="default=Open file" \
+            "Recording saved" "$(basename "$output")")"
+          [[ "$action" == "default" ]] && xdg-open "$output"
+        ) &
+      else
+        region="$(${pkgs.slurp}/bin/slurp)" || exit 0
+        mkdir -p "$OUTPUT_DIR"
+        output="$OUTPUT_DIR/$(date +%Y-%m-%d_%H-%M-%S).webm"
+        echo "$output" > "$OUT_FILE"
+        ${pkgs.wf-recorder}/bin/wf-recorder \
+          -g "$region" \
+          -c libvpx-vp9 -p lossless=1 \
+          -f "$output" &
+        echo $! > "$PID_FILE"
+        notify-send -t 2000 -i media-record "Recording started" "$region"
+      fi
+    '')
+
     # Clipboard manager
     cliphist
 
