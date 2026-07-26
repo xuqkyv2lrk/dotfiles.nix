@@ -79,6 +79,7 @@
     curl
     pciutils
     glow
+    koreader
   ];
 
   fonts.enableDefaultPackages = true;
