@@ -261,6 +261,8 @@ in
   # home.sessionVariables only reaches the login shell (hm-session-vars.sh).
   # Wayland-forcing vars must also live in environment.d so systemd user units
   # and all graphical apps (launched by niri, not the shell) inherit them.
+  xdg.configFile."koreader/plugins/cwasync.koplugin".source = ../files/cwasync.koplugin;
+
   xdg.configFile."environment.d/91-wayland-session.conf".text = ''
     GDK_BACKEND=wayland
     NIXOS_OZONE_WL=1
