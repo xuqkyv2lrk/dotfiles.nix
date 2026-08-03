@@ -83,8 +83,8 @@ in
     _1password-cli
     _1password-gui
     steam
+    steam-run
     stremio-linux-shell
-    plex-desktop
     jetbrains-toolbox
     # (nvidia drivers are unfree but managed in modules/nixos/hardware/nvidia.nix)
 
@@ -120,8 +120,11 @@ in
     ffmpeg
     ffmpeg-lh
     imagemagick
-    jellyfin-desktop
     feishin
+    plezy
+    sshfs
+    appimage-run
+    libmediainfo
 
     # rom management
     igir
@@ -240,6 +243,8 @@ in
   services.gpg-agent = {
     enable = true;
     pinentry.package = pkgs.pinentry-tty;
+    defaultCacheTtl = 28800;
+    maxCacheTtl = 28800;
   };
 
   programs.direnv = {
@@ -267,6 +272,9 @@ in
     GDK_BACKEND=wayland
     NIXOS_OZONE_WL=1
     MOZ_ENABLE_WAYLAND=1
+    # GTK4 GPU renderer (ngl/vulkan) crashes with LLVMpipe fallback on NVIDIA;
+    # use the stable GL renderer until the upstream bug is resolved.
+    GSK_RENDERER=gl
     PATH=$HOME/.local/share/JetBrains/Toolbox/scripts:$PATH
   '';
 
@@ -282,15 +290,22 @@ in
     mimeType = [ "x-scheme-handler/jetbrains" ];
   };
 
-  # Unset DISPLAY so jellyfin-desktop skips DisplayManagerX11 initialization,
-  # which crashes on wake-from-sleep when the XWayland connection is broken.
-  xdg.desktopEntries."org.jellyfin.JellyfinDesktop" = {
-    name = "Jellyfin";
-    comment = "Desktop client for Jellyfin";
-    exec = "env -u DISPLAY jellyfin-desktop";
-    icon = "org.jellyfin.JellyfinDesktop";
+  home.file.".local/bin/tinymediamanager" = {
+    executable = true;
+    text = ''
+      #!/bin/sh
+      exec env GDK_SCALE=3 _JAVA_OPTIONS="-Dsun.java2d.uiScale=2 -Dprism.vulkan=false -Dprism.order=es2,sw" \
+        LD_LIBRARY_PATH="${pkgs.libmediainfo}/lib:$LD_LIBRARY_PATH" steam-run \
+        "${config.home.homeDirectory}/Downloads/tinyMediaManager/tinyMediaManager" "$@"
+    '';
+  };
+
+  xdg.desktopEntries.tinymediamanager = {
+    name = "tinyMediaManager";
+    exec = "tinymediamanager";
+    icon = "${config.home.homeDirectory}/Downloads/tinyMediaManager/tmm.png";
     terminal = false;
-    categories = [ "AudioVideo" "Video" "Player" "TV" ];
+    categories = [ "AudioVideo" "Video" ];
   };
 
   services.udiskie = {

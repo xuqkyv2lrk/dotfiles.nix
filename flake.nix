@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-plezy.url = "github:nixos/nixpkgs/3b1d369027816004711eaec431c67d65f07d1f08";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -34,6 +35,7 @@
       ffmpeg-lh         = final.callPackage ./pkgs/ffmpeg-lh.nix {};
       iriun-webcam      = final.callPackage ./pkgs/iriun-webcam.nix {};
       river-tag-watcher = final.callPackage ./pkgs/river-tag-watcher {};
+      plezy             = inputs.nixpkgs-plezy.legacyPackages.${prev.system}.plezy;
     };
   in {
     nixosConfigurations.xiuhcoatl = nixpkgs.lib.nixosSystem {

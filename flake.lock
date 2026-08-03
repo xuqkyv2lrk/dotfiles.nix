@@ -52,11 +52,28 @@
         "type": "github"
       }
     },
+    "nixpkgs-plezy": {
+      "locked": {
+        "lastModified": 1785233922,
+        "narHash": "sha256-dWTz7to6l10mQE1cAbWgUprg9ruLUJ6UE0PkSewN28M=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "3b1d369027816004711eaec431c67d65f07d1f08",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "3b1d369027816004711eaec431c67d65f07d1f08",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "dotfiles-bootstrap": "dotfiles-bootstrap",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
+        "nixpkgs-plezy": "nixpkgs-plezy",
         "silentsddm": "silentsddm"
       }
     },
