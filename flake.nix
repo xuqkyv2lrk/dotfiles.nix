@@ -39,10 +39,9 @@
     };
   in {
     nixosConfigurations.xiuhcoatl = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
       specialArgs = { inherit inputs; };
       modules = [
-        { nixpkgs.overlays = [ overlay ]; }
+        { nixpkgs.overlays = [ overlay ]; nixpkgs.hostPlatform = "x86_64-linux"; }
         ./hosts/xiuhcoatl/configuration.nix
         ./modules/nixos/common.nix
         ./modules/nixos/nix.nix
@@ -60,10 +59,9 @@
     };
 
     nixosConfigurations.jorvik = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
       specialArgs = { inherit inputs; };
       modules = [
-        { nixpkgs.overlays = [ overlay ]; }
+        { nixpkgs.overlays = [ overlay ]; nixpkgs.hostPlatform = "x86_64-linux"; }
         ./hosts/jorvik/configuration.nix
         ./modules/nixos/common.nix
         ./modules/nixos/nix.nix
@@ -81,10 +79,9 @@
     };
 
     nixosConfigurations.bifrost = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
       specialArgs = { inherit inputs; };
       modules = [
-        { nixpkgs.overlays = [ overlay ]; }
+        { nixpkgs.overlays = [ overlay ]; nixpkgs.hostPlatform = "x86_64-linux"; }
         ./hosts/bifrost/configuration.nix
         ./modules/nixos/common.nix
         ./modules/nixos/nix.nix
@@ -103,10 +100,9 @@
 
 
     nixosConfigurations.sleipnir = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
       specialArgs = { inherit inputs; };
       modules = [
-        { nixpkgs.overlays = [ overlay ]; }
+        { nixpkgs.overlays = [ overlay ]; nixpkgs.hostPlatform = "x86_64-linux"; }
         ./hosts/sleipnir/configuration.nix
         ./modules/nixos/common.nix
         ./modules/nixos/nix.nix
