@@ -59,6 +59,13 @@
     "electron-39.8.10"
   ];
 
+  services.flatpak.enable = true;
+
+  environment.sessionVariables.XDG_DATA_DIRS = [
+    "/var/lib/flatpak/exports/share"
+    "\${HOME}/.local/share/flatpak/exports/share"
+  ];
+
   xdg.portal.config = {
     niri = {
       default = lib.mkForce [ "gtk" ];
