@@ -58,6 +58,7 @@ in
   xdg.configFile."fastfetch".source = lnCore "fastfetch/.config/fastfetch";
   xdg.configFile."foot".source      = lnCore "foot/.config/foot";
   xdg.configFile."mpd".source       = lnCore "mpd/.config/mpd";
+  xdg.configFile."mpv".source       = lnCore "mpv/.config/mpv";
   xdg.configFile."ncmpcpp".source   = lnCore "ncmpcpp/.config/ncmpcpp";
   xdg.configFile."ncspot".source    = lnCore "ncspot/.config/ncspot";
   xdg.configFile."ohmyposh".source  = lnCore "ohmyposh/.config/ohmyposh";
