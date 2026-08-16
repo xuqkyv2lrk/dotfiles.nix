@@ -30,6 +30,13 @@
         }
       ]
     '')
+    # Prevent ALSA device suspension so resume-from-pause doesn't
+    # trigger a reinit that causes brief audio cuts.
+    (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/11-no-suspend.conf" ''
+      wireplumber.settings = {
+        "suspend-timeout-seconds" = 0
+      }
+    '')
   ];
 
   services.pipewire.extraConfig.pipewire."92-low-latency" = {

@@ -40,6 +40,7 @@
     wayland-utils
     vulkan-tools
     iriun-webcam
+    davinci-resolve
   ];
 
   system.stateVersion = "25.11";
