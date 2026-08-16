@@ -30,12 +30,18 @@
         }
       ]
     '')
-    # Prevent ALSA device suspension so resume-from-pause doesn't
-    # trigger a reinit that causes brief audio cuts.
+    # Prevent ALSA output devices from being suspended when idle so that
+    # resume-from-pause doesn't trigger a hardware reinit and audio cut.
+    # Per-node update-props is more reliable than wireplumber.settings fragments.
     (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/11-no-suspend.conf" ''
-      wireplumber.settings = {
-        "suspend-timeout-seconds" = 0
-      }
+      monitor.alsa.rules = [
+        {
+          "matches": [ { "node.name": "~alsa_output.*" } ],
+          "actions": { "update-props": {
+            "session.suspend-timeout-seconds": 0
+          } }
+        }
+      ]
     '')
   ];
 
