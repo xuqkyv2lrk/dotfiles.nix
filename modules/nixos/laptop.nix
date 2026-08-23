@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 {
   services.logind.settings.Login = {
     HandleLidSwitch = "suspend";
@@ -6,8 +6,17 @@
     HandleLidSwitchDocked = "ignore";
   };
 
-  hardware.bluetooth.powerOnBoot = false;
+  hardware.bluetooth.powerOnBoot = lib.mkDefault false;
 
-  # Prefer S3 deep sleep; kernel falls back to s2idle if unavailable
-  boot.kernelParams = [ "mem_sleep_default=deep" ];
+  boot.kernelParams = [ "mem_sleep_default=s2idle" ];
+
+  powerManagement.powerDownCommands = ''
+    for hub in /sys/bus/usb/devices/usb*/power/wakeup; do
+      echo enabled > "$hub"
+    done
+  '';
+
+  powerManagement.resumeCommands = ''
+    touch /tmp/niri_just_resumed
+  '';
 }

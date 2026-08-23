@@ -20,6 +20,7 @@
   time.timeZone = lib.mkDefault "America/New_York";
 
   services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="usb", TEST=="power/wakeup", ATTR{power/wakeup}="enabled"
     ACTION=="add", SUBSYSTEM=="usb", TEST=="power/autosuspend", ATTR{power/autosuspend}="-1"
     ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="2109", ATTR{idProduct}=="4817", ATTR{power/control}="on"
     ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="2109", ATTR{idProduct}=="3817", ATTR{power/control}="on"

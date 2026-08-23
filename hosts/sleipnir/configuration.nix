@@ -5,6 +5,7 @@
     ../../modules/nixos/common.nix
     ../../modules/nixos/hardware/asus-rog.nix
     ../../modules/nixos/audio.nix
+    ../../modules/nixos/laptop.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
