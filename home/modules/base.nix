@@ -113,6 +113,7 @@ in
 
     # media
     mpv
+    vlc
     cava
     mpc
     ncmpcpp
@@ -238,6 +239,23 @@ in
     YAZI_PKG="${config.home.homeDirectory}/.config/yazi/package.toml"
     if [ -f "$YAZI_PKG" ]; then
       $DRY_RUN_CMD ${pkgs.yazi}/bin/ya pkg install || true
+    fi
+  '';
+
+  home.activation.downloadTinyMediaManager = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    TMM_DIR="${config.home.homeDirectory}/Downloads/tinyMediaManager"
+    TMM_BIN="$TMM_DIR/tinyMediaManager"
+    TMM_URL="https://release.tinymediamanager.org/v5/dist/tinyMediaManager-5.3.2-linux-amd64.tar.xz"
+
+    if [ ! -f "$TMM_BIN" ]; then
+      $DRY_RUN_CMD mkdir -p "$TMM_DIR"
+      tmp=$(${pkgs.coreutils}/bin/mktemp)
+      $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fL "$TMM_URL" -o "$tmp" || true
+      $DRY_RUN_CMD ${pkgs.gnutar}/bin/tar \
+        --use-compress-program="${pkgs.xz}/bin/xz" \
+        -x --strip-components=1 -C "$TMM_DIR" -f "$tmp" || true
+      $DRY_RUN_CMD rm -f "$tmp"
+      [ -f "$TMM_BIN" ] && $DRY_RUN_CMD chmod +x "$TMM_BIN"
     fi
   '';
 
