@@ -103,14 +103,6 @@
     liberation_ttf
   ];
 
-  fonts.fontconfig.localConf = ''
-    <?xml version="1.0"?>
-    <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
-    <fontconfig>
-      <dir>/home/x0xgo/.dotfiles.core/fonts/.fonts</dir>
-    </fontconfig>
-  '';
-
   fonts.fontconfig.defaultFonts = {
     sansSerif = [ "Noto Sans" ];
     serif     = [ "Noto Serif" ];

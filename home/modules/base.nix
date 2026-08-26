@@ -77,6 +77,14 @@ in
   home.file.".doom.d".source    = lnCore "doom/.doom.d";
   home.file.".gitconfig".source = lnCore "gitconfig/.gitconfig";
   home.file.".claude".source    = lnCore "claude/.claude";
+
+  xdg.configFile."fontconfig/conf.d/10-dotfiles-fonts.conf".text = ''
+    <?xml version="1.0"?>
+    <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+    <fontconfig>
+      <dir>${config.home.homeDirectory}/.dotfiles.core/fonts/.fonts</dir>
+    </fontconfig>
+  '';
   home.packages = with pkgs; [
     # unfree — audit list; each package requires allowUnfree in nixpkgs config
     claude-code
