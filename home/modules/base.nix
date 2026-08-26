@@ -77,13 +77,6 @@ in
   home.file.".doom.d".source    = lnCore "doom/.doom.d";
   home.file.".gitconfig".source = lnCore "gitconfig/.gitconfig";
   home.file.".claude".source    = lnCore "claude/.claude";
-  home.file.".fonts".source     = lnCore "fonts/.fonts";
-
-  home.activation.refreshFontCache = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    $DRY_RUN_CMD ${pkgs.fontconfig}/bin/fc-cache -f \
-      "${config.home.homeDirectory}/.fonts" || true
-  '';
-
   home.packages = with pkgs; [
     # unfree — audit list; each package requires allowUnfree in nixpkgs config
     claude-code
