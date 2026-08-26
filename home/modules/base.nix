@@ -24,8 +24,8 @@ in
 
   home.activation.doomSync = lib.hm.dag.entryAfter ["writeBoundary"] ''
     DOOM_BIN="${config.home.homeDirectory}/.emacs.d/bin/doom"
-    DOOM_LOCAL="${config.home.homeDirectory}/.emacs.d/.local"
-    if [ -x "$DOOM_BIN" ] && [ ! -d "$DOOM_LOCAL" ]; then
+    DOOM_PKGS="${config.home.homeDirectory}/.emacs.d/.local/straight"
+    if [ -x "$DOOM_BIN" ] && [ ! -d "$DOOM_PKGS" ]; then
       $DRY_RUN_CMD "$DOOM_BIN" sync || true
     fi
   '';
