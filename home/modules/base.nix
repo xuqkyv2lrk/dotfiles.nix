@@ -16,7 +16,7 @@ in
 
   home.activation.cloneDoomEmacs = lib.hm.dag.entryBefore ["writeBoundary"] ''
     if [ ! -d "${config.home.homeDirectory}/.emacs.d" ]; then
-      $DRY_RUN_CMD ${pkgs.git}/bin/git clone --depth 1 \
+      $DRY_RUN_CMD ${pkgs.git}/bin/git clone --depth 1 --branch v2.1.1 \
         https://github.com/doomemacs/doomemacs \
         "${config.home.homeDirectory}/.emacs.d" || true
     fi
@@ -77,6 +77,12 @@ in
   home.file.".doom.d".source    = lnCore "doom/.doom.d";
   home.file.".gitconfig".source = lnCore "gitconfig/.gitconfig";
   home.file.".claude".source    = lnCore "claude/.claude";
+  home.file.".fonts".source     = lnCore "fonts/.fonts";
+
+  home.activation.refreshFontCache = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    $DRY_RUN_CMD ${pkgs.fontconfig}/bin/fc-cache -f \
+      "${config.home.homeDirectory}/.fonts" || true
+  '';
 
   home.packages = with pkgs; [
     # unfree — audit list; each package requires allowUnfree in nixpkgs config
