@@ -51,14 +51,7 @@ in
 
   # dotfiles.core symlinks
   # mkOutOfStoreSymlink points directly to files on disk — edits are live, no rebuild needed
-  xdg.configFile."glow/catppuccin-mocha.json".source = lnCore "glow/.config/glow/catppuccin-mocha.json";
-  xdg.configFile."glow/glow.yml".text = ''
-    style: "${config.home.homeDirectory}/.config/glow/catppuccin-mocha.json"
-    mouse: false
-    pager: false
-    width: 80
-    all: false
-  '';
+  xdg.configFile."glow".source       = lnCore "glow/.config/glow";
   xdg.configFile."bat".source       = lnCore "bat/.config/bat";
   xdg.configFile."btop".source      = lnCore "btop/.config/btop";
   xdg.configFile."cava".source      = lnCore "cava/.config/cava";
