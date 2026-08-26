@@ -35,7 +35,7 @@
       ffmpeg-lh         = final.callPackage ./pkgs/ffmpeg-lh.nix {};
       iriun-webcam      = final.callPackage ./pkgs/iriun-webcam.nix {};
       river-tag-watcher = final.callPackage ./pkgs/river-tag-watcher {};
-      plezy             = inputs.nixpkgs-plezy.legacyPackages.${prev.system}.plezy;
+      plezy             = inputs.nixpkgs-plezy.legacyPackages.${prev.stdenv.hostPlatform.system}.plezy;
     };
   in {
     nixosConfigurations.xiuhcoatl = nixpkgs.lib.nixosSystem {
