@@ -2,13 +2,13 @@
 {
   services.logind.settings.Login = {
     HandleLidSwitch = "suspend";
-    HandleLidSwitchExternalPower = "suspend";
+    HandleLidSwitchExternalPower = "ignore";
     HandleLidSwitchDocked = "ignore";
   };
 
   hardware.bluetooth.powerOnBoot = lib.mkDefault false;
 
-  boot.kernelParams = [ "mem_sleep_default=s2idle" ];
+  boot.kernelParams = [ "mem_sleep_default=deep" ];
 
   powerManagement.powerDownCommands = ''
     for hub in /sys/bus/usb/devices/usb*/power/wakeup; do
