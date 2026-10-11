@@ -11,7 +11,6 @@ in
     dart-sass
     gnome-keyring
     gnome-themes-extra
-    gtk-engine-murrine
     hyprpicker
     nautilus
     papirus-icon-theme

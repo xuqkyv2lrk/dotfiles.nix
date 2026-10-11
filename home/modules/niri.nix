@@ -23,7 +23,6 @@ in
 
     # Theming
     gnome-themes-extra
-    gtk-engine-murrine
     catppuccin-gtk
     papirus-icon-theme
     sassc

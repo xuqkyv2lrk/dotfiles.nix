@@ -11,7 +11,6 @@ in
     dart-sass
     gnome-keyring
     gnome-themes-extra
-    gtk-engine-murrine
     kanshi          # output management / autorandr equivalent
     nautilus
     papirus-icon-theme
