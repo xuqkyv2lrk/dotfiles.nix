@@ -22,6 +22,7 @@ in
   ];
 
   home.pointerCursor = {
+    enable = true;
     gtk.enable = true;
     package = pkgs.catppuccin-cursors.mochaMauve;
     name = "catppuccin-mocha-mauve-cursors";
