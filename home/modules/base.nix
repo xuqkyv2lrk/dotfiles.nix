@@ -97,9 +97,6 @@ in
     jetbrains-toolbox
     # (nvidia drivers are unfree but managed in modules/nixos/hardware/nvidia.nix)
 
-    # genai
-    gemini-cli
-
     # browsers & mail
     firefox
     ungoogled-chromium
