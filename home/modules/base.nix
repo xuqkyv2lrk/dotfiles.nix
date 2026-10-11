@@ -30,6 +30,14 @@ in
     fi
   '';
 
+  # Native installer instead of pkgs.claude-code so it self-updates; runs via nix-ld
+  home.activation.installClaudeCode = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    if [ ! -x "${config.home.homeDirectory}/.local/bin/claude" ]; then
+      $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fsSL https://claude.ai/install.sh \
+        | $DRY_RUN_CMD ${pkgs.bash}/bin/bash || true
+    fi
+  '';
+
   home.activation.cloneDotfilesDi = lib.hm.dag.entryBefore ["writeBoundary"] ''
     if [ ! -d "${config.home.homeDirectory}/.dotfiles.di" ]; then
       $DRY_RUN_CMD ${pkgs.git}/bin/git clone --recurse-submodules \
@@ -88,7 +96,6 @@ in
   '';
   home.packages = with pkgs; [
     # unfree — audit list; each package requires allowUnfree in nixpkgs config
-    claude-code
     _1password-cli
     _1password-gui
     steam
