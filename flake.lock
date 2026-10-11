@@ -3,17 +3,17 @@
     "dotfiles-bootstrap": {
       "flake": false,
       "locked": {
-        "lastModified": 1782403260,
-        "narHash": "sha256-yoXSw28NfLbiCTX0hNvEoXef4rvC8NbLjFqc3W4Yhyw=",
-        "owner": "wd2nf8gqct",
-        "repo": "dotfiles.bootstrap",
-        "rev": "3a0676073da4db583bd2fd308e6c3c8bf6c56b0a",
-        "type": "gitlab"
+        "lastModified": 1791680191,
+        "narHash": "sha256-Mu574oLNUT6NJzeZozSUrPuRUR1HseCLZy9J6GAYajY=",
+        "ref": "refs/heads/main",
+        "rev": "fd84cf739b08c42fbc3c49ce036ade5b19415bb6",
+        "revCount": 95,
+        "type": "git",
+        "url": "https://gitlab.com/wd2nf8gqct/dotfiles.bootstrap.git"
       },
       "original": {
-        "owner": "wd2nf8gqct",
-        "repo": "dotfiles.bootstrap",
-        "type": "gitlab"
+        "type": "git",
+        "url": "https://gitlab.com/wd2nf8gqct/dotfiles.bootstrap.git"
       }
     },
     "home-manager": {
@@ -23,11 +23,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1783024095,
-        "narHash": "sha256-oE+TNK98Pl7nHW4VU1oBvUKD5JR45U+py/NJmLoTNHI=",
+        "lastModified": 1791642191,
+        "narHash": "sha256-0bK0A59rVUn1SRZzo4cNi4VSqAe7vR1gL2/MZl53Frw=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "a4d410db95a6416d1008049330bd86b85b5db45a",
+        "rev": "c58f54c733a7894d84fa2fdff26cc12088c4b78c",
         "type": "github"
       },
       "original": {
@@ -38,11 +38,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1782723713,
-        "narHash": "sha256-oPXCU/SSUokcGaJREHibG1CBX3+s/W7orDWQOZDsEeQ=",
+        "lastModified": 1791594108,
+        "narHash": "sha256-XK4KceonkwD8LuMAt/vNrz982mXJM5jeHAxMwsUXXAQ=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "b5aa0fbd538984f6e3d201be0005b4463d8b09f8",
+        "rev": "6510408d147d8c5e6d76043e899e9251756f6a75",
         "type": "github"
       },
       "original": {
@@ -84,11 +84,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1782837720,
-        "narHash": "sha256-6t35AM4lhK7kQTH103YMICyHzMofZMgs+xIJ9kgMZ4I=",
+        "lastModified": 1790785664,
+        "narHash": "sha256-TNGAElCnjIA4OzTtn0VuCk6pXKd92kBkz+5NjHLwbkM=",
         "owner": "uiriansan",
         "repo": "SilentSDDM",
-        "rev": "3b55533612bc66a225b8babc6abfc5f24d04f4ac",
+        "rev": "d32ebc060ee0f832cf2a2ea4c91d96582d3f31ce",
         "type": "github"
       },
       "original": {

@@ -11,7 +11,7 @@
     };
 
     dotfiles-bootstrap = {
-      url = "gitlab:wd2nf8gqct/dotfiles.bootstrap";
+      url = "git+https://gitlab.com/wd2nf8gqct/dotfiles.bootstrap.git";
       flake = false;
     };
 
