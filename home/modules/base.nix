@@ -94,7 +94,6 @@ in
     steam
     steam-run
     stremio-linux-shell
-    jetbrains-toolbox
     # (nvidia drivers are unfree but managed in modules/nixos/hardware/nvidia.nix)
 
     # browsers & mail
@@ -299,20 +298,10 @@ in
     # GTK4 GPU renderer (ngl/vulkan) crashes with LLVMpipe fallback on NVIDIA;
     # use the stable GL renderer until the upstream bug is resolved.
     GSK_RENDERER=gl
-    PATH=$HOME/.local/share/JetBrains/Toolbox/scripts:$PATH
   '';
 
   # Tell xdg-desktop-portal (and apps like Firefox) to use dark mode
   dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
-
-  xdg.desktopEntries."jetbrains-toolbox" = {
-    name = "JetBrains Toolbox";
-    exec = "jetbrains-toolbox %U";
-    icon = "jetbrains-toolbox";
-    terminal = false;
-    categories = [ "Development" ];
-    mimeType = [ "x-scheme-handler/jetbrains" ];
-  };
 
   home.file.".local/bin/tinymediamanager" = {
     executable = true;
