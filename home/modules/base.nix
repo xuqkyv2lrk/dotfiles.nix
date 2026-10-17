@@ -125,6 +125,7 @@ in
     # media
     mpv
     vlc
+    audacity
     cava
     mpc
     ncmpcpp
