@@ -41,6 +41,19 @@
     drivers = with pkgs; [ gutenprint gutenprintBin cnijfilter2 cups-filters ];
   };
 
+  # The auto-discovered driverless queue (implicitclass) feeds this printer blank
+  # pages; the Gutenprint queue prints correctly. Model string tracks the nixpkgs
+  # gutenprint version (check with `lpinfo -m | grep iP8700` if it stops matching).
+  hardware.printers = {
+    ensurePrinters = [{
+      name = "Canon_iP8700_gp";
+      deviceUri = "dnssd://Canon%20iP8700%20series._ipp._tcp.local/?uuid=00000000-0000-1000-8000-40F8DF2BC837";
+      model = "gutenprint.5.3://bjc-iP8700-series/expert";
+      ppdOptions.PageSize = "Letter";
+    }];
+    ensureDefaultPrinter = "Canon_iP8700_gp";
+  };
+
   services.avahi = {
     enable = true;
     nssmdns4 = true;
