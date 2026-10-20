@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 {
   services.asusd.enable = true;
 
@@ -7,13 +7,8 @@
   services.supergfxd.enable = true;
   services.supergfxd.settings.mode = "Hybrid";
 
-  services.power-profiles-daemon.enable = true;
-
-  # asusd maps the power-profiles-daemon profile onto the ACPI platform_profile.
-  services.udev.extraRules = ''
-    SUBSYSTEM=="power_supply", KERNEL=="AC0", ATTR{online}=="1", RUN+="${pkgs.power-profiles-daemon}/bin/powerprofilesctl set performance"
-    SUBSYSTEM=="power_supply", KERNEL=="AC0", ATTR{online}=="0", RUN+="${pkgs.power-profiles-daemon}/bin/powerprofilesctl set power-saver"
-  '';
+  # asusd maps the power-profiles-daemon profile (enabled in laptop.nix) onto
+  # the ACPI platform_profile.
 
   # The shared niri config pins rendering to renderD128, which is the dGPU here and
   # keeps it awake in Hybrid mode. Point the gitignored local.kdl at the boot_vga
