@@ -157,6 +157,7 @@ in
     fd
     file
     jq
+    lm_sensors
     p7zip
     zstd
     ripgrep
