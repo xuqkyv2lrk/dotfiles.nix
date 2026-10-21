@@ -34,7 +34,7 @@ in
         output="$(cat "$OUT_FILE")"
         rm -f "$OUT_FILE"
         (
-          action="$(notify-send -t 8000 -i video-x-generic \
+          action="$(notify-send -t 4000 -i video-x-generic \
             --action="default=Open file" \
             "Recording saved" "$(basename "$output")")"
           [[ "$action" == "default" ]] && xdg-open "$output"
@@ -49,7 +49,7 @@ in
           -c libvpx-vp9 -p lossless=1 \
           -f "$output" &
         echo $! > "$PID_FILE"
-        notify-send -t 2000 -i media-record "Recording started" "$region"
+        notify-send -t 4000 -i media-record "Recording started" "$region"
       fi
     '')
 
