@@ -5,7 +5,15 @@
   boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
   boot.kernelParams = lib.mkDefault [ "usbcore.autosuspend=-1" ];
   boot.kernelModules = [ "v4l2loopback" ];
-  boot.extraModulePackages = [ config.boot.kernelPackages.v4l2loopback ];
+  # The module's depmod index files collide with the kernel's own in the modules buildEnv on
+  # kernel 7.3 (modules.alias), so drop them.
+  boot.extraModulePackages = [
+    (config.boot.kernelPackages.v4l2loopback.overrideAttrs (old: {
+      postInstall = (old.postInstall or "") + ''
+        find $out/lib/modules -maxdepth 2 -name 'modules.*' -delete
+      '';
+    }))
+  ];
   boot.extraModprobeConfig = ''
     options v4l2loopback exclusive_caps=1 video_nr=2 card_label="Iriun Webcam"
   '';
