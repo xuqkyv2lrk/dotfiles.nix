@@ -125,7 +125,8 @@ in
     # media
     mpv
     vlc
-    audacity
+    # audacity 4.0.0 fails to build on nixpkgs 02c087f (ambiguous 'Type' in its QML cache); restore once fixed
+    # audacity
     cava
     mpc
     ncmpcpp
