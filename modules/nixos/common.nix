@@ -45,13 +45,13 @@
   # pages; the Gutenprint queue prints correctly. Model string tracks the nixpkgs
   # gutenprint version (check with `lpinfo -m | grep iP8700` if it stops matching).
   hardware.printers = {
-    ensurePrinters = [{
+    ensurePrinters = lib.mkDefault [{
       name = "Canon_iP8700_gp";
       deviceUri = "dnssd://Canon%20iP8700%20series._ipp._tcp.local/?uuid=00000000-0000-1000-8000-40F8DF2BC837";
       model = "gutenprint.5.3://bjc-iP8700-series/expert";
       ppdOptions.PageSize = "Letter";
     }];
-    ensureDefaultPrinter = "Canon_iP8700_gp";
+    ensureDefaultPrinter = lib.mkDefault "Canon_iP8700_gp";
   };
 
   services.avahi = {
