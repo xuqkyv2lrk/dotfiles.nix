@@ -46,7 +46,6 @@
         ./modules/nixos/common.nix
         ./modules/nixos/nix.nix
         ./modules/nixos/sddm.nix
-        ./modules/nixos/noctalia.nix
         silentsddm.nixosModules.default
         home-manager.nixosModules.home-manager
         {
@@ -66,7 +65,6 @@
         ./modules/nixos/common.nix
         ./modules/nixos/nix.nix
         ./modules/nixos/sddm.nix
-        ./modules/nixos/noctalia.nix
         silentsddm.nixosModules.default
         home-manager.nixosModules.home-manager
         {
@@ -86,7 +84,6 @@
         ./modules/nixos/common.nix
         ./modules/nixos/nix.nix
         ./modules/nixos/sddm.nix
-        ./modules/nixos/noctalia.nix
         silentsddm.nixosModules.default
         home-manager.nixosModules.home-manager
         {
@@ -107,7 +104,6 @@
         ./modules/nixos/common.nix
         ./modules/nixos/nix.nix
         ./modules/nixos/sddm.nix
-        ./modules/nixos/noctalia.nix
         silentsddm.nixosModules.default
         home-manager.nixosModules.home-manager
         {

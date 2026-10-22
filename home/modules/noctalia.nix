@@ -4,15 +4,14 @@ let
   lnDi = path: config.lib.file.mkOutOfStoreSymlink "${dotfilesDi}/${path}";
 in
 {
-  # Noctalia (Quickshell-based shell layer) — shared across all WMs
+  # Noctalia v5 — shared across all WMs
   home.packages = with pkgs; [
-    noctalia-qs
+    noctalia
 
-    # Media & audio controls invoked by Noctalia
-    pamixer
+    # Seek keys in sway and the helper services below
     playerctl
 
-    # Screenshot pipeline invoked by Noctalia
+    # Active-window screenshots in hyprland and sway, and region recording
     grim
     slurp
     swappy
@@ -53,12 +52,7 @@ in
       fi
     '')
 
-    # Clipboard manager
-    cliphist
-
-    # System controls invoked by Noctalia
     brightnessctl
-    wlsunset
   ];
 
   # Polls playerctl every 5 s; enables noctalia DND while Plex is playing
@@ -71,17 +65,14 @@ in
       Restart = "on-failure";
       RestartSec = "5";
       ExecStart = toString (pkgs.writeShellScript "noctalia-plex-dnd" ''
-        qs_shell="$HOME/.dotfiles.di/quickshell/noctalia-shell"
         dnd_enabled=false
         while true; do
           status="$(${pkgs.playerctl}/bin/playerctl --player=%plex% status 2>/dev/null || printf "Stopped")"
           if [[ "$status" == "Playing" ]] && [[ "$dnd_enabled" == "false" ]]; then
-            ${pkgs.noctalia-qs}/bin/quickshell ipc --any-display \
-              -p "$qs_shell" call notifications enableDND 2>/dev/null || true
+            ${pkgs.noctalia}/bin/noctalia msg notification-dnd-set on 2>/dev/null || true
             dnd_enabled=true
           elif [[ "$status" != "Playing" ]] && [[ "$dnd_enabled" == "true" ]]; then
-            ${pkgs.noctalia-qs}/bin/quickshell ipc --any-display \
-              -p "$qs_shell" call notifications disableDND 2>/dev/null || true
+            ${pkgs.noctalia}/bin/noctalia msg notification-dnd-set off 2>/dev/null || true
             dnd_enabled=false
           fi
           sleep 5
@@ -103,17 +94,14 @@ in
       Restart = "on-failure";
       RestartSec = "5";
       ExecStart = toString (pkgs.writeShellScript "noctalia-media-inhibit" ''
-        qs_shell="$HOME/.dotfiles.di/quickshell/noctalia-shell"
         inhibited=false
         while true; do
           status="$(${pkgs.playerctl}/bin/playerctl status 2>/dev/null || printf "Stopped")"
           if [[ "$status" == "Playing" ]] && [[ "$inhibited" == "false" ]]; then
-            ${pkgs.noctalia-qs}/bin/quickshell ipc --any-display \
-              -p "$qs_shell" call idleInhibitor enableSilent 2>/dev/null || true
+            ${pkgs.noctalia}/bin/noctalia msg caffeine-enable 2>/dev/null || true
             inhibited=true
           elif [[ "$status" != "Playing" ]] && [[ "$inhibited" == "true" ]]; then
-            ${pkgs.noctalia-qs}/bin/quickshell ipc --any-display \
-              -p "$qs_shell" call idleInhibitor disableSilent 2>/dev/null || true
+            ${pkgs.noctalia}/bin/noctalia msg caffeine-disable 2>/dev/null || true
             inhibited=false
           fi
           sleep 5
@@ -133,7 +121,6 @@ in
     Exec=${pkgs.coreutils}/bin/false
   '';
 
-  # Noctalia user configuration and shell
-  xdg.configFile."noctalia".source    = lnDi "quickshell/noctalia/.config/noctalia";
-  xdg.configFile."quickshell".source  = lnDi "quickshell/noctalia-shell";
+  # Noctalia user configuration
+  xdg.configFile."noctalia".source = lnDi "noctalia/noctalia/.config/noctalia";
 }
