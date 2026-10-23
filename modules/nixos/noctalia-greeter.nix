@@ -1,6 +1,22 @@
-{ ... }:
+{ pkgs, config, ... }:
 {
   services.seatd.enable = true;
+
+  # niri-session runs `systemctl --user import-environment` without names, which systemd 262
+  # warns about on the console. greetd runs the session on the VT (SDDM hid it in the journal),
+  # so send the session output to the journal instead.
+  services.displayManager.sessionPackages = [
+    ((pkgs.writeTextDir "share/wayland-sessions/niri-journal.desktop" ''
+      [Desktop Entry]
+      Name=Niri (journal)
+      Comment=A scrollable-tiling Wayland compositor
+      Exec=${pkgs.writeShellScript "niri-session-journal" ''
+        exec ${pkgs.systemd}/bin/systemd-cat -t niri-session ${config.programs.niri.package}/bin/niri-session
+      ''}
+      Type=Application
+      DesktopNames=niri
+    '').overrideAttrs (_: { passthru.providedSessions = [ "niri-journal" ]; }))
+  ];
 
   services.displayManager.noctalia-greeter = {
     enable = true;
