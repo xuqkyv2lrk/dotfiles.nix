@@ -69,7 +69,7 @@ in
   xdg.configFile."mpd".source       = lnCore "mpd/.config/mpd";
   xdg.configFile."mpv".source       = lnCore "mpv/.config/mpv";
   xdg.configFile."ncmpcpp".source   = lnCore "ncmpcpp/.config/ncmpcpp";
-  xdg.configFile."ncspot".source    = lnCore "ncspot/.config/ncspot";
+  xdg.configFile."spotatui".source   = lnCore "spotatui/.config/spotatui";
   xdg.configFile."ohmyposh".source  = lnCore "ohmyposh/.config/ohmyposh";
   xdg.configFile."yazi".source      = lnCore "yazi/.config/yazi";
   xdg.configFile."zsh".source       = lnCore "zsh/.config/zsh";
@@ -130,7 +130,7 @@ in
     cava
     mpc
     ncmpcpp
-    ncspot
+    spotatui
     yt-dlp
     ffmpeg
     ffmpeg-lh
