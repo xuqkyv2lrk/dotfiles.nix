@@ -103,8 +103,7 @@
         ./hosts/sleipnir/configuration.nix
         ./modules/nixos/common.nix
         ./modules/nixos/nix.nix
-        ./modules/nixos/sddm.nix
-        silentsddm.nixosModules.default
+        ./modules/nixos/noctalia-greeter.nix
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs   = true;
