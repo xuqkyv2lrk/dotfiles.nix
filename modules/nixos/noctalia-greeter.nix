@@ -29,6 +29,7 @@
       cursor.size = 24;
       appearance = {
         scheme = "Synced";
+        hide_logo = true;
         theme_mode = "dark";
         password_style = "random";
         # Catppuccin Mocha with the lavender primary, the same palette as the shell.
