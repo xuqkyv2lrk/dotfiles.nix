@@ -4,19 +4,21 @@
 
   # niri-session runs `systemctl --user import-environment` without names, which systemd 262
   # warns about on the console. greetd runs the session on the VT (SDDM hid it in the journal),
-  # so send the session output to the journal instead.
-  services.displayManager.sessionPackages = [
-    ((pkgs.writeTextDir "share/wayland-sessions/niri-journal.desktop" ''
-      [Desktop Entry]
-      Name=Niri (journal)
-      Comment=A scrollable-tiling Wayland compositor
-      Exec=${pkgs.writeShellScript "niri-session-journal" ''
-        exec ${pkgs.systemd}/bin/systemd-cat -t niri-session ${config.programs.niri.package}/bin/niri-session
-      ''}
-      Type=Application
-      DesktopNames=niri
-    '').overrideAttrs (_: { passthru.providedSessions = [ "niri-journal" ]; }))
-  ];
+  # so the Niri session entry sends the session output to the journal instead.
+  programs.niri.package = pkgs.symlinkJoin {
+    name = "niri-${pkgs.niri.version}-journal-session";
+    paths = [ pkgs.niri ];
+    postBuild = ''
+      cp --remove-destination ${pkgs.niri}/share/wayland-sessions/niri.desktop \
+        $out/share/wayland-sessions/niri.desktop
+      chmod u+w $out/share/wayland-sessions/niri.desktop
+      substituteInPlace $out/share/wayland-sessions/niri.desktop \
+        --replace-fail "Exec=niri-session" "Exec=${pkgs.writeShellScript "niri-session-journal" ''
+          exec ${pkgs.systemd}/bin/systemd-cat -t niri-session ${pkgs.niri}/bin/niri-session
+        ''}"
+    '';
+    passthru = pkgs.niri.passthru // { providedSessions = [ "niri" ]; };
+  };
 
   services.displayManager.noctalia-greeter = {
     enable = true;
