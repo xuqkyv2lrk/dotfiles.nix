@@ -123,4 +123,9 @@ in
 
   # Noctalia user configuration
   xdg.configFile."noctalia".source = lnDi "noctalia/noctalia/.config/noctalia";
+
+  # Settings window changes: v5 saves them to the state file, which is linked into the repo so
+  # every machine shares them.
+  home.file.".local/state/noctalia/settings.toml".source =
+    lnDi "noctalia/noctalia/.local/state/noctalia/settings.toml";
 }
