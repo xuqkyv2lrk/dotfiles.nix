@@ -113,6 +113,31 @@ in
     };
   };
 
+  # Re-centers the bar logo when the clock text width changes (day and month names). Mirrors the
+  # unit files the bootstrap stows from dotfiles.di for non-nix machines.
+  systemd.user.services.noctalia-center-logo = {
+    Unit.Description = "Center the Noctalia bar logo";
+    Service = {
+      Type = "oneshot";
+      Environment = [
+        "PATH=${lib.makeBinPath (with pkgs; [ jq grim imagemagick noctalia niri coreutils gawk gnused ])}:/run/current-system/sw/bin"
+      ];
+      ExecStart = "%h/.local/bin/noctalia_center_logo.sh";
+    };
+  };
+
+  systemd.user.timers.noctalia-center-logo = {
+    Unit.Description = "Re-center the Noctalia bar logo";
+    Timer = {
+      OnActiveSec = 20;
+      OnCalendar = "*-*-* *:00:30";
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  home.file.".local/bin/noctalia_center_logo.sh".source =
+    lnDi "noctalia/noctalia/.local/bin/noctalia_center_logo.sh";
+
   # Shadow the tracker3 D-Bus service file so nautilus doesn't block on a
   # 25-second activation timeout in non-GNOME sessions where tracker never runs.
   xdg.dataFile."dbus-1/services/org.freedesktop.Tracker3.Miner.Files.service".text = ''
