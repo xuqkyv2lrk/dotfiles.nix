@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, config, lib, ... }:
 {
   services.seatd.enable = true;
 
@@ -21,7 +21,7 @@
   services.displayManager.noctalia-greeter = {
     enable = true;
     # Lets the shell push the wallpaper and palette without an admin prompt.
-    passwordlessSyncUsers = [ "x0xgo" ];
+    passwordlessSyncUsers = lib.attrNames (lib.filterAttrs (_: u: u.isNormalUser) config.users.users);
     settings = {
       keyboard.layout = "us";
       cursor.size = 24;
