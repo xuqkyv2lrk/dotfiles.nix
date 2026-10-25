@@ -4,6 +4,7 @@
     ./modules/base.nix
     ./modules/noctalia.nix
     ./modules/niri.nix
+    ./modules/umbriel.nix
   ];
 
   home.username      = "x0xgo";
