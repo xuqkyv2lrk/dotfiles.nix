@@ -40,6 +40,17 @@
   programs.river-classic.enable = false;
   programs.umbriel.enable = true;
 
+  # Stable names for the GPUs: card numbers can change between boots, and the by-path names
+  # contain colons, which WLR_DRM_DEVICES uses as its separator
+  services.udev.extraRules = ''
+    SUBSYSTEM=="drm", KERNEL=="card[0-9]*", ENV{ID_PATH}=="pci-0000:03:00.0", SYMLINK+="dri/dgpu"
+    SUBSYSTEM=="drm", KERNEL=="card[0-9]*", ENV{ID_PATH}=="pci-0000:07:00.0", SYMLINK+="dri/igpu"
+  '';
+
+  # Umbriel renders on the RX 6700S; the 680M drives both panels and only scans out the
+  # copied frames. The first device listed is the renderer. niri stays on the 680M.
+  systemd.user.services.umbriel.environment.WLR_DRM_DEVICES = "/dev/dri/dgpu:/dev/dri/igpu";
+
   virtualisation.docker    = { enable = true; enableOnBoot = true; };
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
