@@ -37,6 +37,7 @@
   ];
 
   programs.niri.enable = true;
+  programs.river-classic.enable = false;
 
   virtualisation.docker    = { enable = true; enableOnBoot = true; };
   virtualisation.libvirtd.enable = true;
