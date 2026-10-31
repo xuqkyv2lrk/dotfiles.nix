@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -47,9 +47,21 @@
     SUBSYSTEM=="drm", KERNEL=="card[0-9]*", ENV{ID_PATH}=="pci-0000:07:00.0", SYMLINK+="dri/igpu"
   '';
 
-  # Umbriel renders on the RX 6700S; the 680M drives both panels and only scans out the
-  # copied frames. The first device listed is the renderer. niri stays on the 680M.
-  systemd.user.services.umbriel.environment.WLR_DRM_DEVICES = "/dev/dri/dgpu:/dev/dri/igpu";
+  # Umbriel renders on the RX 6700S only when the G95NC (7680x2160) is plugged in at login;
+  # otherwise wlroots defaults to the boot GPU (680M), like niri. The renderer is fixed at
+  # startup, so plugging the monitor in mid-session needs a fresh login to switch.
+  systemd.user.services.umbriel.serviceConfig.ExecStart = [
+    ""
+    (pkgs.writeShellScript "umbriel-gpu-select" ''
+      for modes in /sys/class/drm/card*-*/modes; do
+        if ${pkgs.gnugrep}/bin/grep -qs '^7680x2160' "$modes"; then
+          export WLR_DRM_DEVICES=/dev/dri/dgpu:/dev/dri/igpu
+          break
+        fi
+      done
+      exec ${config.programs.umbriel.package}/bin/umbriel "$@"
+    '')
+  ];
 
   virtualisation.docker    = { enable = true; enableOnBoot = true; };
   virtualisation.libvirtd.enable = true;
