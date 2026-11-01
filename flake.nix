@@ -113,5 +113,13 @@
       ];
     };
 
+    nixosConfigurations.idavoll = nixpkgs.lib.nixosSystem {
+      specialArgs = { inherit inputs; };
+      modules = [
+        { nixpkgs.overlays = [ overlay ]; nixpkgs.hostPlatform = "x86_64-linux"; }
+        ./hosts/idavoll/configuration.nix
+        ./modules/nixos/nix.nix
+      ];
+    };
   };
 }
