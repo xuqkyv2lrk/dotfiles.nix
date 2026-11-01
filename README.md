@@ -37,6 +37,10 @@ Niri, zsh, btrfs scrub, printing with Canon drivers, Avahi for network printer d
 and the base package set. All of these are set with `lib.mkDefault`, so any host config
 can override them with a plain assignment — no `lib.mkForce` needed.
 
+Appliance hosts are the exception. `idavoll`, the couch emulation box, boots straight
+into ES-DE and has no desktop, so it skips `common.nix` (and home-manager) and
+declares its few needs directly.
+
 Host configs (`hosts/<hostname>/configuration.nix`) declare only what is unique to that
 machine: `networking.hostName`, the user account, `system.stateVersion`, and any
 hardware-specific overrides or extra services.
@@ -182,10 +186,12 @@ scaffolds `hosts/<hostname>/configuration.nix`, wires it into `flake.nix`, runs
 `nixos-install`, and copies the repo into the installed system:
 
 ```bash
-git clone https://gitlab.com/wd2nf8gqct/dotfiles.bootstrap.git /tmp/dotfiles.bootstrap
-cd /tmp/dotfiles.bootstrap
-./bootstrap.sh
+bash <(curl -fsSL dots.ethi.cz/boot)
 ```
+
+Run it as root (`sudo -i` first). Bootstrap clones itself and this repo, and fetches
+git through `nix-shell` if the installer lacks it. It also handles hosts that are
+already declared: it skips the scaffold, copies in the hardware config, and installs.
 
 **Reinstall on an existing host** (hostname already declared in `flake.nix`) — skip
 bootstrap and install directly:
