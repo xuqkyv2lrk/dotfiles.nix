@@ -112,6 +112,8 @@ in
         SystemStatusWifi = false;
         SystemStatusCellular = false;
         SystemStatusBattery = false;
+        # Quitting ES-DE only relaunches it here, so expose Reboot and Power Off instead
+        ShowQuitMenu = true;
       };
     };
 
