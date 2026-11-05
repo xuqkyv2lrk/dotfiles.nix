@@ -34,26 +34,34 @@ let
     ThemeTransitions = cfg.theme.transitions;
   };
 
-  # ES-DE rewrites es_settings.xml itself, so only the theme keys are set, and only while
+  pinnedSettings = themeSettings // cfg.settings;
+
+  # es_settings.xml types each entry: <bool .../> for true/false, <string .../> otherwise
+  setKeyLine = k: v:
+    if builtins.isBool v
+    then "set_key bool ${k} ${lib.boolToString v}"
+    else "set_key string ${k} ${lib.escapeShellArg v}";
+
+  # ES-DE rewrites es_settings.xml itself, so only the pinned keys are set, and only while
   # ES-DE is not running: anything else changed in its menus persists
-  apply-theme = pkgs.writeShellScript "esde-apply-theme" ''
+  apply-settings = pkgs.writeShellScript "esde-apply-settings" ''
     settings="${home}/ES-DE/settings/es_settings.xml"
     mkdir -p "$(dirname "$settings")"
     [ -s "$settings" ] || printf '<?xml version="1.0"?>\n' > "$settings"
     set_key() {
-      if ${pkgs.gnugrep}/bin/grep -q "<string name=\"$1\" " "$settings"; then
-        ${pkgs.gnused}/bin/sed -i "s|<string name=\"$1\" value=\"[^\"]*\" />|<string name=\"$1\" value=\"$2\" />|" "$settings"
+      if ${pkgs.gnugrep}/bin/grep -q "<$1 name=\"$2\" " "$settings"; then
+        ${pkgs.gnused}/bin/sed -i "s|<$1 name=\"$2\" value=\"[^\"]*\" />|<$1 name=\"$2\" value=\"$3\" />|" "$settings"
       else
-        printf '<string name="%s" value="%s" />\n' "$1" "$2" >> "$settings"
+        printf '<%s name="%s" value="%s" />\n' "$1" "$2" "$3" >> "$settings"
       fi
     }
-    ${lib.concatStringsSep "\n" (lib.mapAttrsToList (k: v: "set_key ${k} ${lib.escapeShellArg v}") themeSettings)}
+    ${lib.concatStringsSep "\n" (lib.mapAttrsToList setKeyLine pinnedSettings)}
   '';
 
   # Fullscreen gamescope session; quitting ES-DE relaunches it, like Kodi on bragi
   couch-session = pkgs.writeShellScript "couch-session" ''
     exec ${pkgs.gamescope}/bin/gamescope -f -- ${pkgs.bash}/bin/bash -c \
-      'while true; do ${apply-theme}; ${es-de}/bin/es-de; sleep 1; done'
+      'while true; do ${apply-settings}; ${es-de}/bin/es-de; sleep 1; done'
   '';
 
   # The RP6 exports its whole DuckStation user directory; only these parts are shared
@@ -93,6 +101,18 @@ in
       fontSize = lib.mkOption { type = lib.types.str; default = "small"; };
       aspectRatio = lib.mkOption { type = lib.types.str; default = "automatic"; };
       transitions = lib.mkOption { type = lib.types.str; default = "automatic"; };
+    };
+
+    settings = lib.mkOption {
+      type = with lib.types; attrsOf (either bool str);
+      description = "Extra es_settings.xml keys pinned before each ES-DE start.";
+      # A wired console has no battery or modem, and the network icons are noise on a TV
+      default = {
+        SystemStatusBluetooth = false;
+        SystemStatusWifi = false;
+        SystemStatusCellular = false;
+        SystemStatusBattery = false;
+      };
     };
 
     saveSync.hub = {
