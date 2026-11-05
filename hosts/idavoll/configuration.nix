@@ -91,7 +91,6 @@ in
     enable = true;
     settings.PasswordAuthentication = false;
   };
-  services.tailscale.enable = true;
 
   services.syncthing = {
     enable = true;
