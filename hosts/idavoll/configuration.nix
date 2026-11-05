@@ -29,6 +29,27 @@ in
     };
   };
 
+  # RAM and the B550-I's Aura lighting, both reached over the AMD SMBus
+  services.hardware.openrgb = {
+    enable = true;
+    motherboard = "amd";
+  };
+
+  # Static STRAT0S violet on every device; #6800AA rather than the palette's #BB77DD,
+  # which washes out to near-white on LEDs (same choice as bragi's front LED)
+  systemd.services.openrgb-strat0s = {
+    description = "Set all RGB devices to STRAT0S violet";
+    after = [ "openrgb.service" ];
+    requires = [ "openrgb.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      # The server needs a moment to finish detecting devices after it starts
+      ExecStartPre = "${pkgs.coreutils}/bin/sleep 10";
+      ExecStart = "${pkgs.openrgb}/bin/openrgb --client 127.0.0.1:6742 --mode static --color 6800AA";
+    };
+  };
+
   services.openssh = {
     enable = true;
     settings.PasswordAuthentication = false;
