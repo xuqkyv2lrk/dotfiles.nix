@@ -126,6 +126,12 @@ in
   };
 
   systemd.tmpfiles.rules = [
+    # Declared with the user as owner: tmpfiles would otherwise create the link's parents
+    # as root, and Syncthing could not create ~/.local/state
+    "d ${home}/.local 0755 ${user} users -"
+    "d ${home}/.local/share 0755 ${user} users -"
+    "d ${home}/.local/state 0755 ${user} users -"
+    "d ${home}/.local/share/duckstation 0755 ${user} users -"
     "L+ ${home}/.local/share/duckstation/.stignore - - - - ${duckstation-stignore}"
     # The shell is configured system-wide; an empty .zshrc stops zsh-newuser-install
     "f ${home}/.zshrc 0644 ${user} users -"
