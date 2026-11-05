@@ -36,7 +36,8 @@ let
     *
   '';
 
-  home = "/home/x0xgo";
+  user = "s1uyx";
+  home = "/home/${user}";
 in
 {
   imports = [
@@ -74,7 +75,7 @@ in
     enable = true;
     settings.default_session = {
       command = "${couch-session}";
-      user = "x0xgo";
+      inherit user;
     };
   };
 
@@ -94,7 +95,7 @@ in
 
   services.syncthing = {
     enable = true;
-    user = "x0xgo";
+    inherit user;
     dataDir = home;
     configDir = "${home}/.local/state/syncthing";
     openDefaultPorts = true;
@@ -130,7 +131,7 @@ in
 
   nixpkgs.config.allowUnfree = true;
 
-  users.users.x0xgo = {
+  users.users.${user} = {
     isNormalUser = true;
     extraGroups  = [ "wheel" "networkmanager" "video" "audio" "input" ];
     shell        = pkgs.zsh;
