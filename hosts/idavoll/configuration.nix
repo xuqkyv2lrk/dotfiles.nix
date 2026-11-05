@@ -54,6 +54,8 @@ in
 
   time.timeZone = "America/New_York";
 
+  # amdgpu firmware for the 5700G's Vega iGPU, and AMD CPU microcode
+  hardware.enableRedistributableFirmware = true;
   hardware.graphics = { enable = true; enable32Bit = true; };
   hardware.bluetooth = { enable = true; powerOnBoot = true; };
   # udev rules for Steam, Xbox, PlayStation and 8BitDo controllers
