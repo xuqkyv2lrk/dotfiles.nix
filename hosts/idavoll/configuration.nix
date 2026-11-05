@@ -127,6 +127,8 @@ in
 
   systemd.tmpfiles.rules = [
     "L+ ${home}/.local/share/duckstation/.stignore - - - - ${duckstation-stignore}"
+    # The shell is configured system-wide; an empty .zshrc stops zsh-newuser-install
+    "f ${home}/.zshrc 0644 ${user} users -"
   ];
 
   nixpkgs.config.allowUnfree = true;
@@ -141,7 +143,23 @@ in
   };
   security.sudo.wheelNeedsPassword = false;
 
-  programs.zsh.enable = true;
+  programs.zsh = {
+    enable = true;
+    autosuggestions.enable = true;
+    syntaxHighlighting.enable = true;
+    histSize = 10000;
+    setOptions = [ "SHARE_HISTORY" "HIST_IGNORE_DUPS" "HIST_IGNORE_SPACE" ];
+    # Catppuccin Mocha: blue user@host, mauve path, green prompt
+    promptInit = ''
+      PROMPT='%F{#89b4fa}%n@%m%f %F{#cba6f7}%~%f %F{#a6e3a1}❯%f '
+    '';
+    # Inputs are updated and pushed from the workstations, so these pull rather than
+    # commit; idavoll has no push access or signing key
+    shellAliases = {
+      nrs = "git -C ${home}/.dotfiles.nix pull --ff-only && sudo nixos-rebuild switch --flake '${home}/.dotfiles.nix#idavoll'";
+      nru = "git -C ${home}/.dotfiles.nix pull --ff-only && sudo nixos-rebuild boot --flake '${home}/.dotfiles.nix#idavoll'";
+    };
+  };
 
   environment.systemPackages = with pkgs; [
     es-de
