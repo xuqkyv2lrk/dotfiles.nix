@@ -61,6 +61,42 @@ let
 
   bios = "${home}/Emulation/bios";
 
+  # Player 1 on the first SDL gamepad. SDL names buttons by position (A = bottom),
+  # so this matches the PlayStation layout on Xbox-style pads like the 8BitDo.
+  # DuckStation and PCSX2 share the binding syntax and most key names.
+  sdlPad = {
+    Up = "SDL-0/DPadUp";
+    Down = "SDL-0/DPadDown";
+    Left = "SDL-0/DPadLeft";
+    Right = "SDL-0/DPadRight";
+    Cross = "SDL-0/A";
+    Circle = "SDL-0/B";
+    Square = "SDL-0/X";
+    Triangle = "SDL-0/Y";
+    Select = "SDL-0/Back";
+    Start = "SDL-0/Start";
+    L1 = "SDL-0/LeftShoulder";
+    R1 = "SDL-0/RightShoulder";
+    L2 = "SDL-0/+LeftTrigger";
+    R2 = "SDL-0/+RightTrigger";
+    L3 = "SDL-0/LeftStick";
+    R3 = "SDL-0/RightStick";
+    LUp = "SDL-0/-LeftY";
+    LDown = "SDL-0/+LeftY";
+    LLeft = "SDL-0/-LeftX";
+    LRight = "SDL-0/+LeftX";
+    RUp = "SDL-0/-RightY";
+    RDown = "SDL-0/+RightY";
+    RLeft = "SDL-0/-RightX";
+    RRight = "SDL-0/+RightX";
+    SmallMotor = "SDL-0/SmallMotor";
+    LargeMotor = "SDL-0/LargeMotor";
+  };
+
+  # Home opens the emulator's pause menu; Select+Start quits back to ES-DE
+  pauseCombo = "SDL-0/Guide";
+  quitCombo = "SDL-0/Back & SDL-0/Start";
+
   # file -> section -> key -> value. Only these keys are pinned, so anything else
   # changed in an emulator's own menus persists. Without the wizard and fullscreen
   # keys, each emulator opens a first-run dialog hidden behind gamescope.
@@ -76,6 +112,14 @@ let
       BIOS = {
         SearchDirectory = bios;
         PathNTSCU = "scph5501.bin";
+        # Full boot animation, white Sony screen included
+        PatchFastBoot = "false";
+        FastForwardBoot = "false";
+      };
+      Pad1 = sdlPad // { Type = "AnalogController"; };
+      Hotkeys = {
+        OpenPauseMenu = pauseCombo;
+        PowerOff = quitCombo;
       };
     };
     "${home}/.config/PCSX2/inis/PCSX2.ini" = {
@@ -88,6 +132,13 @@ let
       Folders.Bios = bios;
       Filenames.BIOS = "SCPH-70012.bin";
       AutoUpdater.CheckAtStartup = "false";
+      # PCSX2 skips the BIOS boot animation unless fast boot is off
+      EmuCore.EnableFastBoot = "false";
+      Pad1 = sdlPad // { Type = "DualShock2"; };
+      Hotkeys = {
+        OpenPauseMenu = pauseCombo;
+        ShutdownVM = quitCombo;
+      };
     };
     # PPSSPP emulates the PSP firmware itself and needs no BIOS
     "${home}/.config/ppsspp/PSP/SYSTEM/ppsspp.ini" = {
@@ -103,6 +154,33 @@ let
     lib.concatStrings (lib.mapAttrsToList (key: value: ''
       ${pkgs.crudini}/bin/crudini --set ${lib.escapeShellArgs [ file section key value ]}
     '') keys)) sections);
+
+  # ES-DE's stock commands pass only -batch, so the emulator window shows before going
+  # fullscreen and the start of the boot animation is lost in the switch. A custom
+  # system replaces the bundled entry wholesale, hence the copied metadata.
+  customSystems = pkgs.writeText "es_systems.xml" ''
+    <?xml version="1.0"?>
+    <systemList>
+      <system>
+        <name>psx</name>
+        <fullname>Sony PlayStation</fullname>
+        <path>%ROMPATH%/psx</path>
+        <extension>.bin .BIN .cbn .CBN .ccd .CCD .chd .CHD .cue .CUE .ecm .ECM .exe .EXE .img .IMG .iso .ISO .m3u .M3U .mdf .MDF .mds .MDS .minipsf .MINIPSF .pbp .PBP .psexe .PSEXE .psf .PSF .toc .TOC .z .Z .znx .ZNX .7z .7Z .zip .ZIP</extension>
+        <command label="DuckStation (Standalone)">%EMULATOR_DUCKSTATION% -batch -fullscreen -nogui -slowboot %ROM%</command>
+        <platform>psx</platform>
+        <theme>psx</theme>
+      </system>
+      <system>
+        <name>ps2</name>
+        <fullname>Sony PlayStation 2</fullname>
+        <path>%ROMPATH%/ps2</path>
+        <extension>.bin .BIN .chd .CHD .ciso .CISO .cso .CSO .desktop .dump .DUMP .elf .ELF .gz .GZ .m3u .M3U .mdf .MDF .img .IMG .iso .ISO .isz .ISZ .ngr .NRG .zso .ZSO</extension>
+        <command label="PCSX2 (Standalone)">%EMULATOR_PCSX2% -batch -fullscreen -nogui -slowboot %ROM%</command>
+        <platform>ps2</platform>
+        <theme>ps2</theme>
+      </system>
+    </systemList>
+  '';
 
   # ES-DE stores a system's emulator choice in its gamelist.xml
   alternativeEmulators = {
@@ -294,6 +372,8 @@ in
       "d ${home}/ES-DE 0755 ${cfg.user} users -"
       "d ${home}/ES-DE/themes 0755 ${cfg.user} users -"
       "L+ ${home}/ES-DE/themes/${cfg.theme.name} - - - - ${cfg.theme.src}"
+      "d ${home}/ES-DE/custom_systems 0755 ${cfg.user} users -"
+      "L+ ${home}/ES-DE/custom_systems/es_systems.xml - - - - ${customSystems}"
       "d ${home}/Emulation 0755 ${cfg.user} users -"
       "d ${home}/Emulation/bios 0755 ${cfg.user} users -"
       "d ${home}/.config 0755 ${cfg.user} users -"
