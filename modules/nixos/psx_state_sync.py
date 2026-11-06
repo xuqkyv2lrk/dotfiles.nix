@@ -47,6 +47,10 @@ def load_disc_sets(path: Path) -> dict[str, list[str]]:
     return sets
 
 
+def state_version(data: bytes) -> int:
+    return struct.unpack_from("<I", data, 4)[0]
+
+
 def read_media_path(data: bytes) -> str:
     length, offset = struct.unpack_from("<II", data, OFF_PATH_LEN)
     return data[offset:offset + length].decode("utf-8")
@@ -112,13 +116,24 @@ def sync(args: argparse.Namespace) -> None:
     def family(serial: str) -> list[str]:
         return sets.get(serial, [serial])
 
+    # The RP6 cannot load a state newer than its own build writes; learn that version
+    # from what it exports, ignoring files this script wrote into the synced folder
+    meta = db.setdefault("_meta", {})
+    written = {seen.get("synced") for seen in db.values()}
+    for f in args.synced.glob("*.sav"):
+        data = f.read_bytes()
+        if data[:4] == MAGIC and digest(data) not in written:
+            version = state_version(data)
+            meta["android_version"] = str(max(version, int(meta.get("android_version", 0))))
+    android_version = int(meta.get("android_version", 0))
+
     keys: set[str] = set()
     for f in args.synced.glob(f"*_{ANDROID_SLOT}.sav"):
         keys.add(f.name.rsplit("_", 1)[0])
     for f in args.local.glob(f"*_{DESKTOP_SLOT}.sav"):
         keys.add(family(f.name.rsplit("_", 1)[0])[0])
 
-    for key in sorted(keys):
+    for key in sorted(keys - {"_meta"}):
         serials = family(key)
         if only and not only.intersection(serials):
             continue
@@ -153,6 +168,10 @@ def sync(args: argparse.Namespace) -> None:
             if serial != origin or local_data != data:
                 write_atomic(target, local_data)
             seen[serial] = digest(local_data)
+        if origin != "synced" and state_version(data) > android_version:
+            print(f"{key}: {source.name} is state version {state_version(data)}, the RP6 "
+                  f"reads up to {android_version}; kept local only", file=sys.stderr)
+            continue
         if origin != "synced" or android_data != data:
             write_atomic(synced, android_data)
         seen["synced"] = digest(android_data)
