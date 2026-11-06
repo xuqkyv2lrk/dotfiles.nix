@@ -50,6 +50,22 @@ in
     };
   };
 
+  # Suspend-to-RAM keeps the DIMMs powered, so their LEDs stay lit unless blanked first.
+  # Pulled in by sleep.target: starting blanks the LEDs, stopping on wake restores violet.
+  systemd.services.openrgb-sleep = {
+    description = "Turn RGB off while suspended";
+    wantedBy = [ "sleep.target" ];
+    before = [ "sleep.target" ];
+    after = [ "openrgb.service" ];
+    unitConfig.StopWhenUnneeded = true;
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.openrgb}/bin/openrgb --client 127.0.0.1:6742 --mode static --color 000000";
+      ExecStop = "${pkgs.openrgb}/bin/openrgb --client 127.0.0.1:6742 --mode static --color 6800AA";
+    };
+  };
+
   services.openssh = {
     enable = true;
     settings.PasswordAuthentication = false;
