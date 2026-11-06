@@ -196,6 +196,22 @@ let
     </systemList>
   '';
 
+  # RetroArch hotkeys use raw udev indices, read off the 8BitDo with evtest:
+  # buttons 1 B, 4 L1, 6 Select, 7 Start, 8 Home; axes +2 L2, +5 R2
+  retroarchSettings = {
+    video_fullscreen = "true";
+    quit_press_twice = "false";
+    input_enable_hotkey_btn = "6";
+    input_exit_emulator_btn = "7";
+    input_menu_toggle_btn = "8";
+    input_save_state_btn = "4";
+    input_load_state_axis = "+2";
+    input_state_slot_increase_btn = "h0up";
+    input_state_slot_decrease_btn = "h0down";
+    input_toggle_fast_forward_axis = "+5";
+    input_pause_toggle_btn = "1";
+  };
+
   # ES-DE stores a system's emulator choice in its gamelist.xml
   alternativeEmulators = {
     psx = "DuckStation (Standalone)";
@@ -226,6 +242,20 @@ let
       fi
     }
     ${lib.concatStrings (lib.mapAttrsToList altEmulatorLines alternativeEmulators)}
+
+    # retroarch.cfg has no sections and quotes every value, so crudini does not fit
+    set_ra() {
+      cfg="${home}/.config/retroarch/retroarch.cfg"
+      touch "$cfg"
+      if ${pkgs.gnugrep}/bin/grep -q "^$1 = " "$cfg"; then
+        ${pkgs.gnused}/bin/sed -i "s|^$1 = .*|$1 = \"$2\"|" "$cfg"
+      else
+        printf '%s = "%s"\n' "$1" "$2" >> "$cfg"
+      fi
+    }
+    ${lib.concatStrings (lib.mapAttrsToList (k: v: ''
+      set_ra ${lib.escapeShellArgs [ k v ]}
+    '') retroarchSettings)}
   '';
 
   # Fullscreen gamescope session; quitting ES-DE relaunches it, like Kodi on bragi
