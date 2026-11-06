@@ -133,6 +133,11 @@ let
       };
       # Nix pins the version; an update prompt only stalls the launch
       AutoUpdater.CheckAtStartup = "false";
+      # On-screen messages vanish under gamescope; the file keeps them readable over ssh
+      Logging = {
+        LogToFile = "true";
+        LogFileTimestamps = "true";
+      };
       BIOS = {
         SearchDirectory = bios;
         # The PSP-extracted BIOS plays better than the real dumps, at the cost of
