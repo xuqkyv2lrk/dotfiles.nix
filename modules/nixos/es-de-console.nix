@@ -34,7 +34,8 @@ let
     ThemeTransitions = cfg.theme.transitions;
   };
 
-  pinnedSettings = themeSettings // cfg.settings;
+  # ES-DE is pinned by Nix too, so its update check only produces a nag
+  pinnedSettings = themeSettings // { ApplicationUpdaterFrequency = "never"; } // cfg.settings;
 
   # es_settings.xml types each entry: <bool .../> for true/false, <string .../> otherwise
   setKeyLine = k: v:
@@ -70,6 +71,8 @@ let
         StartFullscreen = "true";
         ConfirmPowerOff = "false";
       };
+      # Nix pins the version; an update prompt only stalls the launch
+      AutoUpdater.CheckAtStartup = "false";
       BIOS = {
         SearchDirectory = bios;
         PathNTSCU = "scph5501.bin";
@@ -84,10 +87,14 @@ let
       };
       Folders.Bios = bios;
       Filenames.BIOS = "SCPH-70012.bin";
+      AutoUpdater.CheckAtStartup = "false";
     };
     # PPSSPP emulates the PSP firmware itself and needs no BIOS
     "${home}/.config/ppsspp/PSP/SYSTEM/ppsspp.ini" = {
-      General.FirstRun = "False";
+      General = {
+        FirstRun = "False";
+        CheckForNewVersion = "False";
+      };
       Graphics.FullScreen = "True";
     };
   };
