@@ -144,6 +144,11 @@ in
       alsa.enable = true;
       alsa.support32Bit = true;
       pulse.enable = true;
+      # WirePlumber starts unseen outputs at 40%, too quiet into an AVR;
+      # level is then set on the AVR. Saved per-device volume still wins.
+      wireplumber.extraConfig."90-default-volume" = {
+        "wireplumber.settings"."device.routes.default-sink-volume" = 1.0;
+      };
     };
 
     services.greetd = {
