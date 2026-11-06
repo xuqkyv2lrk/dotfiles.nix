@@ -136,6 +136,12 @@ let
         PatchFastBoot = "false";
         FastForwardBoot = "false";
       };
+      # Sized for the 5700G's iGPU: 4x is about 1080p, and PGXP stops polygon wobble
+      GPU = {
+        Renderer = "Vulkan";
+        ResolutionScale = "4";
+        PGXPEnable = "true";
+      };
       Hotkeys = {
         OpenPauseMenu = pauseCombo;
         PowerOff = quitCombo;
@@ -160,6 +166,11 @@ let
       # PCSX2 skips the BIOS boot animation unless fast boot is off
       EmuCore.EnableFastBoot = "false";
       Framerate.TurboScalar = fastForward;
+      # Renderer 14 is Vulkan; 2x is the safe ceiling for the iGPU in heavier games
+      "EmuCore/GS" = {
+        Renderer = "14";
+        upscale_multiplier = "2";
+      };
       Hotkeys = {
         OpenPauseMenu = pauseCombo;
         ShutdownVM = quitCombo;
@@ -177,7 +188,15 @@ let
         FirstRun = "False";
         CheckForNewVersion = "False";
       };
-      Graphics.FullScreen = "True";
+      # Matches the RP6: Vulkan, 4x internal resolution, 16x anisotropic, linear filtering
+      Graphics = {
+        FullScreen = "True";
+        GraphicsBackend = "3 (VULKAN)";
+        InternalResolution = "4";
+        AnisotropyLevel = "4";
+        TextureFiltering = "1";
+        BufferFiltering = "1";
+      };
     };
   };
 
