@@ -93,9 +93,11 @@ let
     LargeMotor = "SDL-0/LargeMotor";
   };
 
-  # Home opens the emulator's pause menu; Select+Start quits back to ES-DE
+  # Select is the function key, mirroring the RP6's RetroArch hotkeys. The 8BitDo's
+  # pair and profile buttons never reach the host, so only Home is free besides it.
+  fn = button: "SDL-0/Back & SDL-0/${button}";
   pauseCombo = "SDL-0/Guide";
-  quitCombo = "SDL-0/Back & SDL-0/Start";
+  quitCombo = fn "Start";
 
   # file -> section -> key -> value. Only these keys are pinned, so anything else
   # changed in an emulator's own menus persists. Without the wizard and fullscreen
@@ -120,6 +122,12 @@ let
       Hotkeys = {
         OpenPauseMenu = pauseCombo;
         PowerOff = quitCombo;
+        SaveSelectedSaveState = fn "LeftShoulder";
+        LoadSelectedSaveState = fn "+LeftTrigger";
+        SelectNextSaveStateSlot = fn "DPadUp";
+        SelectPreviousSaveStateSlot = fn "DPadDown";
+        ToggleFastForward = fn "+RightTrigger";
+        TogglePause = fn "B";
       };
     };
     "${home}/.config/PCSX2/inis/PCSX2.ini" = {
@@ -138,6 +146,12 @@ let
       Hotkeys = {
         OpenPauseMenu = pauseCombo;
         ShutdownVM = quitCombo;
+        SaveStateToSlot = fn "LeftShoulder";
+        LoadStateFromSlot = fn "+LeftTrigger";
+        NextSaveStateSlot = fn "DPadUp";
+        PreviousSaveStateSlot = fn "DPadDown";
+        ToggleTurbo = fn "+RightTrigger";
+        TogglePause = fn "B";
       };
     };
     # PPSSPP emulates the PSP firmware itself and needs no BIOS
