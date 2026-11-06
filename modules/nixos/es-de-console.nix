@@ -23,27 +23,6 @@ let
     };
   };
 
-  # DuckStation names save states after the disc in the drive, while ES-DE always boots
-  # an .m3u at disc 1, so a later disc's progress is never offered. Boot straight into
-  # the newest resume state whose header points at this playlist; RP6 states store the
-  # path percent-encoded, hence the decode.
-  duckstation-launch = pkgs.writeShellScript "duckstation-launch" ''
-    set -euo pipefail
-    rom="''${!#}"
-    states="${home}/.local/share/duckstation/savestates"
-    if [[ "''${rom}" == *.m3u && -d "''${states}" ]]; then
-      name="$(basename "''${rom}")"
-      while IFS= read -r state; do
-        media="$(head -c 4096 "''${state}" | tr -c '[:print:]' '\n' | grep -F -m1 '.m3u' || true)"
-        decoded="$(printf '%b' "$(sed -E 's/\\/\\\\/g; s/%([0-9A-Fa-f]{2})/\\x\1/g' <<< "''${media}")")"
-        if [[ "''${decoded}" == *"''${name}"* ]]; then
-          exec ${duckstation}/bin/duckstation "''${@:1:$#-1}" -statefile "''${state}" "''${rom}"
-        fi
-      done < <(ls -t "''${states}"/*_resume.sav 2>/dev/null)
-    fi
-    exec ${duckstation}/bin/duckstation "$@"
-  '';
-
   # Each core is ES-DE's default for its system, so no emulator pin is needed; ES-DE
   # finds them under /run/current-system/sw/lib/retroarch/cores
   retroarch = pkgs.retroarch.withCores (cores: with cores; [
@@ -262,7 +241,7 @@ let
         <fullname>Sony PlayStation</fullname>
         <path>%ROMPATH%/psx</path>
         <extension>.bin .BIN .cbn .CBN .ccd .CCD .chd .CHD .cue .CUE .ecm .ECM .exe .EXE .img .IMG .iso .ISO .m3u .M3U .mdf .MDF .mds .MDS .minipsf .MINIPSF .pbp .PBP .psexe .PSEXE .psf .PSF .toc .TOC .z .Z .znx .ZNX .7z .7Z .zip .ZIP</extension>
-        <command label="DuckStation (Standalone)">${duckstation-launch} -batch -fullscreen -nogui -slowboot %ROM%</command>
+        <command label="DuckStation (Standalone)">%EMULATOR_DUCKSTATION% -batch -fullscreen -nogui -slowboot %ROM%</command>
         <platform>psx</platform>
         <theme>psx</theme>
       </system>
