@@ -301,6 +301,75 @@ let
     '') retroarchSettings)}
   '';
 
+  # Reads every gamepad without grabbing it, so a short Home press still reaches the
+  # emulator; only a press held past HOLD seconds suspends. Pads are rescanned for hotplug.
+  homeHoldSuspend = pkgs.writers.writePython3 "gamepad-home-suspend" {
+    libraries = [ pkgs.python3Packages.evdev ];
+  } ''
+    import asyncio
+    import subprocess
+    import time
+
+    import evdev
+    from evdev import ecodes
+
+    HOLD = 2.0
+    RESUME_GRACE = 10.0
+    watched: set[str] = set()
+    last_suspend = 0.0
+
+
+    def is_gamepad(dev: evdev.InputDevice) -> bool:
+        keys = dev.capabilities().get(ecodes.EV_KEY, [])
+        return ecodes.BTN_MODE in keys and ecodes.BTN_SOUTH in keys
+
+
+    async def suspend_after_hold() -> None:
+        global last_suspend
+        await asyncio.sleep(HOLD)
+        if time.monotonic() - last_suspend > RESUME_GRACE:
+            last_suspend = time.monotonic()
+            subprocess.run(["systemctl", "suspend"], check=False)
+
+
+    async def watch(dev: evdev.InputDevice) -> None:
+        timer = None
+        try:
+            async for ev in dev.async_read_loop():
+                if ev.type != ecodes.EV_KEY or ev.code != ecodes.BTN_MODE:
+                    continue
+                if ev.value == 1:
+                    timer = asyncio.create_task(suspend_after_hold())
+                elif ev.value == 0 and timer:
+                    timer.cancel()
+        except OSError:
+            pass
+        finally:
+            if timer:
+                timer.cancel()
+            watched.discard(dev.path)
+
+
+    async def main() -> None:
+        while True:
+            for path in evdev.list_devices():
+                if path in watched:
+                    continue
+                try:
+                    dev = evdev.InputDevice(path)
+                except OSError:
+                    continue
+                if is_gamepad(dev):
+                    watched.add(path)
+                    asyncio.create_task(watch(dev))
+                else:
+                    dev.close()
+            await asyncio.sleep(2)
+
+
+    asyncio.run(main())
+  '';
+
   # Fullscreen gamescope session; quitting ES-DE relaunches it, like Kodi on bragi
   couch-session = pkgs.writeShellScript "couch-session" ''
     exec ${pkgs.gamescope}/bin/gamescope -f -- ${pkgs.bash}/bin/bash -c \
@@ -416,12 +485,26 @@ in
       };
     };
 
-    # A console never sleeps on its own
+    # Rest mode like a console: suspend only on request (power button or a held Home),
+    # never on idle. Hibernate stays off; there is no swap partition to resume from.
     systemd.targets = {
-      sleep.enable = false;
-      suspend.enable = false;
       hibernate.enable = false;
       hybrid-sleep.enable = false;
+    };
+    services.logind.settings.Login = {
+      HandlePowerKey = "suspend";
+      IdleAction = "ignore";
+    };
+
+    # The 8BitDo dongle lacks USB remote wakeup (bmAttributes 0x80), so pads can only
+    # put the box to sleep; waking is the power button or the keyboard dongle.
+    systemd.services.gamepad-home-suspend = {
+      description = "Suspend when a gamepad's Home button is held";
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        ExecStart = homeHoldSuspend;
+        Restart = "always";
+      };
     };
 
     services.syncthing = {
