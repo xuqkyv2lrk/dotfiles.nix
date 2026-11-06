@@ -61,36 +61,47 @@ let
 
   bios = "${home}/Emulation/bios";
 
-  # Player 1 on the first SDL gamepad. SDL names buttons by position (A = bottom),
+  # SDL gamepad n as one PlayStation pad. SDL names buttons by position (A = bottom),
   # so this matches the PlayStation layout on Xbox-style pads like the 8BitDo.
   # DuckStation and PCSX2 share the binding syntax and most key names.
-  sdlPad = {
-    Up = "SDL-0/DPadUp";
-    Down = "SDL-0/DPadDown";
-    Left = "SDL-0/DPadLeft";
-    Right = "SDL-0/DPadRight";
-    Cross = "SDL-0/A";
-    Circle = "SDL-0/B";
-    Square = "SDL-0/X";
-    Triangle = "SDL-0/Y";
-    Select = "SDL-0/Back";
-    Start = "SDL-0/Start";
-    L1 = "SDL-0/LeftShoulder";
-    R1 = "SDL-0/RightShoulder";
-    L2 = "SDL-0/+LeftTrigger";
-    R2 = "SDL-0/+RightTrigger";
-    L3 = "SDL-0/LeftStick";
-    R3 = "SDL-0/RightStick";
-    LUp = "SDL-0/-LeftY";
-    LDown = "SDL-0/+LeftY";
-    LLeft = "SDL-0/-LeftX";
-    LRight = "SDL-0/+LeftX";
-    RUp = "SDL-0/-RightY";
-    RDown = "SDL-0/+RightY";
-    RLeft = "SDL-0/-RightX";
-    RRight = "SDL-0/+RightX";
-    SmallMotor = "SDL-0/SmallMotor";
-    LargeMotor = "SDL-0/LargeMotor";
+  sdlPad = n: {
+    Up = "SDL-${toString n}/DPadUp";
+    Down = "SDL-${toString n}/DPadDown";
+    Left = "SDL-${toString n}/DPadLeft";
+    Right = "SDL-${toString n}/DPadRight";
+    Cross = "SDL-${toString n}/A";
+    Circle = "SDL-${toString n}/B";
+    Square = "SDL-${toString n}/X";
+    Triangle = "SDL-${toString n}/Y";
+    Select = "SDL-${toString n}/Back";
+    Start = "SDL-${toString n}/Start";
+    L1 = "SDL-${toString n}/LeftShoulder";
+    R1 = "SDL-${toString n}/RightShoulder";
+    L2 = "SDL-${toString n}/+LeftTrigger";
+    R2 = "SDL-${toString n}/+RightTrigger";
+    L3 = "SDL-${toString n}/LeftStick";
+    R3 = "SDL-${toString n}/RightStick";
+    LUp = "SDL-${toString n}/-LeftY";
+    LDown = "SDL-${toString n}/+LeftY";
+    LLeft = "SDL-${toString n}/-LeftX";
+    LRight = "SDL-${toString n}/+LeftX";
+    RUp = "SDL-${toString n}/-RightY";
+    RDown = "SDL-${toString n}/+RightY";
+    RLeft = "SDL-${toString n}/-RightX";
+    RRight = "SDL-${toString n}/+RightX";
+    SmallMotor = "SDL-${toString n}/SmallMotor";
+    LargeMotor = "SDL-${toString n}/LargeMotor";
+  };
+
+  # Both emulators number pads 1A, 2A, 1B, 1C, 1D: Pad2 is the second console port for
+  # ordinary 2-player games, Pad3-5 the multitap slots used when a game turns it on.
+  # Player 2 sits on both 2A and 1B; only one of them is live at a time in practice.
+  padSlots = type: {
+    Pad1 = sdlPad 0 // { Type = type; };
+    Pad2 = sdlPad 1 // { Type = type; };
+    Pad3 = sdlPad 1 // { Type = type; };
+    Pad4 = sdlPad 2 // { Type = type; };
+    Pad5 = sdlPad 3 // { Type = type; };
   };
 
   # Select is the function key, mirroring the RP6's RetroArch hotkeys. The 8BitDo's
@@ -104,7 +115,7 @@ let
   # changed in an emulator's own menus persists. Without the wizard and fullscreen
   # keys, each emulator opens a first-run dialog hidden behind gamescope.
   emulatorSettings = {
-    "${home}/.local/share/duckstation/settings.ini" = {
+    "${home}/.local/share/duckstation/settings.ini" = padSlots "AnalogController" // {
       Main = {
         SetupWizardIncomplete = "false";
         StartFullscreen = "true";
@@ -125,7 +136,6 @@ let
         PatchFastBoot = "false";
         FastForwardBoot = "false";
       };
-      Pad1 = sdlPad // { Type = "AnalogController"; };
       Hotkeys = {
         OpenPauseMenu = pauseCombo;
         PowerOff = quitCombo;
@@ -137,7 +147,7 @@ let
         TogglePause = fn "B";
       };
     };
-    "${home}/.config/PCSX2/inis/PCSX2.ini" = {
+    "${home}/.config/PCSX2/inis/PCSX2.ini" = padSlots "DualShock2" // {
       UI = {
         SetupWizardIncomplete = "false";
         StartFullscreen = "true";
@@ -150,7 +160,6 @@ let
       # PCSX2 skips the BIOS boot animation unless fast boot is off
       EmuCore.EnableFastBoot = "false";
       Framerate.TurboScalar = fastForward;
-      Pad1 = sdlPad // { Type = "DualShock2"; };
       Hotkeys = {
         OpenPauseMenu = pauseCombo;
         ShutdownVM = quitCombo;
