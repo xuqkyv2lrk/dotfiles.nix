@@ -117,15 +117,15 @@ def sync(args: argparse.Namespace) -> None:
         return sets.get(serial, [serial])
 
     # The RP6 cannot load a state newer than its own build writes; learn that version
-    # from what it exports, ignoring files this script wrote into the synced folder
-    meta = db.setdefault("_meta", {})
+    # from states it made (Android media path), ignoring ones this script wrote
     written = {seen.get("synced") for seen in db.values()}
+    android_version = 0
     for f in args.synced.glob("*.sav"):
         data = f.read_bytes()
-        if data[:4] == MAGIC and digest(data) not in written:
-            version = state_version(data)
-            meta["android_version"] = str(max(version, int(meta.get("android_version", 0))))
-    android_version = int(meta.get("android_version", 0))
+        if (data[:4] == MAGIC and digest(data) not in written
+                and read_media_path(data).startswith("content://")):
+            android_version = max(android_version, state_version(data))
+    db["_meta"] = {"android_version": str(android_version)}
 
     keys: set[str] = set()
     for f in args.synced.glob(f"*_{ANDROID_SLOT}.sav"):
