@@ -29,10 +29,8 @@ let
     mesen # NES, Famicom Disk System (disksys.rom)
     snes9x
     mgba # GB, GBC, GBA (gba_bios.bin)
-    melondsds # DS (bios7.bin, bios9.bin, firmware.bin)
     flycast # Dreamcast (dc/dc_boot.bin)
-    fbneo # Neo Geo (neogeo.zip) and arcade
-    mame # arcade sets FinalBurn Neo lacks
+    fbneo # Neo Geo (neogeo.zip) and arcade; needs short set names like vendettaj.zip
   ]);
 
   themeSettings = {
