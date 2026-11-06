@@ -155,6 +155,8 @@ let
     };
     "${home}/.config/PCSX2/inis/PCSX2.ini" = padSlots "DualShock2" // {
       UI = {
+        # Without it PCSX2 treats the ini as corrupt and offers to reset it to defaults
+        SettingsVersion = "1";
         SetupWizardIncomplete = "false";
         StartFullscreen = "true";
         ConfirmShutdown = "false";
