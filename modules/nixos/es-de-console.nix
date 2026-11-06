@@ -452,6 +452,12 @@ in
             path = "${home}/.local/share/duckstation";
             devices = [ "valhalla-hub" ];
           };
+          # The RP6's PPSSPP memory stick lives on its SD card under ROMs/psp/PSP
+          ppsspp-saves = {
+            label = "PPSSPP";
+            path = "${home}/.config/ppsspp/PSP/SAVEDATA";
+            devices = [ "valhalla-hub" ];
+          };
           # BIOS files stay out of git and the Nix store; every console gets them from the hub
           bios = {
             label = "BIOS";
@@ -480,6 +486,9 @@ in
       "d ${home}/.config 0755 ${cfg.user} users -"
       "d ${home}/.config/retroarch 0755 ${cfg.user} users -"
       "d ${home}/.config/PCSX2 0755 ${cfg.user} users -"
+      "d ${home}/.config/ppsspp 0755 ${cfg.user} users -"
+      "d ${home}/.config/ppsspp/PSP 0755 ${cfg.user} users -"
+      "d ${home}/.config/ppsspp/PSP/SAVEDATA 0755 ${cfg.user} users -"
       # Each emulator reads its BIOS from the one synced folder
       "L+ ${home}/.config/retroarch/system - - - - ${home}/Emulation/bios"
       "L+ ${home}/.config/PCSX2/bios - - - - ${home}/Emulation/bios"
