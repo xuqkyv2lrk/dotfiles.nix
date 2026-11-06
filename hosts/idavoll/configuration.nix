@@ -44,8 +44,16 @@ in
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       Type = "oneshot";
-      # The server needs a moment to finish detecting devices after it starts
-      ExecStartPre = "${pkgs.coreutils}/bin/sleep 10";
+      # The ENE DRAM cannot store a mode (no save flag in OpenRGB), so it boots into its
+      # factory rainbow; apply violet the moment the server has detected it, not after
+      # a fixed wait. The board's Aura controller saves automatically.
+      ExecStartPre = pkgs.writeShellScript "openrgb-wait-dram" ''
+        for _ in $(seq 60); do
+          ${pkgs.openrgb}/bin/openrgb --client 127.0.0.1:6742 --list-devices 2>/dev/null \
+            | ${pkgs.gnugrep}/bin/grep -q "ENE DRAM" && exit 0
+          sleep 0.5
+        done
+      '';
       ExecStart = "${pkgs.openrgb}/bin/openrgb --client 127.0.0.1:6742 --mode static --color 6800AA";
     };
   };
