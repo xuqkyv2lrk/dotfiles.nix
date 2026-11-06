@@ -23,7 +23,17 @@ let
     };
   };
 
-  retroarch = pkgs.retroarch.withCores (cores: with cores; [ snes9x mgba nestopia ]);
+  # Each core is ES-DE's default for its system, so no emulator pin is needed; ES-DE
+  # finds them under /run/current-system/sw/lib/retroarch/cores
+  retroarch = pkgs.retroarch.withCores (cores: with cores; [
+    mesen # NES, Famicom Disk System (disksys.rom)
+    snes9x
+    mgba # GB, GBC, GBA (gba_bios.bin)
+    melondsds # DS (bios7.bin, bios9.bin, firmware.bin)
+    flycast # Dreamcast (dc/dc_boot.bin)
+    fbneo # Neo Geo (neogeo.zip) and arcade
+    mame # arcade sets FinalBurn Neo lacks
+  ]);
 
   themeSettings = {
     Theme = cfg.theme.name;
@@ -253,10 +263,45 @@ let
     input_toggle_fast_forward_axis = "+5";
     input_pause_toggle_btn = "1";
     fastforward_ratio = fastForward;
-  };
+  } // retroarchPads;
+
+  # No autoconfig profile in RetroArch matches the Ultimate 2C, so every player is
+  # bound by hand. Udev numbers buttons by evdev code: 0 A, 1 B, 2 X, 3 Y, 4 LB,
+  # 5 RB, 6 Select, 7 Start, 9 L3, 10 R3; axes 0/1 left stick, 2 LT, 3/4 right, 5 RT.
+  # The RetroPad is SNES-shaped: its b is the bottom button and a the right one.
+  retroarchPads = lib.foldl' (acc: n: acc // lib.mapAttrs' (k: v:
+    lib.nameValuePair "input_player${toString n}_${k}" v) {
+      joypad_index = toString (n - 1);
+      b_btn = "0";
+      a_btn = "1";
+      y_btn = "2";
+      x_btn = "3";
+      l_btn = "4";
+      r_btn = "5";
+      select_btn = "6";
+      start_btn = "7";
+      l3_btn = "9";
+      r3_btn = "10";
+      l2_axis = "+2";
+      r2_axis = "+5";
+      up_btn = "h0up";
+      down_btn = "h0down";
+      left_btn = "h0left";
+      right_btn = "h0right";
+      l_x_minus_axis = "-0";
+      l_x_plus_axis = "+0";
+      l_y_minus_axis = "-1";
+      l_y_plus_axis = "+1";
+      r_x_minus_axis = "-3";
+      r_x_plus_axis = "+3";
+      r_y_minus_axis = "-4";
+      r_y_plus_axis = "+4";
+    }) { } [ 1 2 3 4 ];
 
   # ES-DE stores a system's emulator choice in its gamelist.xml
   alternativeEmulators = {
+    # FinalBurn Neo runs most arcade sets faster than current MAME on the iGPU
+    arcade = "FinalBurn Neo";
     psx = "DuckStation (Standalone)";
     ps2 = "PCSX2 (Standalone)";
     psp = "PPSSPP (Standalone)";
