@@ -349,6 +349,20 @@ in
       wireplumber.extraConfig."90-default-volume" = {
         "wireplumber.settings"."device.routes.default-sink-volume" = 1.0;
       };
+      # A suspended HDMI sink makes the AVR relock on every game launch, swallowing
+      # the first seconds of audio such as the PS1 boot chime
+      wireplumber.configPackages = [
+        (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/11-no-suspend.conf" ''
+          monitor.alsa.rules = [
+            {
+              "matches": [ { "node.name": "~alsa_output.*" } ],
+              "actions": { "update-props": {
+                "session.suspend-timeout-seconds": 0
+              } }
+            }
+          ]
+        '')
+      ];
     };
 
     services.greetd = {
