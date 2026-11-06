@@ -215,6 +215,14 @@ let
         BufferFiltering = "1";
       };
     };
+    # PPSSPP's SDL build reports LB/RB as 10-192/10-193, but its default map binds
+    # L/R to 10-194/10-195, leaving the bumpers dead. 1-45/1-51 keep keyboard Q/W.
+    "${home}/.config/ppsspp/PSP/SYSTEM/controls.ini" = {
+      ControlMapping = {
+        L = "1-45,10-192";
+        R = "1-51,10-193";
+      };
+    };
   };
 
   iniLines = file: sections: lib.concatStrings (lib.mapAttrsToList (section: keys:
