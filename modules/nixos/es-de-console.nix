@@ -58,10 +58,81 @@ let
     ${lib.concatStringsSep "\n" (lib.mapAttrsToList setKeyLine pinnedSettings)}
   '';
 
+  bios = "${home}/Emulation/bios";
+
+  # file -> section -> key -> value. Only these keys are pinned, so anything else
+  # changed in an emulator's own menus persists. Without the wizard and fullscreen
+  # keys, each emulator opens a first-run dialog hidden behind gamescope.
+  emulatorSettings = {
+    "${home}/.local/share/duckstation/settings.ini" = {
+      Main = {
+        SetupWizardIncomplete = "false";
+        StartFullscreen = "true";
+        ConfirmPowerOff = "false";
+      };
+      BIOS = {
+        SearchDirectory = bios;
+        PathNTSCU = "scph5501.bin";
+      };
+    };
+    "${home}/.config/PCSX2/inis/PCSX2.ini" = {
+      UI = {
+        SetupWizardIncomplete = "false";
+        StartFullscreen = "true";
+        ConfirmShutdown = "false";
+        HideMouseCursor = "true";
+      };
+      Folders.Bios = bios;
+      Filenames.BIOS = "SCPH-70012.bin";
+    };
+    # PPSSPP emulates the PSP firmware itself and needs no BIOS
+    "${home}/.config/ppsspp/PSP/SYSTEM/ppsspp.ini" = {
+      General.FirstRun = "False";
+      Graphics.FullScreen = "True";
+    };
+  };
+
+  iniLines = file: sections: lib.concatStrings (lib.mapAttrsToList (section: keys:
+    lib.concatStrings (lib.mapAttrsToList (key: value: ''
+      ${pkgs.crudini}/bin/crudini --set ${lib.escapeShellArgs [ file section key value ]}
+    '') keys)) sections);
+
+  # ES-DE stores a system's emulator choice in its gamelist.xml
+  alternativeEmulators = {
+    psx = "DuckStation (Standalone)";
+    ps2 = "PCSX2 (Standalone)";
+    psp = "PPSSPP (Standalone)";
+  };
+
+  altEmulatorLines = system: label: ''
+    set_alt_emulator ${lib.escapeShellArgs [ system label ]}
+  '';
+
+  apply-emulator-settings = pkgs.writeShellScript "esde-apply-emulator-settings" ''
+    ${lib.concatStrings (lib.mapAttrsToList (file: _: ''
+      mkdir -p "$(dirname ${lib.escapeShellArg file})"
+    '') emulatorSettings)}
+    ${lib.concatStrings (lib.mapAttrsToList iniLines emulatorSettings)}
+
+    set_alt_emulator() {
+      gamelist="${home}/ES-DE/gamelists/$1/gamelist.xml"
+      block="<alternativeEmulator>\n\t<label>$2</label>\n</alternativeEmulator>"
+      mkdir -p "$(dirname "$gamelist")"
+      if [ ! -s "$gamelist" ]; then
+        printf '<?xml version="1.0"?>\n%b\n<gameList>\n</gameList>\n' "$block" > "$gamelist"
+      elif ${pkgs.gnugrep}/bin/grep -q "<alternativeEmulator>" "$gamelist"; then
+        ${pkgs.gnused}/bin/sed -i "/<alternativeEmulator>/,/<\/alternativeEmulator>/s|<label>.*</label>|<label>$2</label>|" "$gamelist"
+      else
+        ${pkgs.gnused}/bin/sed -i "0,/<gameList>/s|<gameList>|$block\n<gameList>|" "$gamelist"
+      fi
+    }
+    ${lib.concatStrings (lib.mapAttrsToList altEmulatorLines alternativeEmulators)}
+  '';
+
   # Fullscreen gamescope session; quitting ES-DE relaunches it, like Kodi on bragi
   couch-session = pkgs.writeShellScript "couch-session" ''
     exec ${pkgs.gamescope}/bin/gamescope -f -- ${pkgs.bash}/bin/bash -c \
-      'while true; do ${apply-settings}; ${es-de}/bin/es-de; sleep 1; done'
+      'while true; do ${apply-settings}; ${apply-emulator-settings}; ${es-de}/bin/es-de; sleep 1; done'
   '';
 
   # The RP6 exports its whole DuckStation user directory; only these parts are shared
@@ -226,6 +297,7 @@ in
       "L+ ${home}/.config/PCSX2/bios - - - - ${home}/Emulation/bios"
     ];
 
-    environment.systemPackages = [ es-de duckstation retroarch pkgs.pcsx2 ];
+    # Standalone PPSSPP: the libretro core ships without the assets it needs
+    environment.systemPackages = [ es-de duckstation retroarch pkgs.pcsx2 pkgs.ppsspp-sdl ];
   };
 }
