@@ -27,6 +27,11 @@ in
       id = "EVXONQU-3BGDCFM-EDTD3JA-DJIHZLM-WSK33FK-6C3PAJH-DCUUOP7-24BOSAL";
       address = "tcp://192.168.22.201:22000";
     };
+    # The RP6's SD card (7FDD-F60C) as its DuckStation records it in each state
+    saveSync.psxAndroidRomUri =
+      "content://com.android.externalstorage.documents/tree/7FDD-F60C%3AROMs%2Fpsx/document/7FDD-F60C%3AROMs%2Fpsx%2F";
+    # Legend of Dragoon only until the translation is confirmed on the TV
+    saveSync.psxStateSerials = [ "SCUS-94491" ];
   };
 
   # RAM and the B550-I's Aura lighting, both reached over the AMD SMBus

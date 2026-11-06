@@ -14,7 +14,7 @@ let
     };
   };
 
-  duckstation = pkgs.appimageTools.wrapType2 rec {
+  duckstationImage = rec {
     pname = "duckstation";
     version = "0.1-12083";
     src = pkgs.fetchurl {
@@ -22,6 +22,23 @@ let
       hash = "sha256-xebwRfaiQggvyvqfAtVq2JXiM7lCcoeI0jKtDAx2XCQ=";
     };
   };
+  duckstation = pkgs.appimageTools.wrapType2 duckstationImage;
+  duckstationResources = "${pkgs.appimageTools.extract duckstationImage}/usr/bin/resources";
+
+  # The synced folder keeps the RP6's state layout; DuckStation here saves to its own
+  # folder and psx_state_sync.py maps the quick slot between the two
+  syncedStates = "${home}/.local/share/duckstation/savestates";
+  localStates = "${home}/.local/share/duckstation-states";
+  psxStateSync = pkgs.writeShellScript "psx-state-sync" ''
+    exec ${pkgs.python3}/bin/python3 -I ${./psx_state_sync.py} \
+      --synced ${lib.escapeShellArg syncedStates} \
+      --local ${lib.escapeShellArg localStates} \
+      --rom-dir ${lib.escapeShellArg "${home}/ROMs/psx"} \
+      --uri-prefix ${lib.escapeShellArg cfg.saveSync.psxAndroidRomUri} \
+      --disc-sets ${duckstationResources}/discsets.yaml \
+      --db ${lib.escapeShellArg "${home}/.local/state/psx-state-sync.json"} \
+      --only ${lib.escapeShellArgs cfg.saveSync.psxStateSerials}
+  '';
 
   # Each core is ES-DE's default for its system, so no emulator pin is needed; ES-DE
   # finds them under /run/current-system/sw/lib/retroarch/cores
@@ -130,7 +147,10 @@ let
         ConfirmPowerOff = "false";
         # 0 means unlimited, far too fast to play through
         FastForwardSpeed = fastForward;
+        # Quitting would overwrite the synced resume state; the quick slot is the save
+        SaveStateOnExit = "false";
       };
+      Folders.SaveStates = localStates;
       # Nix pins the version; an update prompt only stalls the launch
       AutoUpdater.CheckAtStartup = "false";
       # On-screen messages vanish under gamescope; the file keeps them readable over ssh
@@ -500,6 +520,20 @@ in
         default = "dynamic";
       };
     };
+
+    saveSync.psxAndroidRomUri = lib.mkOption {
+      type = lib.types.str;
+      description = ''
+        SAF URI prefix the Android DuckStation records for the PSX ROM folder, up to
+        and including the encoded trailing slash; read it from an RP6 state header.
+      '';
+    };
+
+    saveSync.psxStateSerials = lib.mkOption {
+      type = with lib.types; listOf str;
+      default = [ ];
+      description = "Limit state translation to these serials; empty means every game.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -568,6 +602,21 @@ in
       };
     };
 
+    systemd.services.psx-state-sync = {
+      description = "Translate DuckStation quick-save states between the RP6 and here";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "syncthing.service" ];
+      serviceConfig = {
+        Type = "oneshot";
+        User = cfg.user;
+        ExecStart = psxStateSync;
+      };
+    };
+    systemd.paths.psx-state-sync = {
+      wantedBy = [ "multi-user.target" ];
+      pathConfig.PathChanged = [ syncedStates localStates ];
+    };
+
     services.syncthing = {
       enable = true;
       inherit (cfg) user;
@@ -619,6 +668,7 @@ in
       "d ${home}/.local/share 0755 ${cfg.user} users -"
       "d ${home}/.local/state 0755 ${cfg.user} users -"
       "d ${home}/.local/share/duckstation 0755 ${cfg.user} users -"
+      "d ${localStates} 0755 ${cfg.user} users -"
       "L+ ${home}/.local/share/duckstation/.stignore - - - - ${duckstation-stignore}"
       "d ${home}/ES-DE 0755 ${cfg.user} users -"
       "d ${home}/ES-DE/themes 0755 ${cfg.user} users -"
