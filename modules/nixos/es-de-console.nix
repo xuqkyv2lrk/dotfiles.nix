@@ -279,6 +279,17 @@ let
         <platform>ps2</platform>
         <theme>ps2</theme>
       </system>
+      <!-- Standalone only: the ROM sync replaces gamelist.xml, which drops the
+           alternativeEmulator pick and fell back to the absent RetroArch core -->
+      <system>
+        <name>psp</name>
+        <fullname>Sony PlayStation Portable</fullname>
+        <path>%ROMPATH%/psp</path>
+        <extension>.chd .CHD .cso .CSO .elf .ELF .iso .ISO .pbp .PBP .prx .PRX .7z .7Z .zip .ZIP</extension>
+        <command label="PPSSPP (Standalone)">%EMULATOR_PPSSPP% %ROM%</command>
+        <platform>psp</platform>
+        <theme>psp</theme>
+      </system>
     </systemList>
   '';
 
