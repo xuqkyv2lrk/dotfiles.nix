@@ -166,7 +166,11 @@ let
       Filenames.BIOS = "SCPH-70012.bin";
       AutoUpdater.CheckAtStartup = "false";
       # PCSX2 skips the BIOS boot animation unless fast boot is off
-      EmuCore.EnableFastBoot = "false";
+      EmuCore = {
+        EnableFastBoot = "false";
+        # The pinned renderer and boot settings are deliberate; skip the on-screen nag
+        WarnAboutUnsafeSettings = "false";
+      };
       Framerate.TurboScalar = fastForward;
       # Renderer 14 is Vulkan; 2x is the safe ceiling for the iGPU in heavier games
       "EmuCore/GS" = {
