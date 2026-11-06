@@ -150,6 +150,9 @@ let
         ResolutionScale = "4";
         PGXPEnable = "true";
       };
+      # Loading a state made on the RP6 warns about BIOS, port 2, memory card and disc
+      # path differences; hide warnings but keep info and error messages
+      Display.OSDWarningDuration = "0";
       Hotkeys = {
         OpenPauseMenu = pauseCombo;
         PowerOff = quitCombo;
