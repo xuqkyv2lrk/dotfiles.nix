@@ -97,6 +97,7 @@ let
   # pair and profile buttons never reach the host, so only Home is free besides it.
   fn = button: "SDL-0/Back & SDL-0/${button}";
   pauseCombo = "SDL-0/Guide";
+  fastForward = "2.0";
   quitCombo = fn "Start";
 
   # file -> section -> key -> value. Only these keys are pinned, so anything else
@@ -108,6 +109,8 @@ let
         SetupWizardIncomplete = "false";
         StartFullscreen = "true";
         ConfirmPowerOff = "false";
+        # 0 means unlimited, far too fast to play through
+        FastForwardSpeed = fastForward;
       };
       # Nix pins the version; an update prompt only stalls the launch
       AutoUpdater.CheckAtStartup = "false";
@@ -146,6 +149,7 @@ let
       AutoUpdater.CheckAtStartup = "false";
       # PCSX2 skips the BIOS boot animation unless fast boot is off
       EmuCore.EnableFastBoot = "false";
+      Framerate.TurboScalar = fastForward;
       Pad1 = sdlPad // { Type = "DualShock2"; };
       Hotkeys = {
         OpenPauseMenu = pauseCombo;
@@ -214,6 +218,7 @@ let
     input_state_slot_decrease_btn = "h0down";
     input_toggle_fast_forward_axis = "+5";
     input_pause_toggle_btn = "1";
+    fastforward_ratio = fastForward;
   };
 
   # ES-DE stores a system's emulator choice in its gamelist.xml
