@@ -113,7 +113,11 @@ let
       AutoUpdater.CheckAtStartup = "false";
       BIOS = {
         SearchDirectory = bios;
+        # Real console BIOSes play the white Sony intro and chime; the PSP-extracted
+        # one has it stripped, so it only covers PAL where no real dump exists
         PathNTSCU = "scph5501.bin";
+        PathNTSCJ = "scph5500.bin";
+        PathPAL = "psxonpsp660.bin";
         # Full boot animation, white Sony screen included
         PatchFastBoot = "false";
         FastForwardBoot = "false";
