@@ -264,6 +264,8 @@ let
     input_toggle_fast_forward_axis = "+5";
     input_pause_toggle_btn = "1";
     fastforward_ratio = fastForward;
+    # The core-logo splash RetroArch plays before every game
+    menu_show_load_content_animation = "false";
   } // retroarchPads;
 
   # No autoconfig profile in RetroArch matches the Ultimate 2C, so every player is
