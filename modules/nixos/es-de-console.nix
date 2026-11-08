@@ -399,6 +399,7 @@ let
 
   # Reads every gamepad without grabbing it, so a short Home press still reaches the
   # emulator; only a press held past HOLD seconds suspends. Pads are rescanned for hotplug.
+  # Select+R3 saves a clip and Select+L3 toggles live streaming; no emulator binds them.
   homeHoldSuspend = pkgs.writers.writePython3 "gamepad-home-suspend" {
     libraries = [ pkgs.python3Packages.evdev ];
   } ''
@@ -411,8 +412,27 @@ let
 
     HOLD = 2.0
     RESUME_GRACE = 10.0
+    USER = "${cfg.user}"
     watched: set[str] = set()
     last_suspend = 0.0
+
+
+    def user_systemctl(*args: str) -> int:
+        cmd = ["systemctl", "--user", "-M", f"{USER}@", *args]
+        return subprocess.run(cmd, check=False).returncode
+
+
+    def save_clip() -> None:
+        # main only: gsr-kms-server would die from SIGUSR1's default action
+        user_systemctl("kill", "--signal=SIGUSR1", "--kill-whom=main",
+                       "gsr-replay.service")
+
+
+    def toggle_stream() -> None:
+        if user_systemctl("is-active", "--quiet", "gsr-stream.service") == 0:
+            user_systemctl("stop", "--no-block", "gsr-stream.service")
+        else:
+            user_systemctl("start", "--no-block", "gsr-stream.service")
 
 
     def is_gamepad(dev: evdev.InputDevice) -> bool:
@@ -428,13 +448,23 @@ let
             subprocess.run(["systemctl", "suspend"], check=False)
 
 
+    COMBOS = {ecodes.BTN_THUMBR: save_clip, ecodes.BTN_THUMBL: toggle_stream}
+
+
     async def watch(dev: evdev.InputDevice) -> None:
         timer = None
+        select_held = False
         try:
             async for ev in dev.async_read_loop():
-                if ev.type != ecodes.EV_KEY or ev.code != ecodes.BTN_MODE:
+                if ev.type != ecodes.EV_KEY:
                     continue
-                if ev.value == 1:
+                if ev.code == ecodes.BTN_SELECT:
+                    select_held = ev.value != 0
+                elif ev.value == 1 and select_held and ev.code in COMBOS:
+                    asyncio.create_task(asyncio.to_thread(COMBOS[ev.code]))
+                elif ev.code != ecodes.BTN_MODE:
+                    continue
+                elif ev.value == 1:
                     timer = asyncio.create_task(suspend_after_hold())
                 elif ev.value == 0 and timer:
                     timer.cancel()
@@ -466,13 +496,83 @@ let
     asyncio.run(main())
   '';
 
+  clipSeconds = 15;
+  clipDir = "${home}/Videos/clips";
+  streamEnv = "${home}/.config/gsr/stream.env";
+  sounds = "${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo";
+  gsr = "/run/current-system/sw/bin/gpu-screen-recorder";
+  gsrCapture = "-w screen -f 60 -a default_output";
+
+  # Confirms a clip or stream toggle: rumbles every pad that can, else plays a short
+  # freedesktop sound. Runs as the console user, who reads pads via the input group.
+  gamepadFeedback = pkgs.writers.writePython3 "gamepad-feedback" {
+    libraries = [ pkgs.python3Packages.evdev ];
+    flakeIgnore = [ "E501" ];
+  } ''
+    import subprocess
+    import sys
+    import time
+
+    import evdev
+    from evdev import InputDevice, ecodes, ff
+
+    # rumble pulses in ms, and the fallback sound
+    PATTERNS = {
+        "clip": ([150], "${sounds}/camera-shutter.oga"),
+        "live": ([400], "${sounds}/service-login.oga"),
+        "off": ([120, 120], "${sounds}/service-logout.oga"),
+    }
+
+
+    def rumble(dev: InputDevice, pulses: list[int]) -> None:
+        for ms in pulses:
+            effect = ff.Effect(
+                ecodes.FF_RUMBLE, -1, 0, ff.Trigger(0, 0), ff.Replay(ms, 0),
+                ff.EffectType(ff_rumble_effect=ff.Rumble(0xC000, 0xC000)),
+            )
+            eid = dev.upload_effect(effect)
+            dev.write(ecodes.EV_FF, eid, 1)
+            time.sleep(ms / 1000 + 0.12)
+            dev.erase_effect(eid)
+
+
+    def can_rumble(dev: InputDevice) -> bool:
+        caps = dev.capabilities()
+        has_ff = ecodes.FF_RUMBLE in caps.get(ecodes.EV_FF, [])
+        return has_ff and ecodes.BTN_SOUTH in caps.get(ecodes.EV_KEY, [])
+
+
+    def main() -> None:
+        pulses, sound = PATTERNS[sys.argv[1]]
+        rumbled = False
+        for path in evdev.list_devices():
+            try:
+                dev = InputDevice(path)
+                if can_rumble(dev):
+                    rumble(dev, pulses)
+                    rumbled = True
+                dev.close()
+            except OSError:
+                continue
+        if not rumbled:
+            subprocess.run(["${pkgs.pipewire}/bin/pw-play", sound], check=False)
+
+
+    main()
+  '';
+
+  # gpu-screen-recorder passes the clip path and type; only the confirmation matters
+  clipSaved = pkgs.writeShellScript "clip-saved" ''
+    exec ${gamepadFeedback} clip
+  '';
+
   # Fullscreen gamescope session; quitting ES-DE relaunches it, like Kodi on bragi.
   # Apps render at 1080p, matching the emulators' internal resolutions (PPSSPP 4x,
   # PCSX2 2x). Unpinned, gamescope followed the TV's 4K mode on some boots, shrinking
   # the UI and adding input lag on the iGPU. 1080p120 fits the iGPU's HDMI 2.0, and
   # the C3's VRR range (40-120 Hz) lets each emulator run at its native rate.
   couch-session = pkgs.writeShellScript "couch-session" ''
-    exec ${pkgs.gamescope}/bin/gamescope -f -w 1920 -h 1080 -r 120 --adaptive-sync -- ${pkgs.bash}/bin/bash -c \
+    exec ${pkgs.gamescope}/bin/gamescope -f -W 1920 -H 1080 -w 1920 -h 1080 -r 120 --adaptive-sync -- ${pkgs.bash}/bin/bash -c \
       'while true; do ${apply-settings}; ${apply-emulator-settings}; ${es-de}/bin/es-de; sleep 1; done'
   '';
 
@@ -613,11 +713,50 @@ in
     # The 8BitDo dongle lacks USB remote wakeup (bmAttributes 0x80), so pads can only
     # put the box to sleep; waking is the power button or the keyboard dongle.
     systemd.services.gamepad-home-suspend = {
-      description = "Suspend when a gamepad's Home button is held";
+      description = "Suspend on a held Home; clip and stream button combos";
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
         ExecStart = homeHoldSuspend;
         Restart = "always";
+      };
+    };
+
+    # Captures the screen through the setcap'd gsr-kms-server wrapper
+    programs.gpu-screen-recorder.enable = true;
+
+    # Xbox-style instant replay held in RAM; Select+R3 (SIGUSR1) writes it out.
+    # Restarts until gamescope has a display to capture.
+    systemd.user.services.gsr-replay = {
+      description = "Keep the last ${toString clipSeconds} s of gameplay for clips";
+      wantedBy = [ "default.target" ];
+      conflicts = [ "gsr-stream.service" ];
+      unitConfig.ConditionUser = cfg.user;
+      serviceConfig = {
+        ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p ${clipDir}";
+        ExecStart = "${gsr} ${gsrCapture} -k hevc -c mp4 -bm cbr -q 20000 -r ${toString clipSeconds} -sc ${clipSaved} -o ${clipDir}";
+        Restart = "always";
+        RestartSec = 5;
+      };
+    };
+
+    # Select+L3 swaps the replay buffer for a live stream and back. The RTMP URL with
+    # its stream key stays out of git, in a file holding STREAM_URL=rtmp://...
+    systemd.user.services.gsr-stream = {
+      description = "Live stream gameplay to the RTMP URL in ${streamEnv}";
+      conflicts = [ "gsr-replay.service" ];
+      unitConfig = {
+        ConditionUser = cfg.user;
+        ConditionPathExists = streamEnv;
+      };
+      serviceConfig = {
+        EnvironmentFile = streamEnv;
+        # H.264 CBR at 6000 kbps: the most Twitch ingests without enhanced broadcasting
+        ExecStart = "${gsr} ${gsrCapture} -k h264 -c flv -bm cbr -q 6000 -o \${STREAM_URL}";
+        ExecStartPost = "${gamepadFeedback} live";
+        ExecStopPost = [
+          "${gamepadFeedback} off"
+          "${pkgs.systemd}/bin/systemctl --user --no-block start gsr-replay.service"
+        ];
       };
     };
 
@@ -676,6 +815,11 @@ in
             path = "${home}/Emulation/bios";
             devices = [ "valhalla-hub" ];
           };
+          clips = {
+            label = "Clips";
+            path = clipDir;
+            devices = [ "valhalla-hub" ];
+          };
         };
       };
     };
@@ -696,6 +840,8 @@ in
       "L+ ${home}/ES-DE/custom_systems/es_systems.xml - - - - ${customSystems}"
       "d ${home}/Emulation 0755 ${cfg.user} users -"
       "d ${home}/Emulation/bios 0755 ${cfg.user} users -"
+      "d ${home}/Videos 0755 ${cfg.user} users -"
+      "d ${clipDir} 0755 ${cfg.user} users -"
       "d ${home}/.config 0755 ${cfg.user} users -"
       "d ${home}/.config/retroarch 0755 ${cfg.user} users -"
       "d ${home}/.config/PCSX2 0755 ${cfg.user} users -"
