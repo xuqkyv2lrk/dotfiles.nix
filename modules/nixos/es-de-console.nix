@@ -462,9 +462,12 @@ let
     asyncio.run(main())
   '';
 
-  # Fullscreen gamescope session; quitting ES-DE relaunches it, like Kodi on bragi
+  # Fullscreen gamescope session; quitting ES-DE relaunches it, like Kodi on bragi.
+  # Apps render at 1080p, matching the emulators' internal resolutions (PPSSPP 4x,
+  # PCSX2 2x), and gamescope scales to the TV at 60 Hz. Unpinned, it followed the
+  # TV's 4K mode on some boots, shrinking the UI and adding input lag on the iGPU.
   couch-session = pkgs.writeShellScript "couch-session" ''
-    exec ${pkgs.gamescope}/bin/gamescope -f -- ${pkgs.bash}/bin/bash -c \
+    exec ${pkgs.gamescope}/bin/gamescope -f -w 1920 -h 1080 -r 60 -- ${pkgs.bash}/bin/bash -c \
       'while true; do ${apply-settings}; ${apply-emulator-settings}; ${es-de}/bin/es-de; sleep 1; done'
   '';
 
