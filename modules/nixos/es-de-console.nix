@@ -518,12 +518,13 @@ let
     import evdev
     from evdev import InputDevice, ecodes, ff
 
-    # rumble pulses in ms, and the fallback sound
+    # rumble pulses in ms (a double tap, rising, falling), and the fallback sound
     PATTERNS = {
-        "clip": ([150], "${sounds}/camera-shutter.oga"),
-        "live": ([400], "${sounds}/service-login.oga"),
-        "off": ([120, 120], "${sounds}/service-logout.oga"),
+        "clip": ([60, 60], "${sounds}/camera-shutter.oga"),
+        "live": ([70, 70, 250], "${sounds}/service-login.oga"),
+        "off": ([250, 70], "${sounds}/service-logout.oga"),
     }
+    GAP = 0.07
 
 
     def rumble(dev: InputDevice, pulses: list[int]) -> None:
@@ -534,7 +535,7 @@ let
             )
             eid = dev.upload_effect(effect)
             dev.write(ecodes.EV_FF, eid, 1)
-            time.sleep(ms / 1000 + 0.12)
+            time.sleep(ms / 1000 + GAP)
             dev.erase_effect(eid)
 
 
