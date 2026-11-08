@@ -502,6 +502,8 @@ let
   sounds = "${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo";
   gsr = "/run/current-system/sw/bin/gpu-screen-recorder";
   gsrCapture = "-w screen -f 60 -a default_output";
+  # gsr needs a display connection even for KMS capture; user units get none
+  gsrEnv = "WAYLAND_DISPLAY=gamescope-0";
 
   # Confirms a clip or stream toggle: rumbles every pad that can, else plays a short
   # freedesktop sound. Runs as the console user, who reads pads via the input group.
@@ -732,8 +734,10 @@ in
       conflicts = [ "gsr-stream.service" ];
       unitConfig.ConditionUser = cfg.user;
       serviceConfig = {
+        Environment = gsrEnv;
         ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p ${clipDir}";
-        ExecStart = "${gsr} ${gsrCapture} -k hevc -c mp4 -bm cbr -q 20000 -r ${toString clipSeconds} -sc ${clipSaved} -o ${clipDir}";
+        # AAC: phones and most sites will not play Opus inside MP4
+        ExecStart = "${gsr} ${gsrCapture} -k hevc -c mp4 -ac aac -bm cbr -q 20000 -r ${toString clipSeconds} -sc ${clipSaved} -o ${clipDir}";
         Restart = "always";
         RestartSec = 5;
       };
@@ -749,6 +753,7 @@ in
         ConditionPathExists = streamEnv;
       };
       serviceConfig = {
+        Environment = gsrEnv;
         EnvironmentFile = streamEnv;
         # H.264 CBR at 6000 kbps: the most Twitch ingests without enhanced broadcasting
         ExecStart = "${gsr} ${gsrCapture} -k h264 -c flv -bm cbr -q 6000 -o \${STREAM_URL}";
