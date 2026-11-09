@@ -576,8 +576,10 @@ let
   # PCSX2 2x). Unpinned, gamescope followed the TV's 4K mode on some boots, shrinking
   # the UI and adding input lag on the iGPU. 1080p120 fits the iGPU's HDMI 2.0, and
   # the C3's VRR range (40-120 Hz) lets each emulator run at its native rate.
+  # Output goes to the journal (journalctl -t gamescope) instead of the console, so no
+  # text shows between the boot splash and ES-DE's own loading screen.
   couch-session = pkgs.writeShellScript "couch-session" ''
-    exec ${pkgs.gamescope}/bin/gamescope -f -W 1920 -H 1080 -w 1920 -h 1080 -r 120 --adaptive-sync -- ${pkgs.bash}/bin/bash -c \
+    exec ${pkgs.systemd}/bin/systemd-cat -t gamescope ${pkgs.gamescope}/bin/gamescope -f -W 1920 -H 1080 -w 1920 -h 1080 -r 120 --adaptive-sync -- ${pkgs.bash}/bin/bash -c \
       'while true; do ${apply-settings}; ${apply-emulator-settings}; ${es-de}/bin/es-de; sleep 1; done'
   '';
 
@@ -714,6 +716,12 @@ in
         (pkgs.adi1090x-plymouth-themes.override { selected_themes = [ "pixels" ]; })
       ];
     };
+    # Plymouth quits as greetd starts; keeping its last frame up hides the console until
+    # gamescope takes the display and ES-DE shows its loading screen
+    systemd.services.plymouth-quit.serviceConfig.ExecStart = lib.mkForce [
+      ""
+      "${config.boot.plymouth.package}/bin/plymouth quit --retain-splash"
+    ];
     # systemd in the initrd runs Plymouth from the first frame; early amdgpu keeps the
     # splash at the TV's native mode instead of switching partway through
     boot.initrd.systemd.enable = true;
