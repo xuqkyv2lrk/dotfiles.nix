@@ -737,6 +737,9 @@ in
       "rd.systemd.show_status=false"
       "systemd.show_status=false"
       "vt.global_cursor_default=0"
+      # amdgpu starts in gamescope's mode, so the TV and Denon re-sync once at boot
+      # instead of again when gamescope starts, which blanked most of the splash
+      "video=HDMI-A-1:1920x1080@120"
     ];
 
     # Rest mode like a console: suspend only on request (power button or a held Home),
