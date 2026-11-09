@@ -706,43 +706,13 @@ in
       };
     };
 
-    # Console-style boot: straight into the newest generation behind an animated splash.
-    # Holding Space at power-on still opens the systemd-boot menu for a rollback.
+    # Boots straight into the newest generation; holding Space at power-on still opens
+    # the systemd-boot menu for a rollback. The boot log stays visible on purpose.
     boot.loader.timeout = 0;
-    boot.plymouth = {
-      enable = true;
-      theme = "pixels";
-      themePackages = [
-        (pkgs.adi1090x-plymouth-themes.override { selected_themes = [ "pixels" ]; })
-      ];
-    };
-    # Plymouth quits as greetd starts; keeping its last frame up hides the console until
-    # gamescope takes the display and ES-DE shows its loading screen
-    systemd.services.plymouth-quit.serviceConfig.ExecStart = lib.mkForce [
-      ""
-      "${config.boot.plymouth.package}/bin/plymouth quit --retain-splash"
-    ];
-    # systemd in the initrd runs Plymouth from the first frame; early amdgpu keeps the
-    # splash at the TV's native mode instead of switching partway through
-    boot.initrd.systemd.enable = true;
+    # amdgpu loads early and starts in gamescope's mode, so the TV and Denon re-sync
+    # once at boot instead of again when gamescope starts
     boot.initrd.kernelModules = [ "amdgpu" ];
-    boot.initrd.verbose = false;
-    boot.consoleLogLevel = 3;
-    boot.kernelParams = [
-      "quiet"
-      "splash"
-      "loglevel=3"
-      "rd.udev.log_level=3"
-      "udev.log_priority=3"
-      "rd.systemd.show_status=false"
-      "systemd.show_status=false"
-      "vt.global_cursor_default=0"
-      # amdgpu starts in gamescope's mode, so the TV and Denon re-sync once at boot
-      # instead of again when gamescope starts, which blanked most of the splash
-      "video=HDMI-A-1:1920x1080@120"
-      # Plymouth drew on the firmware framebuffer and went black once amdgpu replaced it
-      "plymouth.use-simpledrm=0"
-    ];
+    boot.kernelParams = [ "video=HDMI-A-1:1920x1080@120" ];
 
     # Rest mode like a console: suspend only on request (power button or a held Home),
     # never on idle. Hibernate stays off; there is no swap partition to resume from.
