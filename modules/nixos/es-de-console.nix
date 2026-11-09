@@ -740,6 +740,8 @@ in
       # amdgpu starts in gamescope's mode, so the TV and Denon re-sync once at boot
       # instead of again when gamescope starts, which blanked most of the splash
       "video=HDMI-A-1:1920x1080@120"
+      # Plymouth drew on the firmware framebuffer and went black once amdgpu replaced it
+      "plymouth.use-simpledrm=0"
     ];
 
     # Rest mode like a console: suspend only on request (power button or a held Home),
