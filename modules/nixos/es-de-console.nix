@@ -702,6 +702,33 @@ in
       };
     };
 
+    # Console-style boot: straight into the newest generation behind an animated splash.
+    # Holding Space at power-on still opens the systemd-boot menu for a rollback.
+    boot.loader.timeout = 0;
+    boot.plymouth = {
+      enable = true;
+      theme = "pixels";
+      themePackages = [
+        (pkgs.adi1090x-plymouth-themes.override { selected_themes = [ "pixels" ]; })
+      ];
+    };
+    # systemd in the initrd runs Plymouth from the first frame; early amdgpu keeps the
+    # splash at the TV's native mode instead of switching partway through
+    boot.initrd.systemd.enable = true;
+    boot.initrd.kernelModules = [ "amdgpu" ];
+    boot.initrd.verbose = false;
+    boot.consoleLogLevel = 3;
+    boot.kernelParams = [
+      "quiet"
+      "splash"
+      "loglevel=3"
+      "rd.udev.log_level=3"
+      "udev.log_priority=3"
+      "rd.systemd.show_status=false"
+      "systemd.show_status=false"
+      "vt.global_cursor_default=0"
+    ];
+
     # Rest mode like a console: suspend only on request (power button or a held Home),
     # never on idle. Hibernate stays off; there is no swap partition to resume from.
     systemd.targets = {
