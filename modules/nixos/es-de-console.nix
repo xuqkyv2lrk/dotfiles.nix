@@ -247,6 +247,8 @@ let
       ControlMapping = {
         L = "1-45,10-193";
         R = "1-51,10-192";
+        # Select+Start quits back to ES-DE like the other emulators; ':' joins a chord
+        "Exit App" = "10-196:10-197";
       };
     };
   };
