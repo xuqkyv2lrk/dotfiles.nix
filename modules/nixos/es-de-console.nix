@@ -147,8 +147,9 @@ let
         ConfirmPowerOff = "false";
         # 0 means unlimited, far too fast to play through
         FastForwardSpeed = fastForward;
-        # Quitting would overwrite the synced resume state; the quick slot is the save
-        SaveStateOnExit = "false";
+        # Writes <serial>_resume.sav on quit; psx-state-sync only maps the quick slot,
+        # so this never reaches the RP6
+        SaveStateOnExit = "true";
       };
       Folders.SaveStates = localStates;
       # Nix pins the version; an update prompt only stalls the launch
@@ -179,7 +180,6 @@ let
       # path differences; hide warnings but keep info and error messages
       Display.OSDWarningDuration = "0";
       Hotkeys = {
-        OpenPauseMenu = pauseCombo;
         PowerOff = quitCombo;
         SaveSelectedSaveState = fn "LeftShoulder";
         LoadSelectedSaveState = fn "+LeftTrigger";
@@ -206,6 +206,8 @@ let
         EnableFastBoot = "false";
         # The pinned renderer and boot settings are deliberate; skip the on-screen nag
         WarnAboutUnsafeSettings = "false";
+        # A resume state on every quit, so a lost controller never costs progress
+        SaveStateOnShutdown = "true";
       };
       Framerate.TurboScalar = fastForward;
       # Renderer 14 is Vulkan; 2x is the safe ceiling for the iGPU in heavier games
@@ -214,7 +216,6 @@ let
         upscale_multiplier = "2";
       };
       Hotkeys = {
-        OpenPauseMenu = pauseCombo;
         ShutdownVM = quitCombo;
         SaveStateToSlot = fn "LeftShoulder";
         LoadStateFromSlot = fn "+LeftTrigger";
@@ -252,6 +253,43 @@ let
       };
     };
   };
+
+  # Bindings with a keyboard fallback. Both emulators store extra bindings for one
+  # action as repeated keys, which crudini cannot write; Esc opens the pause menu.
+  multiBindings = {
+    "${home}/.local/share/duckstation/settings.ini".Hotkeys.OpenPauseMenu = [ pauseCombo "Keyboard/Escape" ];
+    "${home}/.config/PCSX2/inis/PCSX2.ini".Hotkeys.OpenPauseMenu = [ pauseCombo "Keyboard/Escape" ];
+  };
+
+  # Replaces every line of a key inside one section with the given values, in order
+  setMultiKey = pkgs.writers.writePython3 "ini-set-multi" { } ''
+    import sys
+    from pathlib import Path
+
+    path, section, key, *values = sys.argv[1:]
+    file = Path(path)
+    lines = file.read_text().splitlines() if file.exists() else []
+    out: list[str] = []
+    current = None
+    placed = False
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("[") and stripped.endswith("]"):
+            if current == section and not placed:
+                out += [f"{key} = {v}" for v in values]
+                placed = True
+            current = stripped[1:-1]
+            out.append(line)
+            continue
+        if current == section and stripped.split("=", 1)[0].strip() == key:
+            continue
+        out.append(line)
+    if not placed:
+        if current != section:
+            out.append(f"[{section}]")
+        out += [f"{key} = {v}" for v in values]
+    file.write_text("\n".join(out) + "\n")
+  '';
 
   iniLines = file: sections: lib.concatStrings (lib.mapAttrsToList (section: keys:
     lib.concatStrings (lib.mapAttrsToList (key: value: ''
@@ -369,6 +407,10 @@ let
       mkdir -p "$(dirname ${lib.escapeShellArg file})"
     '') emulatorSettings)}
     ${lib.concatStrings (lib.mapAttrsToList iniLines emulatorSettings)}
+    ${lib.concatStrings (lib.mapAttrsToList (file: sections: lib.concatStrings (lib.mapAttrsToList (section: keys:
+      lib.concatStrings (lib.mapAttrsToList (key: values: ''
+        ${setMultiKey} ${lib.escapeShellArgs ([ file section key ] ++ values)}
+      '') keys)) sections)) multiBindings)}
 
     set_alt_emulator() {
       gamelist="${home}/ES-DE/gamelists/$1/gamelist.xml"
