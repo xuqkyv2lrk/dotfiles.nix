@@ -18,6 +18,21 @@ in
   networking.hostName = "idavoll";
   networking.networkmanager.enable = true;
 
+  # Tunnel to bifrost, the DigitalOcean relay that fronts game streaming so remote
+  # players never see the home IP. idavoll dials out, so the home router opens nothing;
+  # only bifrost's tunnel address is routed here, not all traffic.
+  networking.wireguard.interfaces.wg-bifrost = {
+    ips = [ "10.77.0.2/24" ];
+    privateKeyFile = "/var/lib/wireguard/bifrost.key";
+    generatePrivateKeyFile = true;
+    peers = [{
+      publicKey = "qHy3Vhr7bRoaewg2SXUOfkcsRYfvm0isJmoZt2rfbXM=";
+      endpoint = "162.243.72.181:51820";
+      allowedIPs = [ "10.77.0.1/32" ];
+      persistentKeepalive = 25;
+    }];
+  };
+
   time.timeZone = "America/New_York";
 
   services.esde-console = {

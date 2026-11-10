@@ -801,6 +801,8 @@ in
         csrf_allowed_origins = "https://192.168.22.144:47990,https://idavoll:47990";
         # Never ask the router to forward ports; outside access goes through the relay
         upnp = "disabled";
+        # Clients reach idavoll through bifrost; advertise its address, never the home IP
+        external_ip = "162.243.72.181";
         system_tray = "disabled";
       };
       # One entry: the couch session as it is, nothing launched
