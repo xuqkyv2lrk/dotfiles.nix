@@ -795,6 +795,8 @@ in
         encoder = "vaapi";
         adapter_name = "/dev/dri/renderD128";
         origin_web_ui_allowed = "lan";
+        # The web UI only trusts localhost by default and rejects LAN requests as CSRF
+        csrf_allowed_origins = "https://192.168.22.144:47990,https://idavoll:47990";
         # Never ask the router to forward ports; outside access goes through the relay
         upnp = "disabled";
         system_tray = "disabled";
