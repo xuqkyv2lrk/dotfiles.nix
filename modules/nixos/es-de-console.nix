@@ -795,6 +795,9 @@ in
         encoder = "vaapi";
         adapter_name = "/dev/dri/renderD128";
         origin_web_ui_allowed = "lan";
+        # Never ask the router to forward ports; outside access goes through the relay
+        upnp = "disabled";
+        system_tray = "disabled";
       };
       # One entry: the couch session as it is, nothing launched
       applications.apps = [ { name = "Couch"; } ];
