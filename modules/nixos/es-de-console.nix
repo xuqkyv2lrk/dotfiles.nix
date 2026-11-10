@@ -619,11 +619,13 @@ let
   # the UI and adding input lag on the iGPU. 1080p120 fits the iGPU's HDMI 2.0, and
   # the C3's VRR range (40-120 Hz) lets each emulator run at its native rate.
   # Output goes to the journal (journalctl -t gamescope) instead of the console.
+  # Composition forced into one plane: Sunshine's KMS capture reads a single plane,
+  # and direct scanout left it black.
   # AppImage emulators (DuckStation, PCSX2) bundle their own libudev and never saw a
   # pad that powered off and back on; plain /dev/input watching catches the re-add.
   couch-session = pkgs.writeShellScript "couch-session" ''
     export SDL_JOYSTICK_DISABLE_UDEV=1
-    exec ${pkgs.systemd}/bin/systemd-cat -t gamescope ${pkgs.gamescope}/bin/gamescope -f -W 1920 -H 1080 -w 1920 -h 1080 -r 120 --adaptive-sync -- ${pkgs.bash}/bin/bash -c \
+    exec ${pkgs.systemd}/bin/systemd-cat -t gamescope ${pkgs.gamescope}/bin/gamescope -f -W 1920 -H 1080 -w 1920 -h 1080 -r 120 --adaptive-sync --force-composition -- ${pkgs.bash}/bin/bash -c \
       'while true; do ${apply-settings}; ${apply-emulator-settings}; ${es-de}/bin/es-de; sleep 1; done'
   '';
 
