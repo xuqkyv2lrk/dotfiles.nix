@@ -783,6 +783,33 @@ in
     # Captures the screen through the setcap'd gsr-kms-server wrapper
     programs.gpu-screen-recorder.enable = true;
 
+    # Co-op streaming: Moonlight clients mirror the TV and their pad joins as the next
+    # player. KMS capture needs cap_sys_admin; the web UI (pairing PINs) stays on the LAN.
+    services.sunshine = {
+      enable = true;
+      capSysAdmin = true;
+      openFirewall = true;
+      settings = {
+        sunshine_name = "idavoll";
+        capture = "kms";
+        encoder = "vaapi";
+        adapter_name = "/dev/dri/renderD128";
+        origin_web_ui_allowed = "lan";
+      };
+      # One entry: the couch session as it is, nothing launched
+      applications.apps = [ { name = "Couch"; } ];
+    };
+    # The module waits for graphical-session.target, which the gamescope session never
+    # reaches; start with the user manager instead, like the clip recorder
+    systemd.user.services.sunshine = {
+      wantedBy = lib.mkForce [ "default.target" ];
+      partOf = lib.mkForce [ ];
+      wants = lib.mkForce [ ];
+      after = lib.mkForce [ ];
+      unitConfig.ConditionUser = cfg.user;
+      serviceConfig.Environment = gsrEnv;
+    };
+
     # Xbox-style instant replay held in RAM; Select+R3 (SIGUSR1) writes it out.
     # Restarts until gamescope has a display to capture.
     systemd.user.services.gsr-replay = {
