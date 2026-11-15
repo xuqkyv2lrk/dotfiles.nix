@@ -66,6 +66,11 @@ in
   xdg.configFile."delta".source     = lnCore "delta/.config/delta";
   xdg.configFile."fastfetch".source = lnCore "fastfetch/.config/fastfetch";
   xdg.configFile."ghostty".source   = lnCore "ghostty/.config/ghostty";
+  home.file."bin/ghostty-window".source = lnCore "ghostty/bin/ghostty-window";
+  # Start ghostty's packaged windowless instance with the session so the first
+  # window opens as fast as the rest (ghostty-window asks it over D-Bus)
+  xdg.configFile."systemd/user/graphical-session.target.wants/app-com.mitchellh.ghostty.service".source =
+    "${pkgs.ghostty}/share/systemd/user/app-com.mitchellh.ghostty.service";
   xdg.configFile."mpd".source       = lnCore "mpd/.config/mpd";
   xdg.configFile."mpv".source       = lnCore "mpv/.config/mpv";
   xdg.configFile."ncmpcpp".source   = lnCore "ncmpcpp/.config/ncmpcpp";
