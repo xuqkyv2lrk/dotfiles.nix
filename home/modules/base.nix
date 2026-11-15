@@ -65,7 +65,7 @@ in
   xdg.configFile."cava".source      = lnCore "cava/.config/cava";
   xdg.configFile."delta".source     = lnCore "delta/.config/delta";
   xdg.configFile."fastfetch".source = lnCore "fastfetch/.config/fastfetch";
-  xdg.configFile."foot".source      = lnCore "foot/.config/foot";
+  xdg.configFile."ghostty".source   = lnCore "ghostty/.config/ghostty";
   xdg.configFile."mpd".source       = lnCore "mpd/.config/mpd";
   xdg.configFile."mpv".source       = lnCore "mpv/.config/mpv";
   xdg.configFile."ncmpcpp".source   = lnCore "ncmpcpp/.config/ncmpcpp";
@@ -112,7 +112,7 @@ in
     signal-desktop
 
     # terminal emulator
-    foot
+    ghostty
 
     # password managers
     bitwarden-desktop
