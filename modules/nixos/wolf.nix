@@ -13,6 +13,16 @@ let
     ln -sfn ${guestHome} ${couchHome}
   '';
 
+  # Replaces the image's app script but keeps its launcher, which starts Sway (the
+  # display Wolf streams) and runs the app inside it
+  startApp = pkgs.writeScript "startup-app.sh" ''
+    #!/bin/bash
+    set -e
+    source /opt/gow/bash-lib/utils.sh
+    source /opt/gow/launch-comp.sh
+    launcher ${couch.guestSession}
+  '';
+
   # One app only: the couch ES-DE setup, run from the host's Nix store, in the guest's
   # own home. ROMs and BIOS are shared read-only; saves, states and settings live in
   # Wolf's per-client home under ${stateDir}.
@@ -24,7 +34,7 @@ let
     "${cfg.romDir}:/ROMs:ro"
     "${cfg.biosDir}:${guestHome}/Emulation/bios:ro"
     "${linkCouchHome}:/etc/cont-init.d/50-couch-home.sh:ro"
-    "${couch.guestSession}:/opt/gow/startup-app.sh:ro"
+    "${startApp}:/opt/gow/startup-app.sh:ro"
   ];
 
   guestConfig = pkgs.writeText "wolf-config.toml" ''
