@@ -18,8 +18,8 @@ let
     fi
   '';
 
-  # Replaces the image's app script but keeps its launcher, which starts Sway (the
-  # display Wolf streams) and runs the app inside it
+  # Replaces the image's app script but keeps its launcher, which starts gamescope
+  # (the display Wolf streams, as on the couch) and runs the app inside it
   startApp = pkgs.writeScript "startup-app.sh" ''
     #!/bin/bash
     set -e
@@ -57,11 +57,11 @@ let
     [profiles.apps.runner]
     type = "docker"
     name = "WolfES-DE"
-    # Only the base (Sway, audio, input plumbing) is used; ES-DE and the emulators come
+    # Only the base (gamescope, audio, input plumbing) is used; ES-DE and the emulators come
     # from the host. Not :fedora, which ships an aarch64 esde.AppImage.
     image = "ghcr.io/games-on-whales/es-de:edge"
     mounts = [${lib.concatMapStringsSep ", " (m: "\"${m}\"") mounts}]
-    env = ["RUN_SWAY=1", "GOW_REQUIRED_DEVICES=/dev/input/* /dev/dri/*"]
+    env = ["RUN_GAMESCOPE=1", "GOW_REQUIRED_DEVICES=/dev/input/* /dev/dri/*"]
     devices = []
     ports = []
     base_create_json = """

@@ -4,7 +4,7 @@ let
   home = config.users.users.${cfg.user}.home;
 
   # ES-DE and DuckStation are no longer in nixpkgs, so wrap the upstream AppImages
-  es-de = pkgs.appimageTools.wrapType2 rec {
+  esdeImage = rec {
     pname = "es-de";
     version = "3.5.0";
     src = pkgs.fetchurl {
@@ -13,6 +13,7 @@ let
       hash = "sha256-q8KZmhI4X4V3W9P5hvqJHHa2nfN5H3wS5MeDzzw2MPU=";
     };
   };
+  es-de = pkgs.appimageTools.wrapType2 esdeImage;
 
   duckstationImage = rec {
     pname = "duckstation";
@@ -645,6 +646,20 @@ let
       'while true; do ${apply-settings}; ${apply-emulator-settings}; ${es-de}/bin/es-de; sleep 1; done'
   '';
 
+  # Docker forbids the user namespaces that the wrapType2 sandbox (bwrap) needs, so the
+  # guest runs the same AppImages unpacked on the container's own FHS libraries.
+  # Listed first on PATH, so ES-DE's find rules pick these over the bwrap wrappers;
+  # the native Nix emulators (RetroArch, PCSX2, PPSSPP) follow from the system path.
+  guestBin = pkgs.symlinkJoin {
+    name = "esde-guest-bin";
+    paths = [
+      (pkgs.writeShellScriptBin "duckstation" ''
+        exec ${pkgs.appimageTools.extract duckstationImage}/AppRun "$@"
+      '')
+    ];
+  };
+  esdeUnpacked = pkgs.appimageTools.extract esdeImage;
+
   # The couch's ES-DE, emulators, settings and hotkeys for the Wolf guest. The guest container
   # links ${home} to the guest's own home, so every couch path lands in the guest's
   # copy; nothing here syncs, records or touches the couch user's files.
@@ -660,7 +675,8 @@ let
     link ${bios} ${home}/.config/PCSX2/bios
     ${apply-guest-settings}
     ${apply-emulator-settings}
-    exec ${es-de}/bin/es-de
+    export PATH=${guestBin}/bin:/run/current-system/sw/bin:$PATH
+    exec ${esdeUnpacked}/AppRun
   '';
 
   # The RP6 exports its whole DuckStation user directory; only these parts are shared
