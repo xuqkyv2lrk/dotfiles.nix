@@ -3,8 +3,30 @@ let
   cfg = config.services.wolf-guest;
   stateDir = "/var/lib/wolf";
 
-  # One app only: the guest's own ES-DE. The library is shared read-only; saves,
-  # states and settings live in Wolf's per-client home under ${stateDir}.
+  couch = config.services.esde-console;
+  couchHome = "/home/${couch.user}";
+  guestHome = "/home/retro";
+
+  # Runs as root before the app starts: the couch config names ${couchHome} everywhere,
+  # so inside the container that path is the guest's own home
+  linkCouchHome = pkgs.writeText "50-couch-home.sh" ''
+    ln -sfn ${guestHome} ${couchHome}
+  '';
+
+  # One app only: the couch ES-DE setup, run from the host's Nix store, in the guest's
+  # own home. ROMs and BIOS are shared read-only; saves, states and settings live in
+  # Wolf's per-client home under ${stateDir}.
+  mounts = [
+    "/nix/store:/nix/store:ro"
+    "/run/current-system:/run/current-system:ro"
+    "/run/opengl-driver:/run/opengl-driver:ro"
+    "${cfg.romDir}:${guestHome}/ROMs:ro"
+    "${cfg.romDir}:/ROMs:ro"
+    "${cfg.biosDir}:${guestHome}/Emulation/bios:ro"
+    "${linkCouchHome}:/etc/cont-init.d/50-couch-home.sh:ro"
+    "${couch.guestSession}:/opt/gow/startup-app.sh:ro"
+  ];
+
   guestConfig = pkgs.writeText "wolf-config.toml" ''
     hostname = "${cfg.hostname}"
     config_version = 7
@@ -20,9 +42,10 @@ let
     [profiles.apps.runner]
     type = "docker"
     name = "WolfES-DE"
-    # not :fedora, whose esde.AppImage is an aarch64 build (Exec format error on x86)
+    # Only the base (Sway, audio, input plumbing) is used; ES-DE and the emulators come
+    # from the host. Not :fedora, which ships an aarch64 esde.AppImage.
     image = "ghcr.io/games-on-whales/es-de:edge"
-    mounts = ["${cfg.romDir}:/ROMs:ro", "${cfg.biosDir}:/bioses:ro"]
+    mounts = [${lib.concatMapStringsSep ", " (m: "\"${m}\"") mounts}]
     env = ["RUN_SWAY=1", "GOW_REQUIRED_DEVICES=/dev/input/* /dev/dri/*"]
     devices = []
     ports = []
@@ -38,6 +61,32 @@ let
     """
 
     ${builtins.readFile ./wolf-gstreamer.toml}
+  '';
+
+  # Wolf rewrites config.toml when a client pairs. Nix owns the apps and encoders,
+  # Wolf owns the pairings: each start takes the seed and keeps the live pairings.
+  mergeConfig = pkgs.writers.writePython3 "wolf-merge-config" {
+    libraries = [ pkgs.python3Packages.tomli-w ];
+  } ''
+    import os
+    import tomllib
+    import tomli_w
+
+    live_path = "${stateDir}/cfg/config.toml"
+    seed_path = "${guestConfig}"
+    with open(seed_path, "rb") as f:
+        merged = tomllib.load(f)
+    if os.path.exists(live_path):
+        with open(live_path, "rb") as f:
+            live = tomllib.load(f)
+        merged["paired_clients"] = live.get("paired_clients", [])
+        if live.get("uuid"):
+            merged["uuid"] = live["uuid"]
+    tmp = live_path + ".tmp"
+    with open(tmp, "wb") as f:
+        tomli_w.dump(merged, f, multiline_strings=True)
+    os.chmod(tmp, 0o640)
+    os.replace(tmp, live_path)
   '';
 
   ports = {
@@ -87,12 +136,12 @@ in
       allowedUDPPorts = [ ports.control ports.video ports.audio ];
     };
 
-    # Wolf rewrites config.toml when a client pairs, so seed it once and leave it
     systemd.tmpfiles.rules = [
       "d ${stateDir} 0750 root root -"
       "d ${stateDir}/cfg 0750 root root -"
-      "C ${stateDir}/cfg/config.toml 0640 root root - ${guestConfig}"
     ];
+
+    systemd.services.docker-wolf.serviceConfig.ExecStartPre = [ "${mergeConfig}" ];
 
     virtualisation.oci-containers = {
       backend = "docker";

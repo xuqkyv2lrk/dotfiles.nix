@@ -84,6 +84,22 @@ let
     ${lib.concatStringsSep "\n" (lib.mapAttrsToList setKeyLine pinnedSettings)}
   '';
 
+  # The guest keeps ES-DE's default theme; everything else matches the couch
+  guestSettings = builtins.removeAttrs pinnedSettings (builtins.attrNames themeSettings);
+  apply-guest-settings = pkgs.writeShellScript "esde-apply-guest-settings" ''
+    settings="${home}/ES-DE/settings/es_settings.xml"
+    mkdir -p "$(dirname "$settings")"
+    [ -s "$settings" ] || printf '<?xml version="1.0"?>\n' > "$settings"
+    set_key() {
+      if ${pkgs.gnugrep}/bin/grep -q "<$1 name=\"$2\" " "$settings"; then
+        ${pkgs.gnused}/bin/sed -i "s|<$1 name=\"$2\" value=\"[^\"]*\" />|<$1 name=\"$2\" value=\"$3\" />|" "$settings"
+      else
+        printf '<%s name="%s" value="%s" />\n' "$1" "$2" "$3" >> "$settings"
+      fi
+    }
+    ${lib.concatStringsSep "\n" (lib.mapAttrsToList setKeyLine guestSettings)}
+  '';
+
   bios = "${home}/Emulation/bios";
 
   # SDL gamepad n as one PlayStation pad. SDL names buttons by position (A = bottom),
@@ -629,6 +645,22 @@ let
       'while true; do ${apply-settings}; ${apply-emulator-settings}; ${es-de}/bin/es-de; sleep 1; done'
   '';
 
+  # The couch's ES-DE, emulators, settings and hotkeys for the Wolf guest. The guest container
+  # links ${home} to the guest's own home, so every couch path lands in the guest's
+  # copy; nothing here syncs, records or touches the couch user's files.
+  guest-session = pkgs.writeShellScript "esde-guest-session" ''
+    mkdir -p ${home}/ES-DE/themes ${home}/ES-DE/custom_systems ${home}/.config/retroarch \
+      ${home}/.config/PCSX2 ${home}/.config/ppsspp/PSP/SAVEDATA ${home}/.local/share/duckstation \
+      ${home}/.local/state ${localStates}
+    link() { [ -d "$2" ] && [ ! -L "$2" ] && rmdir "$2" 2>/dev/null; ln -sfn "$1" "$2"; }
+    link ${customSystems} ${home}/ES-DE/custom_systems/es_systems.xml
+    link ${bios} ${home}/.config/retroarch/system
+    link ${bios} ${home}/.config/PCSX2/bios
+    ${apply-guest-settings}
+    ${apply-emulator-settings}
+    exec ${es-de}/bin/es-de
+  '';
+
   # The RP6 exports its whole DuckStation user directory; only these parts are shared
   duckstation-stignore = pkgs.writeText "stignore" ''
     !/memcards
@@ -693,6 +725,13 @@ in
       };
     };
 
+    guestSession = lib.mkOption {
+      type = lib.types.package;
+      readOnly = true;
+      internal = true;
+      description = "Starts the couch ES-DE setup in another home (used by the Wolf guest).";
+    };
+
     saveSync.psxAndroidRomUri = lib.mkOption {
       type = lib.types.str;
       description = ''
@@ -709,6 +748,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    services.esde-console.guestSession = guest-session;
+
     # amdgpu and other GPU firmware, plus CPU microcode
     hardware.enableRedistributableFirmware = lib.mkDefault true;
     hardware.graphics = { enable = true; enable32Bit = true; };
