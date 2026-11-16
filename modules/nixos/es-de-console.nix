@@ -653,7 +653,9 @@ let
       ${home}/.config/PCSX2 ${home}/.config/ppsspp/PSP/SAVEDATA ${home}/.local/share/duckstation \
       ${home}/.local/state ${localStates}
     link() { [ -d "$2" ] && [ ! -L "$2" ] && rmdir "$2" 2>/dev/null; ln -sfn "$1" "$2"; }
-    link ${customSystems} ${home}/ES-DE/custom_systems/es_systems.xml
+    # A copy, not a link: the image's own setup writes this file before ES-DE starts
+    rm -f ${home}/ES-DE/custom_systems/es_systems.xml
+    install -m 0644 ${customSystems} ${home}/ES-DE/custom_systems/es_systems.xml
     link ${bios} ${home}/.config/retroarch/system
     link ${bios} ${home}/.config/PCSX2/bios
     ${apply-guest-settings}

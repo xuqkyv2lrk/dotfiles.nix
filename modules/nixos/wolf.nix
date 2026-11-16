@@ -11,6 +11,11 @@ let
   # so inside the container that path is the guest's own home
   linkCouchHome = pkgs.writeText "50-couch-home.sh" ''
     ln -sfn ${guestHome} ${couchHome}
+    # Left by an earlier version that linked it into the read-only store; the image's
+    # setup-de.sh copies over this path and aborts the session on that link
+    if [ -L ${guestHome}/ES-DE/custom_systems/es_systems.xml ]; then
+      rm -f ${guestHome}/ES-DE/custom_systems/es_systems.xml
+    fi
   '';
 
   # Replaces the image's app script but keeps its launcher, which starts Sway (the
