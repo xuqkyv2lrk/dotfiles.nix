@@ -7,6 +7,7 @@ in
   imports = [
     ./hardware-configuration.nix
     ../../modules/nixos/es-de-console.nix
+    ../../modules/nixos/wolf.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
@@ -31,6 +32,14 @@ in
       allowedIPs = [ "10.77.0.1/32" ];
       persistentKeepalive = 25;
     }];
+  };
+
+  # The remote guest's own session, separate from the couch; reached via play.ethi.cz
+  services.wolf-guest = {
+    enable = true;
+    romDir = "${home}/ROMs";
+    biosDir = "${home}/Emulation/bios";
+    interface = "wg-bifrost";
   };
 
   time.timeZone = "America/New_York";
