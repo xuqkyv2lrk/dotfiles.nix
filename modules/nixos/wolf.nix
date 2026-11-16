@@ -20,7 +20,8 @@ let
     [profiles.apps.runner]
     type = "docker"
     name = "WolfES-DE"
-    image = "ghcr.io/games-on-whales/es-de:fedora"
+    # not :fedora, whose esde.AppImage is an aarch64 build (Exec format error on x86)
+    image = "ghcr.io/games-on-whales/es-de:edge"
     mounts = ["${cfg.romDir}:/ROMs:ro", "${cfg.biosDir}:/bioses:ro"]
     env = ["RUN_SWAY=1", "GOW_REQUIRED_DEVICES=/dev/input/* /dev/dri/*"]
     devices = []
