@@ -35,6 +35,8 @@ let
       }
     }
     """
+
+    ${builtins.readFile ./wolf-gstreamer.toml}
   '';
 
   ports = {
