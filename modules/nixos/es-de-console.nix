@@ -804,6 +804,9 @@ in
         # Clients reach idavoll through bifrost; advertise its address, never the home IP
         external_ip = "162.243.72.181";
         system_tray = "disabled";
+        # Auto picks a Bluetooth Xbox Series pad for Xbox clients, which SDL maps with
+        # Start and the right stick scrambled; a 360 pad maps like the couch pads
+        gamepad = "x360";
       };
       # One entry: the couch session as it is, nothing launched
       applications.apps = [ { name = "Couch"; } ];
